@@ -1,0 +1,118 @@
+
+--- 2026-04-24 19:54:59.931062 ---
+Error processing submission: APIError: [403]: Google Drive API has not been used in project 312374628878 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/drive.googleapis.com/overview?project=312374628878 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.
+Traceback (most recent call last):
+  File "C:\portfolio\FortGang\backend\app.py", line 140, in handle_contact
+    append_to_sheet(data)
+    ~~~~~~~~~~~~~~~^^^^^^
+  File "C:\portfolio\FortGang\backend\app.py", line 65, in append_to_sheet
+    worksheet = get_google_sheet()
+  File "C:\portfolio\FortGang\backend\app.py", line 45, in get_google_sheet
+    spreadsheet = client.open(sheet_name)
+  File "C:\portfolio\FortGang\backend\venv\Lib\site-packages\gspread\client.py", line 132, in open
+    spreadsheet_files, response = self._list_spreadsheet_files(title, folder_id)
+                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\portfolio\FortGang\backend\venv\Lib\site-packages\gspread\client.py", line 105, in _list_spreadsheet_files
+    response = self.http_client.request("get", url, params=params)
+  File "C:\portfolio\FortGang\backend\venv\Lib\site-packages\gspread\http_client.py", line 128, in request
+    raise APIError(response)
+gspread.exceptions.APIError: APIError: [403]: Google Drive API has not been used in project 312374628878 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/drive.googleapis.com/overview?project=312374628878 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.
+
+--- 2026-04-24 20:00:31.934231 ---
+Error processing submission: APIError: [403]: Google Sheets API has not been used in project 312374628878 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/sheets.googleapis.com/overview?project=312374628878 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.
+Traceback (most recent call last):
+  File "C:\portfolio\FortGang\backend\app.py", line 140, in handle_contact
+    append_to_sheet(data)
+    ~~~~~~~~~~~~~~~^^^^^^
+  File "C:\portfolio\FortGang\backend\app.py", line 65, in append_to_sheet
+    worksheet = get_google_sheet()
+  File "C:\portfolio\FortGang\backend\app.py", line 45, in get_google_sheet
+    spreadsheet = client.open(sheet_name)
+  File "C:\portfolio\FortGang\backend\venv\Lib\site-packages\gspread\client.py", line 144, in open
+    return Spreadsheet(self.http_client, properties)
+  File "C:\portfolio\FortGang\backend\venv\Lib\site-packages\gspread\spreadsheet.py", line 29, in __init__
+    metadata = self.fetch_sheet_metadata()
+  File "C:\portfolio\FortGang\backend\venv\Lib\site-packages\gspread\spreadsheet.py", line 230, in fetch_sheet_metadata
+    return self.client.fetch_sheet_metadata(self.id, params=params)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\portfolio\FortGang\backend\venv\Lib\site-packages\gspread\http_client.py", line 305, in fetch_sheet_metadata
+    r = self.request("get", url, params=params)
+  File "C:\portfolio\FortGang\backend\venv\Lib\site-packages\gspread\http_client.py", line 128, in request
+    raise APIError(response)
+gspread.exceptions.APIError: APIError: [403]: Google Sheets API has not been used in project 312374628878 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/sheets.googleapis.com/overview?project=312374628878 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.
+
+--- 2026-04-24 20:02:54.760640 ---
+Google Sheets error (non-fatal): APIError: [403]: Google Sheets API has not been used in project 312374628878 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/sheets.googleapis.com/overview?project=312374628878 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.
+Traceback (most recent call last):
+  File "C:\portfolio\FortGang\backend\app.py", line 143, in handle_contact
+    append_to_sheet(data)
+    ~~~~~~~~~~~~~~~^^^^^^
+  File "C:\portfolio\FortGang\backend\app.py", line 65, in append_to_sheet
+    worksheet = get_google_sheet()
+  File "C:\portfolio\FortGang\backend\app.py", line 45, in get_google_sheet
+    spreadsheet = client.open(sheet_name)
+  File "C:\portfolio\FortGang\backend\venv\Lib\site-packages\gspread\client.py", line 144, in open
+    return Spreadsheet(self.http_client, properties)
+  File "C:\portfolio\FortGang\backend\venv\Lib\site-packages\gspread\spreadsheet.py", line 29, in __init__
+    metadata = self.fetch_sheet_metadata()
+  File "C:\portfolio\FortGang\backend\venv\Lib\site-packages\gspread\spreadsheet.py", line 230, in fetch_sheet_metadata
+    return self.client.fetch_sheet_metadata(self.id, params=params)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\portfolio\FortGang\backend\venv\Lib\site-packages\gspread\http_client.py", line 305, in fetch_sheet_metadata
+    r = self.request("get", url, params=params)
+  File "C:\portfolio\FortGang\backend\venv\Lib\site-packages\gspread\http_client.py", line 128, in request
+    raise APIError(response)
+gspread.exceptions.APIError: APIError: [403]: Google Sheets API has not been used in project 312374628878 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/sheets.googleapis.com/overview?project=312374628878 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.
+
+--- 2026-04-24 20:04:09.593719 ---
+Google Sheets error (non-fatal): APIError: [403]: Google Sheets API has not been used in project 312374628878 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/sheets.googleapis.com/overview?project=312374628878 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.
+Traceback (most recent call last):
+  File "C:\portfolio\FortGang\backend\app.py", line 143, in handle_contact
+    append_to_sheet(data)
+    ~~~~~~~~~~~~~~~^^^^^^
+  File "C:\portfolio\FortGang\backend\app.py", line 65, in append_to_sheet
+    worksheet = get_google_sheet()
+  File "C:\portfolio\FortGang\backend\app.py", line 45, in get_google_sheet
+    spreadsheet = client.open(sheet_name)
+  File "C:\portfolio\FortGang\backend\venv\Lib\site-packages\gspread\client.py", line 144, in open
+    return Spreadsheet(self.http_client, properties)
+  File "C:\portfolio\FortGang\backend\venv\Lib\site-packages\gspread\spreadsheet.py", line 29, in __init__
+    metadata = self.fetch_sheet_metadata()
+  File "C:\portfolio\FortGang\backend\venv\Lib\site-packages\gspread\spreadsheet.py", line 230, in fetch_sheet_metadata
+    return self.client.fetch_sheet_metadata(self.id, params=params)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\portfolio\FortGang\backend\venv\Lib\site-packages\gspread\http_client.py", line 305, in fetch_sheet_metadata
+    r = self.request("get", url, params=params)
+  File "C:\portfolio\FortGang\backend\venv\Lib\site-packages\gspread\http_client.py", line 128, in request
+    raise APIError(response)
+gspread.exceptions.APIError: APIError: [403]: Google Sheets API has not been used in project 312374628878 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/sheets.googleapis.com/overview?project=312374628878 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.
+
+--- 2026-04-24 20:07:04.913743 ---
+Google Sheets error (non-fatal): 
+Traceback (most recent call last):
+  File "C:\portfolio\FortGang\backend\venv\Lib\site-packages\gspread\client.py", line 155, in open_by_key
+    spreadsheet = Spreadsheet(self.http_client, {"id": key})
+  File "C:\portfolio\FortGang\backend\venv\Lib\site-packages\gspread\spreadsheet.py", line 29, in __init__
+    metadata = self.fetch_sheet_metadata()
+  File "C:\portfolio\FortGang\backend\venv\Lib\site-packages\gspread\spreadsheet.py", line 230, in fetch_sheet_metadata
+    return self.client.fetch_sheet_metadata(self.id, params=params)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\portfolio\FortGang\backend\venv\Lib\site-packages\gspread\http_client.py", line 305, in fetch_sheet_metadata
+    r = self.request("get", url, params=params)
+  File "C:\portfolio\FortGang\backend\venv\Lib\site-packages\gspread\http_client.py", line 128, in request
+    raise APIError(response)
+gspread.exceptions.APIError: APIError: [403]: Google Sheets API has not been used in project 312374628878 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/sheets.googleapis.com/overview?project=312374628878 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\portfolio\FortGang\backend\app.py", line 147, in handle_contact
+    append_to_sheet(data)
+    ~~~~~~~~~~~~~~~^^^^^^
+  File "C:\portfolio\FortGang\backend\app.py", line 69, in append_to_sheet
+    worksheet = get_google_sheet()
+  File "C:\portfolio\FortGang\backend\app.py", line 47, in get_google_sheet
+    spreadsheet = client.open_by_key(sheet_id)
+  File "C:\portfolio\FortGang\backend\venv\Lib\site-packages\gspread\client.py", line 160, in open_by_key
+    raise PermissionError from ex
+PermissionError

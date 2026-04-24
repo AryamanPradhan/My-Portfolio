@@ -1,3 +1,8 @@
+# Secrets
+credentials.json
+.env
+api/.env
+
 # Large media files
 frontend/assets/*.mp4
 frontend/assets/*.mov

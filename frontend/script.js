@@ -286,12 +286,10 @@ volumeSlider.addEventListener('input', (e) => {
 
 // ── Contact Form Submission ─────────────────────────────────────────────────
 
-// IMPORTANT: When deployed on Vercel (HTTPS), your backend must also be HTTPS.
-// Browsers will block requests from an HTTPS site to an HTTP (localhost or IP) backend.
-// Use a service like Render.com or Railway.app to host your Flask backend for free with HTTPS.
+// When hosted on Vercel, we use relative paths so it works for both local and production.
 const BACKEND_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
     ? 'http://localhost:5000' 
-    : 'https://your-backend-service.onrender.com'; // <--- REPLACE THIS with your public HTTPS backend URL
+    : ''; // Empty string means use the same domain (relative path)
 
 const contactForm = document.querySelector('.contact-form');
 if (contactForm) {
