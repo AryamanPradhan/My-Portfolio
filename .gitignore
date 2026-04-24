@@ -1,0 +1,13 @@
+# Large media files
+frontend/assets/*.mp4
+frontend/assets/*.mov
+frontend/assets/*.wmv
+
+# Dependencies
+node_modules/
+__pycache__/
+*.pyc
+
+# OS files
+.DS_Store
+Thumbs.db
