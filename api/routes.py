@@ -63,9 +63,8 @@ def handle_contact():
     except Exception as e:
         error_msg = f"Google Sheets error (non-fatal): {e}\n{traceback.format_exc()}"
         print(error_msg)
-        log_path = os.path.join(base_dir, "error_log.txt")
-        with open(log_path, "a") as f:
-            f.write(f"\n--- {datetime.now()} ---\n{error_msg}")
+        # Removed file logging because Vercel has a read-only filesystem. 
+        # Errors will still appear in Vercel's Dashboard logs.
 
     # Step 2: Send Discord notification (non-fatal)
     try:
