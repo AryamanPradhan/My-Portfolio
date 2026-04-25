@@ -24,6 +24,11 @@ def handle_contact():
     if not data:
         return jsonify({"error": "No data provided"}), 400
 
+    # Honeypot Check: If the hidden field is filled, it's a bot.
+    if data.get("honeypot"):
+        print("Bot detected via honeypot -- ignoring submission.")
+        return jsonify({"success": True, "message": "Message received"}), 200
+
     required_fields = ["name", "email", "phone"]
     missing = [f for f in required_fields if not data.get(f, "").strip()]
 
@@ -57,9 +62,7 @@ def handle_contact():
     except Exception as e:
         error_msg = f"Google Sheets error (non-fatal): {e}\n{traceback.format_exc()}"
         print(error_msg)
-        log_path = os.path.join(base_dir, "error_log.txt")
-        with open(log_path, "a") as f:
-            f.write(f"\n--- {datetime.now()} ---\n{error_msg}")
+        # Removed file logging to match Vercel-compatible logic.
 
     # Step 2: Send Discord notification (non-fatal)
     try:
