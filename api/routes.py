@@ -73,7 +73,6 @@ def handle_contact():
         }), 500
 
 @api.route("/health", methods=["GET"])
-@limiter.exempt  # Health checks don't need rate limiting
 def health_check():
     """Simple health check endpoint."""
     return jsonify({"status": "ok", "timestamp": datetime.now().isoformat()})
