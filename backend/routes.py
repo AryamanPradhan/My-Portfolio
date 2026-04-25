@@ -35,6 +35,12 @@ def handle_contact():
     if missing:
         return jsonify({"error": f"Missing required fields: {', '.join(missing)}"}), 400
 
+    # Email format validation
+    import re
+    email_regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+    if not re.match(email_regex, data.get("email", "")):
+        return jsonify({"error": "Please enter a valid email address."}), 400
+
     # Security: Input Validation (Max lengths) to prevent DoS via payload size
     max_lengths = {
         "name": 100,

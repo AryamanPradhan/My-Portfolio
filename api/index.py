@@ -162,7 +162,7 @@ def handle_contact():
 
         # 2. Email validation
         import re
-        email_regex = r'^[^\s@]+@[^\s@]+\.[^\s@]+$'
+        email_regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
         if not re.match(email_regex, email):
             return jsonify({"error": "Please enter a valid email address"}), 400
 
