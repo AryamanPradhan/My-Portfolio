@@ -6,7 +6,7 @@ Workflow: Form Submit → Google Sheets → Discord Notification
 """
 
 import os
-from flask import Flask
+from flask import Flask, jsonify
 from flask_cors import CORS
 from dotenv import load_dotenv
 
@@ -17,6 +17,17 @@ base_dir = os.path.dirname(os.path.abspath(__file__))
 load_dotenv(os.path.join(base_dir, ".env"))
 
 app = Flask(__name__)
+
+# Guarantee JSON Responses for ALL errors
+@app.errorhandler(Exception)
+def handle_all_errors(e):
+    try:
+        from werkzeug.exceptions import HTTPException
+        if isinstance(e, HTTPException):
+            return jsonify(error=e.description), e.code
+    except:
+        pass
+    return jsonify(error="Internal Server Error", details=str(e)), 500
 
 # Security: CORS Restricted
 allowed_origins = os.getenv("ALLOWED_ORIGINS", "*").split(",")
