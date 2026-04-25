@@ -2,22 +2,18 @@ import os
 import traceback
 from datetime import datetime
 from flask import Blueprint, request, jsonify
-from flask_limiter import Limiter
-from flask_limiter.util import get_remote_address
+from flask import Blueprint, request, jsonify
 
-from services.sheets import append_to_sheet
-from services.discord import send_discord_notification
+
 
 api = Blueprint('api', __name__)
 base_dir = os.path.dirname(os.path.abspath(__file__))
 
-# Security: Rate Limiting based on IP address
-limiter = Limiter(key_func=get_remote_address)
-
 @api.route("/contact", methods=["POST"])
-@limiter.limit("5 per minute")  # Enforce rate limit on contact form submissions
 def handle_contact():
     """Handle incoming contact form submissions."""
+    from services.sheets import append_to_sheet
+    from services.discord import send_discord_notification
     try:
         data = request.get_json()
 

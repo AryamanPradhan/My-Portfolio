@@ -10,7 +10,7 @@ from flask import Flask
 from flask_cors import CORS
 from dotenv import load_dotenv
 
-from routes import api, limiter
+from routes import api
 
 # Load environment variables
 base_dir = os.path.dirname(os.path.abspath(__file__))
@@ -18,12 +18,9 @@ load_dotenv(os.path.join(base_dir, ".env"))
 
 app = Flask(__name__)
 
-# Security: CORS Restricted (using ALLOWED_ORIGINS from .env or fallback to *)
+# Security: CORS Restricted
 allowed_origins = os.getenv("ALLOWED_ORIGINS", "*").split(",")
 CORS(app, origins=allowed_origins)
-
-# Initialize Flask-Limiter for rate limiting
-limiter.init_app(app)
 
 # Register API routes blueprint
 app.register_blueprint(api, url_prefix='/api')
