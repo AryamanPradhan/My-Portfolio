@@ -24,6 +24,12 @@ def handle_contact():
     if not data:
         return jsonify({"error": "No data provided"}), 400
 
+    # Honeypot Check: If the hidden field is filled, it's a bot.
+    # We return 200 (Success) so the bot thinks it succeeded, but we don't process it.
+    if data.get("honeypot"):
+        print("Bot detected via honeypot -- ignoring submission.")
+        return jsonify({"success": True, "message": "Message received"}), 200
+
     required_fields = ["name", "email", "phone"]
     missing = [f for f in required_fields if not data.get(f, "").strip()]
 

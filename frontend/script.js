@@ -314,6 +314,7 @@ if (contactForm) {
             budget: document.getElementById('budget')?.value.trim() || '',
             message: document.getElementById('message')?.value.trim() || '',
             section: section,
+            honeypot: document.getElementById('honeypot')?.value || '',
         };
 
         // Client-side validation

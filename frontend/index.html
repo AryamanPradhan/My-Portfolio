@@ -51,8 +51,14 @@
     <div class="preloader" id="preloader">
         <div class="preloader-logo">ARYAMAN<span class="dot">.</span></div>
         <div class="preloader-options" id="preloader-options">
-            <button class="glass-btn" data-choice="web">Web Development</button>
-            <button class="glass-btn" data-choice="automation">Automation</button>
+            <div class="preloader-choice">
+                <button class="glass-btn" data-choice="web">Web Development</button>
+                <p class="choice-desc">High-end websites & digital experiences.</p>
+            </div>
+            <div class="preloader-choice">
+                <button class="glass-btn" data-choice="automation">Automation</button>
+                <p class="choice-desc">Strategic AI & business workflow systems.</p>
+            </div>
         </div>
     </div>
 
@@ -270,6 +276,11 @@
                             <div class="form-group">
                                 <label for="message">Project Detail</label>
                                 <textarea id="message" rows="4" placeholder="Tell us more about the project..."></textarea>
+                            </div>
+                            <!-- Hidden honeypot field to stop bots -->
+                            <div style="display:none;">
+                                <label for="honeypot">Leave this field empty</label>
+                                <input type="text" name="honeypot" id="honeypot">
                             </div>
                             <button type="submit" class="btn-primary w-100">Send Message</button>
                         </form>

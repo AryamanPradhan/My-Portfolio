@@ -17,7 +17,21 @@ def get_google_sheet():
     sheet_id = os.getenv("GOOGLE_SHEET_ID", "")
     sheet_name = os.getenv("GOOGLE_SHEET_NAME", "Portfolio Leads")
 
-    credentials = Credentials.from_service_account_file(creds_file, scopes=SCOPES)
+    import json
+    creds_json = os.getenv("GOOGLE_CREDENTIALS_JSON")
+    
+    if creds_json:
+        # Load from environment variable (preferred for production)
+        try:
+            creds_dict = json.loads(creds_json)
+            credentials = Credentials.from_service_account_info(creds_dict, scopes=SCOPES)
+        except Exception as e:
+            print(f"Error loading credentials from env: {e}")
+            credentials = Credentials.from_service_account_file(creds_file, scopes=SCOPES)
+    else:
+        # Load from local file (for local development)
+        credentials = Credentials.from_service_account_file(creds_file, scopes=SCOPES)
+        
     client = gspread.authorize(credentials)
 
     # Prefer opening by ID (only needs Sheets API, not Drive API)
