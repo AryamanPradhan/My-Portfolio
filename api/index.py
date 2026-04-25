@@ -149,8 +149,27 @@ def handle_contact():
             return jsonify({"success": True, "message": "Message received"}), 200
 
         # Basic Validation
-        if not data.get("name") or not data.get("email"):
-            return jsonify({"error": "Name and Email are required"}), 400
+        name = data.get("name", "").strip()
+        email = data.get("email", "").strip()
+        phone = data.get("phone", "").strip()
+
+        if not name or not email or not phone:
+            return jsonify({"error": "Name, Email, and Phone are required"}), 400
+
+        # 1. Name restriction
+        if len(name) > 50:
+            return jsonify({"error": "Name should not exceed 50 characters"}), 400
+
+        # 2. Email validation
+        import re
+        email_regex = r'^[^\s@]+@[^\s@]+\.[^\s@]+$'
+        if not re.match(email_regex, email):
+            return jsonify({"error": "Please enter a valid email address"}), 400
+
+        # 3. Phone validation
+        phone_digits = re.sub(r'\D', '', phone)
+        if len(phone_digits) != 10:
+            return jsonify({"error": "Phone number must be exactly 10 digits"}), 400
 
         sheets_ok = False
         discord_ok = False

@@ -323,6 +323,26 @@ if (contactForm) {
             return;
         }
 
+        // 1. Name restriction (max 50 characters)
+        if (formData.name.length > 50) {
+            alert('Name should not exceed 50 characters.');
+            return;
+        }
+
+        // 2. Email validation (regex)
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(formData.email)) {
+            alert('Please enter a valid email address.');
+            return;
+        }
+
+        // 3. Phone number validation (exactly 10 digits)
+        const phoneDigits = formData.phone.replace(/\D/g, ''); // Remove non-digits
+        if (phoneDigits.length !== 10) {
+            alert('Phone number must be exactly 10 digits.');
+            return;
+        }
+
         // Loading state
         submitBtn.disabled = true;
         submitBtn.textContent = 'Sending...';
