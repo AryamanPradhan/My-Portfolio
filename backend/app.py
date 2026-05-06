@@ -38,8 +38,8 @@ if __name__ == "__main__":
     # Security: Use Waitress for production serving instead of Flask's built-in server
     if debug_mode:
         print("Running in DEBUG mode (Flask dev server)...")
-        app.run(host="0.0.0.0", port=port, debug=True)
+        app.run(host="127.0.0.1", port=port, debug=True)
     else:
         print("Running in PRODUCTION mode (Waitress WSGI server)...")
         from waitress import serve
-        serve(app, host="0.0.0.0", port=port)
+        serve(app, host="127.0.0.1", port=port)

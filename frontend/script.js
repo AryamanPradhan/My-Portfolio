@@ -270,15 +270,21 @@ bgMusic.addEventListener('pause', updateMusicUI);
 // Initial check in case it's already playing (autoplay)
 updateMusicUI();
 
-const toggleMusic = () => {
-    if (!bgMusic.paused) {
-        bgMusic.pause();
-    } else {
-        bgMusic.play().catch(e => console.log('Audio play failed:', e));
+const toggleMusic = (e) => {
+    if (e) {
+        e.preventDefault();
+        e.stopPropagation();
     }
+    if (bgMusic.paused) {
+        bgMusic.play().catch(err => console.error('Audio play failed:', err));
+    } else {
+        bgMusic.pause();
+    }
+    updateMusicUI();
 };
 
 musicToggle.addEventListener('click', toggleMusic);
+musicToggle.addEventListener('touchstart', toggleMusic, { passive: false });
 
 volumeSlider.addEventListener('input', (e) => {
     bgMusic.volume = e.target.value;
