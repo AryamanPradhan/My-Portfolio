@@ -4,17 +4,61 @@ import data from '../portfolioData.json';
 
 const { personal, contact, services } = data;
 
+// Mirrors the caps enforced in api/_lib/validation.js. Kept in sync by hand —
+// the server is the authority, this only spares people a pointless round trip.
+const LIMITS = {
+  name: { min: 2, max: 80 },
+  email: { max: 160 },
+  message: { min: 20, max: 4000 },
+};
+
+const EMAIL_RE = /^[^\s@,;:<>"'\\]+@[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)+$/i;
+
+function validate(form) {
+  const errors = {};
+  if (form.name.trim().length < LIMITS.name.min) {
+    errors.name = 'Tell me who you are.';
+  }
+  if (!EMAIL_RE.test(form.email.trim())) {
+    errors.email = 'That does not look like a valid email.';
+  }
+  if (form.message.trim().length < LIMITS.message.min) {
+    errors.message = `At least ${LIMITS.message.min} characters, please.`;
+  }
+  return errors;
+}
+
+function buildMailto(form) {
+  const subject = `New project enquiry — ${form.name}${form.project ? ` (${form.project})` : ''}`;
+  const body = [
+    `Name: ${form.name}`,
+    `Reply to: ${form.email}`,
+    form.project ? `Project type: ${form.project}` : null,
+    '',
+    form.message,
+  ].filter(Boolean).join('\n');
+  return `mailto:${contact.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+}
+
 export default function Contact() {
   const [form, setForm] = useState({ name: '', email: '', project: '', message: '' });
-  const [opened, setOpened] = useState(false);
+  // Honeypot. Hidden from people and from assistive tech, so anything that
+  // fills it is a bot walking the DOM rather than reading the page.
+  const [website, setWebsite] = useState('');
+  const [status, setStatus] = useState('idle'); // idle | sending | sent | error
+  const [errors, setErrors] = useState({});
+  const [notice, setNotice] = useState('');
   const [log, setLog] = useState([]);
   const logRef = useRef(null);
+  // Start of dwell time. A submission arriving seconds after the page rendered
+  // did not come from someone who read it.
+  const mountedAt = useRef(Date.now());
 
   useEffect(() => {
     const initLogs = [
       '[SYS] Contact terminal ready',
-      `[NET] Route: mail client → ${contact.email}`,
-      '[SYS] Fill the form and hit transmit — it opens your mail app with the message drafted.',
+      '[NET] Secure channel open — transmissions relay straight to my inbox',
+      '[SYS] Fill the form and hit transmit.',
       '[SYS] Awaiting input...',
     ];
     const timers = initLogs.map((line, i) =>
@@ -27,31 +71,65 @@ export default function Contact() {
     if (logRef.current) logRef.current.scrollTop = logRef.current.scrollHeight;
   }, [log]);
 
-  const handleSubmit = (e) => {
+  const pushLog = (...lines) => setLog(prev => [...prev, ...lines]);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!form.name || !form.email || !form.message) return;
+    if (status === 'sending') return;
 
-    const subject = `New project enquiry — ${form.name}${form.project ? ` (${form.project})` : ''}`;
-    const body = [
-      `Name: ${form.name}`,
-      `Reply to: ${form.email}`,
-      form.project ? `Project type: ${form.project}` : null,
-      '',
-      form.message,
-    ].filter(Boolean).join('\n');
+    const found = validate(form);
+    setErrors(found);
+    if (Object.keys(found).length > 0) {
+      pushLog('[ERR] Payload rejected — check the highlighted fields.');
+      return;
+    }
 
-    setLog(prev => [
-      ...prev,
-      `[TX] Composing message (${form.message.length} chars)...`,
-      '[TX] Handing off to your mail client.',
-      '[SYS] If nothing opened, email directly — address is on the right.',
-    ]);
-    setOpened(true);
+    setStatus('sending');
+    setNotice('');
+    pushLog(`[TX] Encoding payload (${form.message.trim().length} chars)...`, '[TX] Transmitting...');
 
-    window.location.href = `mailto:${contact.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...form,
+          website,
+          elapsedMs: Date.now() - mountedAt.current,
+        }),
+      });
+
+      const payload = await res.json().catch(() => ({}));
+
+      if (res.ok && payload.ok) {
+        setStatus('sent');
+        setForm({ name: '', email: '', project: '', message: '' });
+        setErrors({});
+        pushLog('[TX] Acknowledged — message delivered.', '[SYS] I usually reply within a day.');
+        return;
+      }
+
+      if (res.status === 400 && payload.errors) {
+        setErrors(payload.errors);
+        setStatus('idle');
+        pushLog('[ERR] Payload rejected — check the highlighted fields.');
+        return;
+      }
+
+      setStatus('error');
+      setNotice(payload.error || 'Transmission failed.');
+      pushLog(`[ERR] ${payload.error || 'Transmission failed.'}`);
+    } catch {
+      // Network-level failure: offline, blocked, or the function is down.
+      setStatus('error');
+      setNotice('Could not reach the server.');
+      pushLog('[ERR] Could not reach the server.', '[SYS] Fall back to your own mail client below.');
+    }
   };
 
-  const ready = form.name && form.email && form.message;
+  const charCount = form.message.trim().length;
+  const ready = Object.keys(validate(form)).length === 0;
+  const sending = status === 'sending';
 
   return (
     <div className="h-full overflow-y-auto pr-2 page-enter">
@@ -95,32 +173,58 @@ export default function Contact() {
               <span className="font-label-caps text-label-caps text-primary text-[10px]">START A CONVERSATION</span>
             </div>
             <div className="font-status-tiny text-outline text-[9px] mb-4">
-              THIS DRAFTS AN EMAIL IN YOUR OWN MAIL APP — NOTHING IS SENT FROM THIS PAGE
+              SENT STRAIGHT TO MY INBOX — YOUR ADDRESS IS USED ONLY TO REPLY, NEVER STORED OR SHARED
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-4" noValidate>
+              {/* Honeypot — off-screen, out of tab order, hidden from AT. */}
+              <div aria-hidden="true" className="absolute w-px h-px -left-[9999px] overflow-hidden">
+                <label htmlFor="website">Website</label>
+                <input
+                  id="website"
+                  name="website"
+                  type="text"
+                  tabIndex={-1}
+                  autoComplete="off"
+                  value={website}
+                  onChange={e => setWebsite(e.target.value)}
+                />
+              </div>
+
               <div>
                 <label className="font-label-caps text-outline text-[10px] block mb-1.5">YOUR NAME</label>
                 <input
                   type="text"
                   value={form.name}
+                  maxLength={LIMITS.name.max}
                   onChange={e => setForm(prev => ({ ...prev, name: e.target.value }))}
                   placeholder="Who's writing?"
-                  className="w-full px-3 py-2 text-[12px]"
-                  required
+                  className={`w-full px-3 py-2 text-[12px] ${errors.name ? 'border border-led-red' : ''}`}
+                  aria-invalid={Boolean(errors.name)}
+                  disabled={sending}
                 />
+                {errors.name && (
+                  <div className="font-mono-data text-led-red text-[10px] mt-1">{errors.name}</div>
+                )}
               </div>
+
               <div>
                 <label className="font-label-caps text-outline text-[10px] block mb-1.5">YOUR EMAIL</label>
                 <input
                   type="email"
                   value={form.email}
+                  maxLength={LIMITS.email.max}
                   onChange={e => setForm(prev => ({ ...prev, email: e.target.value }))}
                   placeholder="where I should reply"
-                  className="w-full px-3 py-2 text-[12px]"
-                  required
+                  className={`w-full px-3 py-2 text-[12px] ${errors.email ? 'border border-led-red' : ''}`}
+                  aria-invalid={Boolean(errors.email)}
+                  disabled={sending}
                 />
+                {errors.email && (
+                  <div className="font-mono-data text-led-red text-[10px] mt-1">{errors.email}</div>
+                )}
               </div>
+
               <div>
                 <label className="font-label-caps text-outline text-[10px] block mb-1.5">WHAT DO YOU NEED?</label>
                 <div className="flex flex-wrap gap-1.5">
@@ -128,8 +232,9 @@ export default function Contact() {
                     <button
                       type="button"
                       key={s.name}
+                      disabled={sending}
                       onClick={() => setForm(prev => ({ ...prev, project: prev.project === s.name ? '' : s.name }))}
-                      className={`font-mono-data text-[10px] px-2 py-1 border transition-all ${
+                      className={`font-mono-data text-[10px] px-2 py-1 border transition-all disabled:opacity-50 ${
                         form.project === s.name
                           ? 'bg-primary text-on-primary border-primary'
                           : 'bg-surface-container-lowest text-on-surface-variant border-border-graphite/40 hover:text-primary'
@@ -140,40 +245,61 @@ export default function Contact() {
                   ))}
                 </div>
               </div>
+
               <div>
                 <label className="font-label-caps text-outline text-[10px] block mb-1.5">MESSAGE</label>
                 <textarea
                   value={form.message}
+                  maxLength={LIMITS.message.max}
                   onChange={e => setForm(prev => ({ ...prev, message: e.target.value }))}
                   placeholder="What are you trying to automate, and what does it cost you today?"
                   rows={6}
-                  className="w-full px-3 py-2 text-[12px] resize-none"
-                  required
+                  className={`w-full px-3 py-2 text-[12px] resize-none ${errors.message ? 'border border-led-red' : ''}`}
+                  aria-invalid={Boolean(errors.message)}
+                  disabled={sending}
                 />
+                {errors.message && (
+                  <div className="font-mono-data text-led-red text-[10px] mt-1">{errors.message}</div>
+                )}
               </div>
 
               <div className="bevel-inset bg-surface-container-lowest p-3 flex justify-between font-mono-data text-[10px]">
                 <span className="text-outline">PAYLOAD</span>
                 <span className={ready ? 'text-led-green' : 'text-outline'}>
-                  {form.message.length} CHARS &nbsp;|&nbsp; {ready ? 'READY' : 'INCOMPLETE'}
+                  {charCount}/{LIMITS.message.max} CHARS &nbsp;|&nbsp; {ready ? 'READY' : 'INCOMPLETE'}
                 </span>
               </div>
 
               <button
                 type="submit"
-                className="w-full bevel-outset py-3 font-label-caps text-[12px] font-bold transition-all bg-primary text-on-primary hover:bg-primary-container active:translate-y-0.5"
+                disabled={sending}
+                className="w-full bevel-outset py-3 font-label-caps text-[12px] font-bold transition-all bg-primary text-on-primary hover:bg-primary-container active:translate-y-0.5 disabled:opacity-60 disabled:cursor-wait"
               >
-                TRANSMIT
+                {sending ? 'TRANSMITTING...' : 'TRANSMIT'}
               </button>
 
-              {opened && (
+              {status === 'sent' && (
                 <div className="bevel-inset bg-led-green/5 p-3 text-center animate-fade-in">
                   <div className="font-mono-data text-led-green text-[11px]">
-                    Your mail app should have opened with the message drafted.
+                    Message received. I'll get back to you.
                   </div>
                   <div className="font-mono-data text-on-surface-variant text-[10px] mt-1">
-                    If it didn't, email {contact.email} directly.
+                    Usually within a day.
                   </div>
+                </div>
+              )}
+
+              {status === 'error' && (
+                <div className="bevel-inset bg-led-red/5 p-3 animate-fade-in">
+                  <div className="font-mono-data text-led-red text-[11px] mb-2">{notice}</div>
+                  {/* The enquiry is not lost just because the API is: hand the
+                      already-typed message to their own mail client. */}
+                  <a
+                    href={buildMailto(form)}
+                    className="inline-block bevel-outset bg-surface-container-highest text-primary px-3 py-2 font-label-caps text-[10px] font-bold hover:text-primary-container"
+                  >
+                    OPEN IN MY MAIL APP INSTEAD
+                  </a>
                 </div>
               )}
             </form>
@@ -236,6 +362,7 @@ export default function Contact() {
             <div ref={logRef} className="flex-1 p-3 overflow-y-auto font-mono-data text-[10px] leading-relaxed">
               {log.map((line, i) => (
                 <div key={i} className={
+                  line.includes('[ERR]') ? 'text-led-red mb-0.5' :
                   line.includes('[NET]') ? 'text-led-green/80 mb-0.5' :
                   line.includes('[TX]') ? 'text-primary mb-0.5' :
                   'text-on-surface-variant mb-0.5'

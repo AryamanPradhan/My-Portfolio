@@ -1,0 +1,12 @@
+{
+  "name": "my-portfolio",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Serverless API for the portfolio contact form. The site itself lives in portfolio-app/.",
+  "dependencies": {
+    "@upstash/ratelimit": "^2.0.5",
+    "@upstash/redis": "^1.34.3",
+    "resend": "^4.0.1"
+  }
+}
