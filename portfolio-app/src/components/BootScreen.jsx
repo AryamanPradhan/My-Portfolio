@@ -187,7 +187,7 @@ export default function BootScreen({ onBootComplete }) {
               <div className="space-y-4">
                 {subsystems.map((sys, i) => (
                   <div key={sys.id}>
-                    <div className="flex justify-between font-mono-data text-mono-data text-[11px] mb-1">
+                    <div className="flex justify-between font-mono-data text-mono-data mb-1">
                       <span className="text-on-surface-variant">{sys.label}</span>
                       <span className={`transition-opacity ${
                         sys.status === 'ONLINE' ? 'text-led-green' :
@@ -213,7 +213,7 @@ export default function BootScreen({ onBootComplete }) {
                 sessionStorage.setItem('aryaman-os-booted', 'true');
                 onBootComplete();
               }}
-              className="bevel-outset bg-surface-container-highest text-outline px-4 py-2 font-label-caps text-[10px] hover:text-primary hover:bg-surface-bright transition-all mt-auto"
+              className="bevel-outset bg-surface-container-highest text-outline px-4 py-2 font-label-caps text-[13px] hover:text-primary hover:bg-surface-bright transition-all mt-auto"
             >
               SKIP BOOT SEQUENCE
             </button>

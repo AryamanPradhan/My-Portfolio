@@ -19,31 +19,31 @@ function Node({ step, mode, isActive, onClick }) {
         <span className={`material-symbols-outlined text-2xl ${m.color}`} style={{ fontVariationSettings: "'FILL' 0" }}>
           {m.icon}
         </span>
-        <span className={`font-label-caps text-[8px] px-1.5 py-0.5 border ${m.border} ${m.color}`}>
+        <span className={`font-label-caps text-[12px] px-1.5 py-0.5 border ${m.border} ${m.color}`}>
           {m.label}
         </span>
       </div>
 
-      <div className="font-mono-data text-on-surface text-[11px] font-semibold leading-tight mb-1">
+      <div className="font-mono-data text-on-surface text-[14px] font-semibold leading-tight mb-1">
         {step.title}
       </div>
-      <div className="font-mono-data text-outline text-[9px] mt-auto">
+      <div className="font-mono-data text-outline text-[12px] mt-auto">
         {step.items.length} TASKS
       </div>
 
       {isActive && (
         <div className="mt-2 pt-2 border-t border-border-graphite/30 animate-fade-in space-y-1">
           {step.items.map((item, i) => (
-            <div key={i} className="flex items-start gap-1.5 font-mono-data text-[9px]">
+            <div key={i} className="flex items-start gap-1.5 font-mono-data text-[12px]">
               <span className={`${m.color} flex-shrink-0`}>&#9656;</span>
               <span className="text-on-surface-variant">{item}</span>
             </div>
           ))}
           {step.receives && (
             <div className="mt-1.5 pt-1.5 border-t border-border-graphite/20">
-              <div className="font-label-caps text-[7px] text-outline mb-1">CLIENT INPUT</div>
+              <div className="font-label-caps text-[12px] text-outline mb-1">CLIENT INPUT</div>
               {step.receives.map((r, i) => (
-                <div key={i} className="flex items-start gap-1.5 font-mono-data text-[9px]">
+                <div key={i} className="flex items-start gap-1.5 font-mono-data text-[12px]">
                   <span className="text-outline flex-shrink-0">&#8594;</span>
                   <span className="text-on-surface-variant">{r}</span>
                 </div>
@@ -51,7 +51,7 @@ function Node({ step, mode, isActive, onClick }) {
             </div>
           )}
           {step.note && (
-            <div className={`mt-1 font-mono-data text-[9px] ${m.color} italic`}>{step.note}</div>
+            <div className={`mt-1 font-mono-data text-[12px] ${m.color} italic`}>{step.note}</div>
           )}
         </div>
       )}
@@ -136,9 +136,9 @@ export default function WorkflowDiagram({ steps, codename }) {
     <div className="blueprint-grid relative rounded overflow-hidden">
       {/* Coordinate marks */}
       <div className="flex justify-between px-3 py-1 border-b border-border-graphite/20">
-        <span className="font-mono-data text-[8px] text-outline">X-001</span>
-        <span className="font-mono-data text-[8px] text-outline">SYS_ARCH: {codename || 'PIPELINE'}</span>
-        <span className="font-mono-data text-[8px] text-outline">X-100</span>
+        <span className="font-mono-data text-[12px] text-outline">X-001</span>
+        <span className="font-mono-data text-[12px] text-outline">SYS_ARCH: {codename || 'PIPELINE'}</span>
+        <span className="font-mono-data text-[12px] text-outline">X-100</span>
       </div>
 
       {/* Legend */}
@@ -146,12 +146,12 @@ export default function WorkflowDiagram({ steps, codename }) {
         {Object.entries(MODE).map(([key, m]) => (
           <div key={key} className="flex items-center gap-1.5">
             <div className="w-2 h-2" style={{ backgroundColor: m.dot }} />
-            <span className="font-label-caps text-[8px] text-outline">{m.label}</span>
+            <span className="font-label-caps text-[12px] text-outline">{m.label}</span>
           </div>
         ))}
         <div className="ml-auto flex items-center gap-1.5">
           <div className="w-1.5 h-1.5 bg-primary animate-pulse" />
-          <span className="font-mono-data text-[8px] text-primary">LIVE</span>
+          <span className="font-mono-data text-[12px] text-primary">LIVE</span>
         </div>
       </div>
 
@@ -195,10 +195,10 @@ export default function WorkflowDiagram({ steps, codename }) {
 
       {/* Footer */}
       <div className="flex items-center justify-between px-3 py-2 border-t border-border-graphite/20">
-        <span className="font-mono-data text-outline text-[9px]">
+        <span className="font-mono-data text-outline text-[12px]">
           {steps.length} NODES &nbsp;|&nbsp; {steps.filter(s => s.mode === 'auto').length} AUTO &nbsp;|&nbsp; {steps.filter(s => s.mode === 'hybrid').length} HYBRID &nbsp;|&nbsp; {steps.filter(s => s.mode === 'human').length} HUMAN
         </span>
-        <span className="font-mono-data text-led-green text-[9px]">
+        <span className="font-mono-data text-led-green text-[12px]">
           PIPELINE: OPERATIONAL
         </span>
       </div>

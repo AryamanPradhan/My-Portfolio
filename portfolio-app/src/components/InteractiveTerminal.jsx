@@ -149,10 +149,10 @@ export default function InteractiveTerminal({ className = '' }) {
       onClick={() => inputRef.current?.focus()}
     >
       <div className="h-6 bg-surface-steel flex items-center px-3 border-b-2 border-border-graphite flex-shrink-0">
-        <span className="font-label-caps text-label-caps text-outline text-[9px]">TERMINAL // INTERACTIVE</span>
+        <span className="font-label-caps text-label-caps text-outline">TERMINAL // INTERACTIVE</span>
         <div className="w-1.5 h-1.5 bg-led-green led-pulse-green rounded-full ml-auto"></div>
       </div>
-      <div ref={scrollRef} className="flex-1 p-3 overflow-y-auto font-mono-data text-[11px] leading-relaxed">
+      <div ref={scrollRef} className="flex-1 p-3 overflow-y-auto font-mono-data text-[14px] leading-relaxed">
         {history.map((entry, i) => (
           <div key={i} className={
             entry.type === 'input' ? 'text-primary mb-0.5' :
@@ -171,7 +171,7 @@ export default function InteractiveTerminal({ className = '' }) {
             value={input}
             onChange={e => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            className="flex-1 bg-transparent border-none outline-none text-primary font-mono-data text-[11px] p-0 m-0 focus:ring-0 focus:shadow-none caret-primary"
+            className="flex-1 bg-transparent border-none outline-none text-primary font-mono-data text-[14px] p-0 m-0 focus:ring-0 focus:shadow-none caret-primary"
             style={{ boxShadow: 'none', border: 'none' }}
             autoComplete="off"
             spellCheck={false}

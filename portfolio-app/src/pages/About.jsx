@@ -26,10 +26,10 @@ export default function About() {
     <div className="h-full overflow-y-auto pr-2 page-enter">
       {/* Header */}
       <div className="bevel-outset bg-led-red/10 border-led-red/30 px-4 lg:px-6 py-2 flex justify-between items-center mb-4 gap-3">
-        <span className="font-label-caps text-label-caps text-led-red text-[10px] lg:text-[11px] tracking-widest">
+        <span className="font-label-caps text-label-caps text-led-red tracking-widest">
           ABOUT THE OPERATOR // {personal.name.toUpperCase()}
         </span>
-        <span className="font-mono-data text-mono-data text-outline text-[10px] hidden sm:block flex-shrink-0">
+        <span className="font-mono-data text-mono-data text-outline hidden sm:block flex-shrink-0">
           {personal.availability}
         </span>
       </div>
@@ -41,7 +41,7 @@ export default function About() {
           <div className="bevel-outset bg-surface-dim p-4 lg:p-6">
             <div className="flex items-center gap-2 mb-4">
               <span className="material-symbols-outlined text-primary text-lg">fingerprint</span>
-              <span className="font-label-caps text-label-caps text-primary text-[11px]">IDENTITY</span>
+              <span className="font-label-caps text-label-caps text-primary">IDENTITY</span>
             </div>
 
             <div className="flex flex-col sm:flex-row gap-6">
@@ -60,7 +60,7 @@ export default function About() {
                 <div className="font-headline-md text-base lg:text-lg text-primary-container font-bold tracking-wide mb-3">
                   {personal.title.toUpperCase()}
                 </div>
-                <p className="font-mono-data text-on-surface-variant text-[12px] leading-relaxed mb-4">
+                <p className="font-body-base text-on-surface-variant text-[16px] leading-relaxed mb-4">
                   {personal.bio}
                 </p>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
@@ -70,8 +70,8 @@ export default function About() {
                     { label: 'CLIENTS', value: personal.focus, color: 'text-primary-container' },
                   ].map(({ label, value, color }) => (
                     <div key={label} className="bevel-inset bg-background-matte/60 p-2">
-                      <div className="font-status-tiny text-outline text-[9px]">{label}</div>
-                      <div className={`font-mono-data ${color} text-[11px] leading-snug`}>{value}</div>
+                      <div className="font-status-tiny text-outline text-[12px]">{label}</div>
+                      <div className={`font-mono-data ${color} text-[14px] leading-snug`}>{value}</div>
                     </div>
                   ))}
                 </div>
@@ -83,13 +83,13 @@ export default function About() {
           <div className="bevel-outset bg-surface-dim p-4 lg:p-6">
             <div className="flex items-center gap-2 mb-4">
               <span className="material-symbols-outlined text-primary text-lg">rule</span>
-              <span className="font-label-caps text-label-caps text-primary text-[11px]">OPERATING PRINCIPLES</span>
+              <span className="font-label-caps text-label-caps text-primary">OPERATING PRINCIPLES</span>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
               {principles.map((p, i) => (
                 <div key={i} className="flex gap-2 bevel-inset bg-background-matte/40 px-3 py-2.5">
-                  <span className="text-led-green font-mono-data text-[11px] flex-shrink-0">▸</span>
-                  <span className="font-mono-data text-on-surface-variant text-[11px] leading-relaxed">{p}</span>
+                  <span className="text-led-green font-mono-data text-[14px] flex-shrink-0">▸</span>
+                  <span className="font-body-base text-on-surface-variant text-[15px] leading-relaxed">{p}</span>
                 </div>
               ))}
             </div>
@@ -99,9 +99,9 @@ export default function About() {
           <div className="bevel-outset bg-surface-dim p-4 lg:p-6">
             <div className="flex items-center gap-2 mb-4">
               <span className="material-symbols-outlined text-led-red text-lg">visibility_off</span>
-              <span className="font-label-caps text-label-caps text-led-red text-[11px]">WORKING NOTES // CLICK TO REVEAL</span>
+              <span className="font-label-caps text-label-caps text-led-red">WORKING NOTES // CLICK TO REVEAL</span>
             </div>
-            <div className="font-mono-data text-on-surface-variant text-[12px] leading-loose">
+            <div className="font-mono-data text-on-surface-variant text-[16px] leading-loose">
               <p className="mb-3">
                 Most automation work I see is assembled from {reveal('r1', 'no-code platforms billed per task run')}, which
                 looks fast until the workflow needs real error handling. Everything I ship is {reveal('r2', 'hand-written Python calling APIs directly')} —
@@ -117,7 +117,7 @@ export default function About() {
                 simpler {reveal('r6', 'checkbox inside the tool the client already opens daily')} did the same job — and removed
                 the always-on server it would have required.
               </p>
-              <div className="text-outline text-[10px] mt-4 italic">
+              <div className="text-outline text-[13px] mt-4 italic">
                 [ {revealed.size} of 6 revealed — click any highlighted block ]
               </div>
             </div>
@@ -135,15 +135,15 @@ export default function About() {
           <div className="bevel-outset bg-surface-dim p-4">
             <div className="flex items-center gap-2 mb-3">
               <span className="material-symbols-outlined text-primary text-sm">inventory_2</span>
-              <span className="font-label-caps text-label-caps text-primary text-[10px]">BUILD SUMMARY</span>
+              <span className="font-label-caps text-label-caps text-primary">BUILD SUMMARY</span>
             </div>
             <div className="space-y-2">
               {projects.map(p => (
                 <div key={p.codename} className="bevel-inset bg-background-matte/40 p-2.5">
-                  <div className="font-mono-data text-primary-container text-[11px]">{p.codename}</div>
+                  <div className="font-mono-data text-primary-container text-[14px]">{p.codename}</div>
                   <div className="flex justify-between mt-1 gap-2">
-                    <span className="font-status-tiny text-outline text-[9px] truncate">{p.type}</span>
-                    <span className="font-status-tiny text-led-green text-[9px] flex-shrink-0">{p.status}</span>
+                    <span className="font-status-tiny text-outline text-[12px] truncate">{p.type}</span>
+                    <span className="font-status-tiny text-led-green text-[12px] flex-shrink-0">{p.status}</span>
                   </div>
                 </div>
               ))}
@@ -151,25 +151,25 @@ export default function About() {
           </div>
 
           <div className="bevel-outset bg-surface-container-high p-4">
-            <div className="font-label-caps text-label-caps text-outline text-[10px] mb-3">KNOWLEDGE BASE</div>
+            <div className="font-label-caps text-label-caps text-outline mb-3">KNOWLEDGE BASE</div>
             <div className="space-y-3">
               {knowledgeBase.map(kb => (
                 <div key={kb.name}>
-                  <div className="font-mono-data text-primary text-[11px] mb-0.5">{kb.name}</div>
-                  <p className="font-mono-data text-on-surface-variant text-[10px] leading-relaxed">{kb.desc}</p>
+                  <div className="font-mono-data text-primary text-[14px] mb-0.5">{kb.name}</div>
+                  <p className="font-body-base text-on-surface-variant text-[15px] leading-relaxed">{kb.desc}</p>
                 </div>
               ))}
             </div>
           </div>
 
           <div className="bevel-outset bg-surface-dim p-4">
-            <div className="font-label-caps text-label-caps text-primary text-[10px] mb-2">ENGAGEMENT</div>
-            <p className="font-mono-data text-on-surface-variant text-[10px] leading-relaxed mb-3">
+            <div className="font-label-caps text-label-caps text-primary mb-2">ENGAGEMENT</div>
+            <p className="font-body-base text-on-surface-variant text-[15px] leading-relaxed mb-3">
               {personal.engagement}. Currently taking on new work with {personal.focus.toLowerCase()}.
             </p>
             <a
               href={`mailto:${contact.email}`}
-              className="block text-center bevel-outset bg-primary text-on-primary py-2 font-label-caps text-[11px] font-bold hover:bg-primary-container transition-colors break-all"
+              className="block text-center bevel-outset bg-primary text-on-primary py-2 font-label-caps text-[14px] font-bold hover:bg-primary-container transition-colors break-all"
             >
               {contact.email}
             </a>

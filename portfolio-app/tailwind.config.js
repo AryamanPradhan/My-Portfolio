@@ -61,23 +61,29 @@ export default {
         "secondary-container": "#FFB000",
         "on-background": "#F5DED4",
       },
+      // Inter carries anything read as language; JetBrains Mono carries anything
+      // read as instrumentation — labels, readouts, terminal output. Both have
+      // far taller x-heights than IBM Plex, which is what buys legibility at
+      // the small sizes this design depends on.
       fontFamily: {
-        "display-lg": ["IBM Plex Sans", "sans-serif"],
-        "title-sm": ["IBM Plex Sans", "sans-serif"],
-        "status-tiny": ["IBM Plex Mono", "monospace"],
-        "mono-data": ["IBM Plex Mono", "monospace"],
-        "label-caps": ["IBM Plex Mono", "monospace"],
-        "body-base": ["IBM Plex Sans", "sans-serif"],
-        "headline-md": ["IBM Plex Sans", "sans-serif"],
+        "display-lg": ["Inter", "system-ui", "sans-serif"],
+        "title-sm": ["Inter", "system-ui", "sans-serif"],
+        "body-base": ["Inter", "system-ui", "sans-serif"],
+        "headline-md": ["Inter", "system-ui", "sans-serif"],
+        "status-tiny": ["JetBrains Mono", "ui-monospace", "monospace"],
+        "mono-data": ["JetBrains Mono", "ui-monospace", "monospace"],
+        "label-caps": ["JetBrains Mono", "ui-monospace", "monospace"],
       },
+      // Nothing sits below 12px. Line heights are looser than before because
+      // the old 1.0-1.4 values were tuned for text too small to wrap much.
       fontSize: {
-        "display-lg": ["32px", { lineHeight: "1.2", letterSpacing: "-0.02em", fontWeight: "600" }],
-        "title-sm": ["18px", { lineHeight: "1.4", fontWeight: "500" }],
-        "status-tiny": ["10px", { lineHeight: "1", fontWeight: "500" }],
-        "mono-data": ["13px", { lineHeight: "1.4", fontWeight: "400" }],
-        "label-caps": ["11px", { lineHeight: "1", letterSpacing: "0.05em", fontWeight: "600" }],
-        "body-base": ["14px", { lineHeight: "1.5", fontWeight: "400" }],
-        "headline-md": ["24px", { lineHeight: "1.2", fontWeight: "600" }],
+        "display-lg": ["34px", { lineHeight: "1.15", letterSpacing: "-0.02em", fontWeight: "700" }],
+        "headline-md": ["26px", { lineHeight: "1.25", fontWeight: "600" }],
+        "title-sm": ["19px", { lineHeight: "1.4", fontWeight: "600" }],
+        "body-base": ["16px", { lineHeight: "1.6", fontWeight: "400" }],
+        "mono-data": ["14px", { lineHeight: "1.6", fontWeight: "400" }],
+        "label-caps": ["12px", { lineHeight: "1.3", letterSpacing: "0.06em", fontWeight: "600" }],
+        "status-tiny": ["12px", { lineHeight: "1.3", letterSpacing: "0.04em", fontWeight: "500" }],
       },
       boxShadow: {
         'inset-bevel': 'inset 1px 1px 0px rgba(255, 255, 255, 0.1), inset -1px -1px 0px rgba(0, 0, 0, 0.8)',

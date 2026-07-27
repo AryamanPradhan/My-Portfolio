@@ -100,14 +100,14 @@ export default function Home() {
         {/* Hero */}
         <div className="bevel-outset bg-surface-dim relative overflow-hidden">
           <div className="bg-led-red/20 border-b border-led-red/40 px-4 lg:px-6 py-1 flex justify-between items-center">
-            <span className="font-label-caps text-label-caps text-led-red text-[10px] lg:text-[11px] tracking-widest">
+            <span className="font-label-caps text-label-caps text-led-red tracking-widest">
               PERSONNEL FILE // OPEN FOR ENGAGEMENT
             </span>
-            <span className="font-mono-data text-mono-data text-outline text-[10px]">{time}</span>
+            <span className="font-mono-data text-mono-data text-outline">{time}</span>
           </div>
 
           <div className="p-4 lg:p-8">
-            <div className="font-mono-data text-mono-data text-outline mb-3 text-[10px] lg:text-[11px]">
+            <div className="font-mono-data text-mono-data text-outline mb-3">
               FILE TYPE: OPERATOR OVERVIEW &nbsp;|&nbsp; BUILDS: SYSTEMS THAT RUN UNATTENDED &nbsp;|&nbsp; ENGAGEMENT: {personal.engagement.toUpperCase()}
             </div>
 
@@ -119,20 +119,20 @@ export default function Home() {
                 <DecryptText
                   text={personal.name.toUpperCase()}
                   as="div"
-                  className="font-mono-data text-primary-container text-[13px] lg:text-sm tracking-[0.3em] uppercase mb-3"
+                  className="font-mono-data text-primary-container text-[16px] lg:text-sm tracking-[0.3em] uppercase mb-3"
                   speed={40}
                 />
                 <h1 className="font-display-lg text-3xl md:text-4xl lg:text-5xl font-black text-primary uppercase tracking-tighter leading-[1.05] mb-5 drop-shadow-[0_0_15px_rgba(255,176,0,0.4)] max-w-2xl">
                   {personal.headline}
                 </h1>
-                <p className="font-mono-data text-on-surface-variant leading-relaxed mb-6 max-w-xl text-[12px] lg:text-[13px] border-l-2 border-primary/40 pl-3">
+                <p className="font-body-base text-on-surface-variant leading-relaxed mb-6 max-w-xl text-[16px] border-l-2 border-primary/40 pl-3">
                   {personal.subheadline}
                 </p>
                 <div className="flex flex-wrap gap-3">
-                  <Link to="/contact" className="bevel-outset bg-primary text-on-primary px-5 py-2 font-label-caps font-bold text-[12px] hover:bg-primary-container active:translate-y-0.5 transition-all inline-block">
+                  <Link to="/contact" className="bevel-outset bg-primary text-on-primary px-5 py-2 font-label-caps font-bold text-[16px] hover:bg-primary-container active:translate-y-0.5 transition-all inline-block">
                     START A PROJECT
                   </Link>
-                  <Link to="/about" className="bevel-outset bg-surface-container-highest text-primary px-5 py-2 font-label-caps font-bold text-[12px] hover:text-primary-container active:translate-y-0.5 transition-all border border-border-graphite inline-block">
+                  <Link to="/about" className="bevel-outset bg-surface-container-highest text-primary px-5 py-2 font-label-caps font-bold text-[16px] hover:text-primary-container active:translate-y-0.5 transition-all border border-border-graphite inline-block">
                     ABOUT THE OPERATOR
                   </Link>
                 </div>
@@ -140,8 +140,8 @@ export default function Home() {
 
               {/* Fact card */}
               <div className="bevel-inset bg-background-matte/80 p-4 lg:p-5 w-full lg:w-64 flex-shrink-0">
-                <div className="font-label-caps text-label-caps text-primary mb-3 text-[11px]">AT A GLANCE</div>
-                <div className="space-y-2 font-mono-data text-mono-data text-[11px]">
+                <div className="font-label-caps text-label-caps text-primary mb-3">AT A GLANCE</div>
+                <div className="space-y-2 font-mono-data text-mono-data">
                   {summary.map(({ label, value, color }, i) => (
                     <div key={label} className={`flex justify-between gap-2 ${i < summary.length - 1 ? 'border-b border-border-graphite/30 pb-1' : ''}`}>
                       <span className="text-outline flex-shrink-0">{label}</span>
@@ -151,7 +151,7 @@ export default function Home() {
                 </div>
                 <a
                   href={`mailto:${contact.email}`}
-                  className="mt-4 block text-center bevel-outset bg-surface-container-highest text-primary py-2 font-label-caps text-[10px] hover:text-primary-container transition-colors"
+                  className="mt-4 block text-center bevel-outset bg-surface-container-highest text-primary py-2 font-label-caps text-[13px] hover:text-primary-container transition-colors"
                 >
                   EMAIL DIRECT
                 </a>
@@ -164,16 +164,16 @@ export default function Home() {
         <div className="bevel-outset bg-surface-dim p-4 lg:p-6">
           <div className="flex items-center gap-2 mb-1">
             <span className="material-symbols-outlined text-primary text-lg">handyman</span>
-            <span className="font-label-caps text-label-caps text-primary text-[11px]">WHAT I BUILD // SERVICES</span>
+            <span className="font-label-caps text-label-caps text-primary">WHAT I BUILD // SERVICES</span>
           </div>
-          <div className="font-status-tiny text-outline text-[9px] mb-4">
+          <div className="font-status-tiny text-outline text-[12px] mb-4">
             TYPICAL ENGAGEMENT: {personal.engagement.toUpperCase()} &nbsp;|&nbsp; FOCUS: {personal.focus.toUpperCase()}
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 lg:gap-4">
             {services.map(service => (
               <div key={service.name} className="bevel-inset bg-background-matte/60 p-4">
-                <div className="font-label-caps text-label-caps text-primary-container text-[11px] mb-1.5">{service.name}</div>
-                <div className="font-mono-data text-mono-data text-on-surface-variant text-[11px] leading-relaxed">{service.desc}</div>
+                <div className="font-label-caps text-label-caps text-primary-container mb-1.5">{service.name}</div>
+                <div className="font-body-base text-on-surface-variant text-[15px] leading-relaxed">{service.desc}</div>
               </div>
             ))}
           </div>
@@ -183,18 +183,18 @@ export default function Home() {
         <div className="bevel-outset bg-surface-dim p-4 lg:p-6">
           <div className="flex items-center gap-2 mb-1">
             <span className="material-symbols-outlined text-primary text-lg">database</span>
-            <span className="font-label-caps text-label-caps text-primary text-[11px]">TECH STACK</span>
+            <span className="font-label-caps text-label-caps text-primary">TECH STACK</span>
           </div>
-          <div className="font-status-tiny text-outline text-[9px] mb-4">
+          <div className="font-status-tiny text-outline text-[12px] mb-4">
             EVERYTHING BELOW IS HANDS-ON, NOT ASPIRATIONAL
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {stack.map(group => (
               <div key={group.category} className="bevel-inset bg-background-matte/60 p-3">
-                <div className="font-label-caps text-primary-container text-[10px] mb-2">{group.category}</div>
+                <div className="font-label-caps text-primary-container text-[13px] mb-2">{group.category}</div>
                 <div className="flex flex-wrap gap-1">
                   {group.items.map(item => (
-                    <span key={item} className="bg-surface-container-lowest text-on-surface-variant font-mono-data text-[9px] px-1.5 py-0.5 border border-border-graphite/30">
+                    <span key={item} className="bg-surface-container-lowest text-on-surface-variant font-mono-data text-[12px] px-1.5 py-0.5 border border-border-graphite/30">
                       {item}
                     </span>
                   ))}
@@ -209,11 +209,11 @@ export default function Home() {
           <div className="flex items-center justify-between mb-1 gap-3">
             <div className="flex items-center gap-2">
               <span className="material-symbols-outlined text-primary text-lg">star</span>
-              <span className="font-label-caps text-label-caps text-primary text-[11px]">SPOTLIGHT PROJECTS</span>
+              <span className="font-label-caps text-label-caps text-primary">SPOTLIGHT PROJECTS</span>
             </div>
-            <span className="font-mono-data text-outline text-[10px] hidden sm:block">{spotlightProjects.length} FILES</span>
+            <span className="font-mono-data text-outline text-[13px] hidden sm:block">{spotlightProjects.length} FILES</span>
           </div>
-          <div className="font-status-tiny text-outline text-[9px] mb-4">
+          <div className="font-status-tiny text-outline text-[12px] mb-4">
             FEATURED BUILDS &nbsp;|&nbsp; PRIMARY LANGUAGE: PYTHON
           </div>
 
@@ -225,22 +225,22 @@ export default function Home() {
                     <span className="material-symbols-outlined text-primary-container text-lg flex-shrink-0">star</span>
                     <div className="min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className="font-mono-data text-primary text-[13px] font-semibold">{op.codename}</span>
-                        <span className={`font-label-caps text-[9px] px-2 py-0.5 ${STATUS_STYLES[op.status] || STATUS_STYLES.COMPLETE}`}>
+                        <span className="font-mono-data text-primary text-[16px] font-semibold">{op.codename}</span>
+                        <span className={`font-label-caps text-[12px] px-2 py-0.5 ${STATUS_STYLES[op.status] || STATUS_STYLES.COMPLETE}`}>
                           {op.status}
                         </span>
-                        <span className="font-label-caps text-[9px] px-2 py-0.5 text-outline bg-surface-container-low border border-border-graphite/30 hidden sm:inline">
+                        <span className="font-label-caps text-[12px] px-2 py-0.5 text-outline bg-surface-container-low border border-border-graphite/30 hidden sm:inline">
                           {op.type.toUpperCase()}
                         </span>
                       </div>
-                      <div className="font-mono-data text-on-surface-variant text-[11px] mt-1 line-clamp-1">
+                      <div className="font-mono-data text-on-surface-variant text-[14px] mt-1 line-clamp-1">
                         {op.brief || op.name}
                       </div>
                     </div>
                   </div>
                   <button
                     onClick={() => setOpenProject(op)}
-                    className="bevel-outset bg-surface-container-highest text-primary px-3 py-1.5 font-label-caps text-[10px] hover:text-primary-container hover:bg-surface-container-high active:translate-y-0.5 transition-all flex-shrink-0 flex items-center gap-1.5"
+                    className="bevel-outset bg-surface-container-highest text-primary px-3 py-1.5 font-label-caps text-[13px] hover:text-primary-container hover:bg-surface-container-high active:translate-y-0.5 transition-all flex-shrink-0 flex items-center gap-1.5"
                   >
                     <span className="material-symbols-outlined text-sm">open_in_new</span>
                     OPEN FILE
@@ -256,11 +256,11 @@ export default function Home() {
           <div className="flex items-center justify-between mb-1 gap-3">
             <div className="flex items-center gap-2">
               <span className="material-symbols-outlined text-primary text-lg">folder_special</span>
-              <span className="font-label-caps text-label-caps text-primary text-[11px]">OTHER PROJECTS // BUILD LOG</span>
+              <span className="font-label-caps text-label-caps text-primary">OTHER PROJECTS // BUILD LOG</span>
             </div>
-            <span className="font-mono-data text-outline text-[10px] hidden sm:block">{otherProjects.length} FILES</span>
+            <span className="font-mono-data text-outline text-[13px] hidden sm:block">{otherProjects.length} FILES</span>
           </div>
-          <div className="font-status-tiny text-outline text-[9px] mb-4">
+          <div className="font-status-tiny text-outline text-[12px] mb-4">
             {otherProjects.length} BUILDS &nbsp;|&nbsp; {activeCount} LIVE OR IN BUILD &nbsp;|&nbsp; PRIMARY LANGUAGE: PYTHON
           </div>
 
@@ -272,22 +272,22 @@ export default function Home() {
                     <span className="material-symbols-outlined text-primary-container text-lg flex-shrink-0">folder_special</span>
                     <div className="min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className="font-mono-data text-primary text-[13px] font-semibold">{op.codename}</span>
-                        <span className={`font-label-caps text-[9px] px-2 py-0.5 ${STATUS_STYLES[op.status] || STATUS_STYLES.COMPLETE}`}>
+                        <span className="font-mono-data text-primary text-[16px] font-semibold">{op.codename}</span>
+                        <span className={`font-label-caps text-[12px] px-2 py-0.5 ${STATUS_STYLES[op.status] || STATUS_STYLES.COMPLETE}`}>
                           {op.status}
                         </span>
-                        <span className="font-label-caps text-[9px] px-2 py-0.5 text-outline bg-surface-container-low border border-border-graphite/30 hidden sm:inline">
+                        <span className="font-label-caps text-[12px] px-2 py-0.5 text-outline bg-surface-container-low border border-border-graphite/30 hidden sm:inline">
                           {op.type.toUpperCase()}
                         </span>
                       </div>
-                      <div className="font-mono-data text-on-surface-variant text-[11px] mt-1 line-clamp-1">
+                      <div className="font-mono-data text-on-surface-variant text-[14px] mt-1 line-clamp-1">
                         {op.brief || op.name}
                       </div>
                     </div>
                   </div>
                   <button
                     onClick={() => setOpenProject(op)}
-                    className="bevel-outset bg-surface-container-highest text-primary px-3 py-1.5 font-label-caps text-[10px] hover:text-primary-container hover:bg-surface-container-high active:translate-y-0.5 transition-all flex-shrink-0 flex items-center gap-1.5"
+                    className="bevel-outset bg-surface-container-highest text-primary px-3 py-1.5 font-label-caps text-[13px] hover:text-primary-container hover:bg-surface-container-high active:translate-y-0.5 transition-all flex-shrink-0 flex items-center gap-1.5"
                   >
                     <span className="material-symbols-outlined text-sm">open_in_new</span>
                     OPEN FILE
@@ -310,11 +310,11 @@ export default function Home() {
         <div className="bevel-outset bg-surface-dim p-3 flex-shrink-0">
           <div className="flex items-center gap-2 border-b border-border-graphite pb-2 mb-3">
             <span className="material-symbols-outlined text-primary text-sm">monitoring</span>
-            <span className="font-label-caps text-label-caps text-primary text-[10px]">SYSTEM TELEMETRY</span>
+            <span className="font-label-caps text-label-caps text-primary">SYSTEM TELEMETRY</span>
           </div>
           <div className="space-y-3">
             <div>
-              <div className="flex justify-between font-mono-data text-mono-data text-[10px] mb-1">
+              <div className="flex justify-between font-mono-data text-mono-data mb-1">
                 <span>SIGNAL</span>
                 <span className="text-primary-container">{signalData[signalData.length - 1]}%</span>
               </div>
@@ -323,7 +323,7 @@ export default function Home() {
               </div>
             </div>
             <div>
-              <div className="flex justify-between font-mono-data text-mono-data text-[10px] mb-1">
+              <div className="flex justify-between font-mono-data text-mono-data mb-1">
                 <span>UPLINK</span>
                 <span className="text-led-green">{linkData[linkData.length - 1]}%</span>
               </div>
@@ -334,11 +334,11 @@ export default function Home() {
           </div>
           <div className="grid grid-cols-2 gap-2 mt-3">
             <div className="bevel-inset bg-surface-container-low p-2">
-              <div className="font-status-tiny text-status-tiny text-outline text-[9px]">BUILDS</div>
+              <div className="font-status-tiny text-status-tiny text-outline">BUILDS</div>
               <div className="font-mono-data text-mono-data text-primary text-sm">{projects.length}</div>
             </div>
             <div className="bevel-inset bg-surface-container-low p-2">
-              <div className="font-status-tiny text-status-tiny text-outline text-[9px]">ACTIVE</div>
+              <div className="font-status-tiny text-status-tiny text-outline">ACTIVE</div>
               <div className="font-mono-data text-mono-data text-led-green text-sm">{activeCount}</div>
             </div>
           </div>
@@ -346,13 +346,13 @@ export default function Home() {
 
         <Link
           to="/contact"
-          className="bevel-outset bg-primary text-on-primary py-3 font-label-caps font-bold text-[12px] text-center hover:bg-primary-container active:translate-y-0.5 transition-all flex-shrink-0"
+          className="bevel-outset bg-primary text-on-primary py-3 font-label-caps font-bold text-[16px] text-center hover:bg-primary-container active:translate-y-0.5 transition-all flex-shrink-0"
         >
           START A PROJECT
         </Link>
 
         <div className="bevel-outset bg-surface-container-high p-3 flex-shrink-0">
-          <div className="font-label-caps text-label-caps text-outline text-[10px] mb-2">FIND ME</div>
+          <div className="font-label-caps text-label-caps text-outline mb-2">FIND ME</div>
           <div className="grid grid-cols-3 gap-1.5">
             {[
               { icon: 'hub', label: 'GITHUB', href: `https://${contact.github}`, color: 'text-primary-container' },
@@ -367,7 +367,7 @@ export default function Home() {
                 className={`h-12 bevel-inset bg-background-matte flex flex-col items-center justify-center ${asset.color} hover:text-primary transition-colors`}
               >
                 <span className="material-symbols-outlined text-sm">{asset.icon}</span>
-                <span className="font-status-tiny text-[8px] mt-0.5">{asset.label}</span>
+                <span className="font-status-tiny text-[12px] mt-0.5">{asset.label}</span>
               </a>
             ))}
           </div>
@@ -392,12 +392,12 @@ export default function Home() {
             <div className="bevel-outset bg-surface-container-high flex items-center justify-between px-4 py-2 flex-shrink-0">
               <div className="flex items-center gap-3">
                 <span className="material-symbols-outlined text-primary text-lg">folder_open</span>
-                <span className="font-mono-data text-primary text-[13px] font-semibold">{openProject.codename}</span>
-                <span className="font-mono-data text-outline text-[11px]">// {openProject.name}</span>
+                <span className="font-mono-data text-primary text-[16px] font-semibold">{openProject.codename}</span>
+                <span className="font-mono-data text-outline text-[14px]">// {openProject.name}</span>
               </div>
               <button
                 onClick={() => setOpenProject(null)}
-                className="bevel-outset bg-surface-container-lowest w-7 h-7 flex items-center justify-center text-led-red hover:bg-led-red hover:text-on-primary transition-colors font-mono-data font-bold text-[13px]"
+                className="bevel-outset bg-surface-container-lowest w-7 h-7 flex items-center justify-center text-led-red hover:bg-led-red hover:text-on-primary transition-colors font-mono-data font-bold text-[16px]"
               >
                 X
               </button>
@@ -405,29 +405,29 @@ export default function Home() {
 
             {/* Status bar */}
             <div className="bg-surface-dim border-x-2 border-border-graphite/60 px-4 py-1.5 flex items-center gap-3 flex-shrink-0">
-              <span className={`font-label-caps text-[9px] px-2 py-0.5 ${STATUS_STYLES[openProject.status] || STATUS_STYLES.COMPLETE}`}>
+              <span className={`font-label-caps text-[12px] px-2 py-0.5 ${STATUS_STYLES[openProject.status] || STATUS_STYLES.COMPLETE}`}>
                 {openProject.status}
               </span>
-              <span className="font-label-caps text-[9px] px-2 py-0.5 text-outline bg-surface-container-low border border-border-graphite/30">
+              <span className="font-label-caps text-[12px] px-2 py-0.5 text-outline bg-surface-container-low border border-border-graphite/30">
                 {openProject.type.toUpperCase()}
               </span>
-              <span className="font-mono-data text-outline text-[10px] ml-auto">{openProject.date}</span>
+              <span className="font-mono-data text-outline text-[13px] ml-auto">{openProject.date}</span>
             </div>
 
             {/* Content */}
             <div className="bevel-inset bg-background-matte overflow-y-auto flex-1 p-4 lg:p-6 space-y-5">
 
               <div>
-                <div className="font-label-caps text-primary text-[10px] mb-1.5">OBJECTIVE</div>
-                <p className="font-mono-data text-on-surface-variant text-[12px] leading-relaxed">{openProject.objective}</p>
+                <div className="font-label-caps text-primary text-[13px] mb-1.5">OBJECTIVE</div>
+                <p className="font-body-base text-on-surface-variant text-[16px] leading-relaxed">{openProject.objective}</p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                 <div className="bevel-inset bg-surface-container-lowest p-3">
-                  <div className="font-label-caps text-outline text-[9px] mb-2">BUILT WITH</div>
+                  <div className="font-label-caps text-outline text-[12px] mb-2">BUILT WITH</div>
                   <div className="flex flex-wrap gap-1">
                     {openProject.tech.map(t => (
-                      <span key={t} className="bg-surface-container-highest text-primary-fixed-dim font-mono-data text-[9px] px-1.5 py-0.5 border border-border-graphite/30">
+                      <span key={t} className="bg-surface-container-highest text-primary-fixed-dim font-mono-data text-[12px] px-1.5 py-0.5 border border-border-graphite/30">
                         {t}
                       </span>
                     ))}
@@ -435,10 +435,10 @@ export default function Home() {
                 </div>
 
                 <div className="bevel-inset bg-surface-container-lowest p-3">
-                  <div className="font-label-caps text-outline text-[9px] mb-2">KEY FACTS</div>
+                  <div className="font-label-caps text-outline text-[12px] mb-2">KEY FACTS</div>
                   <div className="space-y-1.5">
                     {Object.entries(openProject.facts).map(([key, val]) => (
-                      <div key={key} className="flex justify-between gap-2 font-mono-data text-[10px]">
+                      <div key={key} className="flex justify-between gap-2 font-mono-data text-[13px]">
                         <span className="text-on-surface-variant">{labelFor(key)}</span>
                         <span className="text-primary text-right flex-shrink-0">{val}</span>
                       </div>
@@ -447,10 +447,10 @@ export default function Home() {
                 </div>
 
                 <div className="bevel-inset bg-surface-container-lowest p-3">
-                  <div className="font-label-caps text-outline text-[9px] mb-2">DESIGN DECISIONS</div>
+                  <div className="font-label-caps text-outline text-[12px] mb-2">DESIGN DECISIONS</div>
                   <div className="space-y-1.5">
                     {openProject.outcomes.map((outcome, j) => (
-                      <div key={j} className="flex gap-1.5 font-mono-data text-on-surface-variant text-[10px] leading-relaxed">
+                      <div key={j} className="flex gap-1.5 font-body-base text-on-surface-variant text-[15px] leading-relaxed">
                         <span className="text-led-green flex-shrink-0">&#10003;</span>
                         <span>{outcome}</span>
                       </div>
@@ -461,7 +461,7 @@ export default function Home() {
 
               {openProject.workflow && (
                 <div className="pt-3 border-t border-border-graphite/40">
-                  <div className="font-label-caps text-primary text-[10px] mb-3 flex items-center gap-2">
+                  <div className="font-label-caps text-primary text-[13px] mb-3 flex items-center gap-2">
                     <span className="material-symbols-outlined text-sm">schema</span>
                     SYSTEM ARCHITECTURE
                   </div>
@@ -475,7 +475,7 @@ export default function Home() {
                     href={openProject.loom.replace('/embed/', '/share/')}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="bevel-outset bg-surface-container-highest text-primary px-4 py-2 font-label-caps text-[10px] hover:text-primary-container active:translate-y-0.5 transition-all flex items-center gap-2"
+                    className="bevel-outset bg-surface-container-highest text-primary px-4 py-2 font-label-caps text-[13px] hover:text-primary-container active:translate-y-0.5 transition-all flex items-center gap-2"
                   >
                     <span className="material-symbols-outlined text-sm">play_circle</span>
                     WATCH DEMO
@@ -486,12 +486,12 @@ export default function Home() {
 
             {/* Bottom bar */}
             <div className="bevel-outset bg-surface-container-high px-4 py-2 flex items-center justify-between flex-shrink-0">
-              <span className="font-mono-data text-outline text-[10px]">
+              <span className="font-mono-data text-outline text-[13px]">
                 {openProject.tech.length} DEPS &nbsp;|&nbsp; {Object.keys(openProject.facts).length} FACTS &nbsp;|&nbsp; {openProject.outcomes.length} DECISIONS
               </span>
               <button
                 onClick={() => setOpenProject(null)}
-                className="font-label-caps text-outline text-[10px] hover:text-primary transition-colors"
+                className="font-label-caps text-outline text-[13px] hover:text-primary transition-colors"
               >
                 [ESC] CLOSE
               </button>

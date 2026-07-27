@@ -229,7 +229,11 @@ textarea {
   background-color: #160C07 !important;
   border: 2px solid #332200 !important;
   color: #FFE066 !important;
-  font-family: 'IBM Plex Mono', monospace !important;
+  font-family: 'JetBrains Mono', ui-monospace, monospace !important;
+  /* 16px is the threshold below which iOS Safari zooms the viewport on focus,
+     which then leaves the page scrolled sideways. Keep form fields at or above
+     it regardless of what the utility classes say. */
+  font-size: 16px !important;
   caret-color: #FFB000;
   box-shadow: inset 1px 1px 0px rgba(255, 255, 255, 0.1), inset -1px -1px 0px rgba(0, 0, 0, 0.8) !important;
 }
@@ -302,7 +306,7 @@ textarea:focus {
   border: 1px solid #332200;
   background: #0D0A00;
   padding: 1px 5px;
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 9px;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 12px;
   z-index: 1;
 }

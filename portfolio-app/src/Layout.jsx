@@ -57,7 +57,7 @@ export default function Layout() {
           </div>
         </div>
         <div className="flex items-center gap-3 flex-shrink-0">
-          <div className="font-mono-data text-mono-data text-outline text-[10px] hidden xl:block">
+          <div className="font-mono-data text-mono-data text-outline hidden xl:block">
             {time}
           </div>
           <div className="h-5 w-px bg-border-graphite hidden xl:block"></div>
@@ -67,7 +67,7 @@ export default function Layout() {
           </div>
           <Link
             to="/contact"
-            className="bevel-outset bg-primary text-on-primary px-3 lg:px-4 py-1.5 font-label-caps font-bold text-[10px] lg:text-[11px] hover:bg-primary-container active:translate-y-0.5 transition-all whitespace-nowrap"
+            className="bevel-outset bg-primary text-on-primary px-3 lg:px-4 py-1.5 font-label-caps font-bold text-[13px] lg:text-[14px] hover:bg-primary-container active:translate-y-0.5 transition-all whitespace-nowrap"
           >
             START A PROJECT
           </Link>
@@ -111,7 +111,7 @@ export default function Layout() {
               }`}
             >
               <span className="material-symbols-outlined text-lg">{link.icon}</span>
-              <span className="font-label-caps text-label-caps text-[11px]">{link.label}</span>
+              <span className="font-label-caps text-label-caps">{link.label}</span>
             </Link>
           ))}
         </nav>
@@ -120,7 +120,7 @@ export default function Layout() {
         <div className="px-4 pb-3">
           <Link
             to="/contact"
-            className="block text-center bevel-outset bg-primary text-on-primary py-2.5 font-label-caps font-bold text-[11px] hover:bg-primary-container active:translate-y-0.5 transition-all"
+            className="block text-center bevel-outset bg-primary text-on-primary py-2.5 font-label-caps font-bold text-[14px] hover:bg-primary-container active:translate-y-0.5 transition-all"
           >
             START A PROJECT
           </Link>
@@ -128,7 +128,7 @@ export default function Layout() {
 
         {/* Social links */}
         <div className="px-4 py-3 border-t border-border-graphite">
-          <div className="font-status-tiny text-outline text-[9px] mb-2">FIND ME</div>
+          <div className="font-status-tiny text-outline text-[12px] mb-2">FIND ME</div>
           <div className="flex gap-2">
             {[
               { icon: 'hub', href: `https://${contact.github}`, label: 'GitHub' },
@@ -144,14 +144,14 @@ export default function Layout() {
                 title={link.label}
               >
                 <span className="material-symbols-outlined text-sm group-hover:text-primary transition-colors">{link.icon}</span>
-                <span className="font-status-tiny text-[7px] mt-0.5">{link.label.toUpperCase()}</span>
+                <span className="font-status-tiny text-[12px] mt-0.5">{link.label.toUpperCase()}</span>
               </a>
             ))}
           </div>
         </div>
 
         <div className="p-4 border-t-2 border-border-graphite">
-          <div className="font-mono-data text-mono-data text-outline text-[10px] leading-relaxed">
+          <div className="font-mono-data text-mono-data text-outline leading-relaxed">
             <div>STACK: PYTHON / FASTAPI</div>
             <div>AI: CLAUDE + OPENAI API</div>
             <div className="text-primary-container mt-1">THIS SITE: REACT + VITE</div>
