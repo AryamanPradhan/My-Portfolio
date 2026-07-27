@@ -89,22 +89,31 @@ export async function checkRateLimit(ip) {
 }
 
 /**
- * Allowed browser origins.
+ * Extra origins beyond the request's own host.
  *
- * ALLOWED_ORIGINS is a comma-separated env var for the custom domain. The
- * deployment's own URL and the Vite dev server are always permitted so preview
- * builds and local work keep functioning without extra configuration.
+ * ALLOWED_ORIGINS is a comma-separated env var, only needed when the page is
+ * served from a different host than the API — which is not the case here.
+ *
+ * Note VERCEL_URL is the *deployment-specific* hostname
+ * (my-portfolio-a1b2c3.vercel.app), not the production alias a visitor types.
+ * VERCEL_PROJECT_PRODUCTION_URL is the stable one. Relying on VERCEL_URL alone
+ * rejects every real visitor, so both are listed.
  */
-function allowedOrigins() {
-  const configured = (process.env.ALLOWED_ORIGINS || '')
-    .split(',')
-    .map(o => o.trim().replace(/\/$/, ''))
-    .filter(Boolean);
+function extraAllowedOrigins() {
+  const origins = new Set(
+    (process.env.ALLOWED_ORIGINS || '')
+      .split(',')
+      .map(o => o.trim().replace(/\/$/, '').toLowerCase())
+      .filter(Boolean)
+  );
 
-  const origins = new Set(configured);
-
-  if (process.env.VERCEL_URL) origins.add(`https://${process.env.VERCEL_URL}`);
-  if (process.env.VERCEL_BRANCH_URL) origins.add(`https://${process.env.VERCEL_BRANCH_URL}`);
+  for (const host of [
+    process.env.VERCEL_PROJECT_PRODUCTION_URL,
+    process.env.VERCEL_URL,
+    process.env.VERCEL_BRANCH_URL,
+  ]) {
+    if (host) origins.add(`https://${host}`.toLowerCase());
+  }
 
   if (process.env.VERCEL_ENV !== 'production') {
     origins.add('http://localhost:5173');
@@ -115,15 +124,49 @@ function allowedOrigins() {
 }
 
 /**
+ * The host this request was actually addressed to.
+ *
+ * Vercel puts the visitor-facing hostname in x-forwarded-host; `host` alone can
+ * be the internal one.
+ */
+function requestHost(req) {
+  const forwarded = req.headers['x-forwarded-host'];
+  if (typeof forwarded === 'string' && forwarded !== '') {
+    return forwarded.split(',')[0].trim().toLowerCase();
+  }
+  const host = req.headers.host;
+  return typeof host === 'string' ? host.trim().toLowerCase() : '';
+}
+
+/**
  * Reject cross-site POSTs.
  *
- * Browsers set Origin on every POST and scripts cannot forge it, so this costs
- * nothing and turns away drive-by form spam aimed at the raw endpoint. A
- * missing Origin is refused rather than waved through — legitimate submissions
- * from the site always carry one.
+ * The test is same-origin: does the Origin the browser reported match the host
+ * this request was addressed to? That holds on any domain — production alias,
+ * preview deployment, custom domain, localhost — without configuration, which
+ * an env-var allowlist does not.
+ *
+ * Browsers set Origin on cross-document POSTs and a page cannot forge either
+ * header, so this turns away drive-by form spam. It was never a defence
+ * against a non-browser client, which can send any headers it likes; that is
+ * what the rate limit is for.
+ *
+ * A missing Origin is refused rather than waved through — submissions from the
+ * site always carry one.
  */
 export function isAllowedOrigin(req) {
   const origin = req.headers.origin;
   if (typeof origin !== 'string' || origin === '') return false;
-  return allowedOrigins().has(origin.replace(/\/$/, ''));
+
+  let originHost;
+  try {
+    originHost = new URL(origin).host.toLowerCase();
+  } catch {
+    return false;
+  }
+  if (originHost === '') return false;
+
+  if (originHost === requestHost(req)) return true;
+
+  return extraAllowedOrigins().has(origin.replace(/\/$/, '').toLowerCase());
 }

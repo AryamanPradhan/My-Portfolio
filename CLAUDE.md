@@ -88,7 +88,7 @@ and emails the submission on. Checks run cheapest-first and each has a reason:
 
 | Layer | Behaviour |
 |-------|-----------|
-| Origin allowlist | Rejects any POST without a permitted `Origin` header |
+| Same-origin check | The `Origin` header must match the host the request was addressed to (`x-forwarded-host`). Works on any domain with no config; `ALLOWED_ORIGINS` is an optional extra |
 | Body size cap | 16 KB, refused before parsing |
 | Rate limit | 5/hour and 15/day per IP via Upstash. **Fails closed** — if Upstash is unconfigured the endpoint 503s rather than running unmetered |
 | Honeypot | `website` field, hidden off-screen; filled means bot |
