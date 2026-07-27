@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        @keyframes scanline {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100%); }
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 5px var(--glow-color); }
+            50% { box-shadow: 0 0 15px var(--glow-color); }
+        }
+        .crt-overlay {
+            pointer-events: none;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+            background-size: 100% 3px, 3px 100%;
+            z-index: 100;
+        }
+        .scanline {
+            width: 100%;
+            height: 2px;
+            background: rgba(234, 107, 30, 0.1);
+            opacity: 0.1;
+            position: absolute;
+            animation: scanline 8s linear infinite;
+        }
+        .industrial-bevel-out {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
+            border-right: 2px solid rgba(0, 0, 0, 0.5);
+            border-bottom: 2px solid rgba(0, 0, 0, 0.5);
+        }
+        .industrial-bevel-in {
+            border-top: 2px solid rgba(0, 0, 0, 0.5);
+            border-left: 2px solid rgba(0, 0, 0, 0.5);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .led-indicator {
+            width: 6px;
+            height: 6px;
+            border-radius: 1px;
+        }
+        .led-active {
+            background-color: #22C55E;
+            box-shadow: 0 0 8px #22C55E;
+            animation: blink 1.5s step-end infinite;
+        }
+        .led-standby {
+            background-color: #fbbc00;
+            box-shadow: 0 0 4px #fbbc00;
+        }
+        .led-alert {
+            background-color: #EF4444;
+            box-shadow: 0 0 8px #EF4444;
+            animation: blink 0.5s step-end infinite;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-container": "#ea6b1e",
+                        "tertiary": "#aac7ff",
+                        "on-surface": "#f5ded4",
+                        "surface-variant": "#40322b",
+                        "secondary-fixed-dim": "#fbbc00",
+                        "surface-dim": "#1c110c",
+                        "on-tertiary-fixed": "#001b3e",
+                        "background-matte": "#0D0D0D",
+                        "surface-container-highest": "#40322b",
+                        "led-red": "#EF4444",
+                        "border-graphite": "#333333",
+                        "secondary": "#ffe2ab",
+                        "primary": "#ffb693",
+                        "on-tertiary-container": "#002958",
+                        "surface-tint": "#ffb693",
+                        "secondary-fixed": "#ffdfa0",
+                        "on-error": "#690005",
+                        "error": "#ffb4ab",
+                        "on-secondary-container": "#6d5000",
+                        "on-background": "#f5ded4",
+                        "on-primary-fixed": "#351000",
+                        "inverse-primary": "#a04100",
+                        "on-secondary": "#402d00",
+                        "on-primary-container": "#4b1b00",
+                        "surface-steel": "#1A1A1A",
+                        "outline": "#a78b7e",
+                        "on-surface-variant": "#e0c0b2",
+                        "led-green": "#22C55E",
+                        "surface-container-low": "#251913",
+                        "on-primary": "#562000",
+                        "on-error-container": "#ffdad6",
+                        "error-container": "#93000a",
+                        "secondary-container": "#ffbf00",
+                        "tertiary-container": "#3e90ff",
+                        "surface": "#1c110c",
+                        "surface-container": "#291d17",
+                        "background": "#1c110c",
+                        "outline-variant": "#584238",
+                        "on-tertiary": "#002f64",
+                        "inverse-on-surface": "#3b2d27",
+                        "tertiary-fixed-dim": "#aac7ff",
+                        "surface-container-lowest": "#160c07",
+                        "primary-fixed-dim": "#ffb693",
+                        "on-secondary-fixed": "#261a00",
+                        "primary-fixed": "#ffdbcc",
+                        "on-secondary-fixed-variant": "#5c4300",
+                        "surface-bright": "#443630",
+                        "terminal-dim": "#662B00",
+                        "surface-container-high": "#342721",
+                        "inverse-surface": "#f5ded4",
+                        "on-tertiary-fixed-variant": "#00458d",
+                        "tertiary-fixed": "#d6e3ff",
+                        "on-primary-fixed-variant": "#7a3000"
+                    },
+                    "fontFamily": {
+                        "status-tiny": ["IBM Plex Mono"],
+                        "mono-data": ["IBM Plex Mono"],
+                        "title-sm": ["IBM Plex Sans"],
+                        "headline-md": ["IBM Plex Sans"],
+                        "body-base": ["IBM Plex Sans"],
+                        "label-caps": ["IBM Plex Mono"],
+                        "display-lg": ["IBM Plex Sans"]
+                    },
+                    "fontSize": {
+                        "status-tiny": ["10px", {"lineHeight": "1", "fontWeight": "500"}],
+                        "mono-data": ["13px", {"lineHeight": "1.4", "fontWeight": "400"}],
+                        "title-sm": ["18px", {"lineHeight": "1.4", "fontWeight": "500"}],
+                        "headline-md": ["24px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                        "body-base": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "label-caps": ["11px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "display-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600"}]
+                    },
+                    "spacing": {
+                        "touch-target": "32px",
+                        "unit": "4px",
+                        "panel-margin": "8px",
+                        "gutter": "16px"
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background-matte text-on-surface font-body-base overflow-hidden h-screen select-none">
+<!-- CRT Overlay Layer -->
+<div class="fixed inset-0 crt-overlay pointer-events-none"></div>
+<div class="scanline"></div>
+<!-- Top Navigation Bar -->
+<header class="fixed top-0 w-full z-50 flex justify-between items-center px-gutter py-unit h-[64px] bg-background-matte border-b-2 border-border-graphite shadow-[0_1px_0_0_rgba(255,182,147,0.1)]">
+<div class="flex items-center gap-4">
+<span class="font-display-lg text-display-lg font-black text-primary-container uppercase tracking-tighter">OS-CORE 98 v4.2</span>
+<div class="h-8 w-px bg-border-graphite mx-2"></div>
+<div class="flex flex-col">
+<span class="font-status-tiny text-status-tiny text-primary uppercase">System Status: Nominal</span>
+<span class="font-mono-data text-mono-data text-terminal-dim">Kernel_Log: 1998.09.24.08:00:12</span>
+</div>
+</div>
+<div class="flex items-center gap-6 h-full">
+<div class="hidden md:flex gap-4 h-full items-center">
+<a class="text-on-surface-variant font-mono-data hover:bg-surface-variant hover:text-primary-fixed px-2 py-1 transition-colors" href="#">TERMINAL</a>
+<a class="text-primary font-bold border-b-2 border-primary pb-1" href="#">OPERATOR</a>
+<a class="text-on-surface-variant font-mono-data hover:bg-surface-variant hover:text-primary-fixed px-2 py-1 transition-colors" href="#">FILES</a>
+</div>
+<div class="flex gap-2">
+<span class="material-symbols-outlined text-primary-container cursor-pointer">security</span>
+<span class="material-symbols-outlined text-primary-container cursor-pointer">terminal</span>
+<span class="material-symbols-outlined text-primary-container cursor-pointer">settings</span>
+</div>
+</div>
+</header>
+<!-- Side Navigation Bar -->
+<aside class="fixed left-0 top-[64px] bottom-[32px] w-64 flex flex-col z-40 bg-surface-dim border-r-2 border-border-graphite">
+<div class="p-4 border-b border-border-graphite bg-surface-container-low">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 industrial-bevel-in bg-background-matte flex items-center justify-center">
+<span class="material-symbols-outlined text-secondary-fixed">account_circle</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-caps text-label-caps text-primary">OPERATOR_091_IDENT</span>
+<span class="font-status-tiny text-status-tiny text-outline">LEVEL 4 CLEARANCE</span>
+</div>
+</div>
+</div>
+<nav class="flex-1 p-2 space-y-1 overflow-y-auto">
+<div class="flex flex-row items-center gap-4 text-outline border-2 border-transparent p-4 hover:bg-surface-container-highest hover:text-primary-fixed-dim cursor-pointer transition-all">
+<span class="material-symbols-outlined">desktop_windows</span>
+<span class="font-label-caps text-label-caps">WORKSTATION</span>
+</div>
+<div class="flex flex-row items-center gap-4 text-outline border-2 border-transparent p-4 hover:bg-surface-container-highest hover:text-primary-fixed-dim cursor-pointer transition-all">
+<span class="material-symbols-outlined">monitoring</span>
+<span class="font-label-caps text-label-caps">TELEMETRY</span>
+</div>
+<div class="flex flex-row items-center gap-4 bg-primary-container text-on-primary-container border-2 border-t-primary border-l-primary border-r-on-primary-container border-b-on-primary-container p-4 translate-x-0.5 translate-y-0.5 shadow-inner">
+<span class="material-symbols-outlined">badge</span>
+<span class="font-label-caps text-label-caps">PROFILE</span>
+</div>
+<div class="flex flex-row items-center gap-4 text-outline border-2 border-transparent p-4 hover:bg-surface-container-highest hover:text-primary-fixed-dim cursor-pointer transition-all">
+<span class="material-symbols-outlined">folder_managed</span>
+<span class="font-label-caps text-label-caps">FILES</span>
+</div>
+<div class="flex flex-row items-center gap-4 text-outline border-2 border-transparent p-4 hover:bg-surface-container-highest hover:text-primary-fixed-dim cursor-pointer transition-all">
+<span class="material-symbols-outlined">settings_input_antenna</span>
+<span class="font-label-caps text-label-caps">COMMS</span>
+</div>
+</nav>
+<div class="p-4 border-t border-border-graphite bg-surface-container-lowest">
+<button class="w-full py-3 bg-error-container text-on-error-container font-label-caps text-label-caps border-2 border-t-error border-l-error border-r-on-error border-b-on-error active:translate-x-0.5 active:translate-y-0.5 transition-all">
+                INITIATE OVERRIDE
+            </button>
+<div class="mt-4 flex items-center justify-center gap-2 text-outline-variant py-2 hover:text-led-red cursor-pointer">
+<span class="material-symbols-outlined text-[18px]">power_settings_new</span>
+<span class="font-label-caps text-label-caps">TERMINATE</span>
+</div>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="ml-64 mt-[64px] mb-[32px] p-gutter h-[calc(100vh-96px)] overflow-y-auto grid grid-cols-12 gap-gutter bg-surface-container">
+<!-- Left Column: Industrial Portrait Frame -->
+<div class="col-span-12 lg:col-span-4 flex flex-col gap-gutter">
+<section class="industrial-bevel-out bg-surface-dim p-4 flex flex-col items-center">
+<div class="w-full flex justify-between items-center mb-4 border-b border-border-graphite pb-2">
+<span class="font-label-caps text-label-caps text-outline">VISUAL_IDENT_LOCK</span>
+<div class="flex gap-2">
+<div class="led-indicator led-active"></div>
+<div class="led-indicator led-standby"></div>
+</div>
+</div>
+<div class="relative w-full aspect-square industrial-bevel-in bg-background-matte overflow-hidden group">
+<img class="w-full h-full object-cover filter grayscale contrast-125 opacity-80 mix-blend-screen group-hover:opacity-100 transition-opacity" data-alt="A gritty, high-contrast black and white cinematic portrait of a stoic South Asian male AI architect wearing industrial headgear and a dark technical jacket. The lighting is dramatic, casting deep shadows across his face with a subtle orange glow from nearby monitors reflecting in his eyes. The overall mood is classified, serious, and reminiscent of high-end late 90s workstation aesthetic with slight film grain." src="https://lh3.googleusercontent.com/aida-public/AB6AXuACwTJJxOT2FdupF8r3YQRgsoNfrCuXxKR-KbhMyUIqZyZB0UzI_bKVbPK2Z-YMfxSNBGTgb0HDUfe1AZsr3YnpZYaDuaUWTHCWEvqExHav_mzcVKSyK3mh2En5FtfUQAwgBNA_iQU98JWoNLsRrgqKNLcDpDxkFr58ozVGRnw_xUW9O0B6WDU4HFGN6b6yvj_5bnqwD7WgkyyYv2kdAOdu9fNA5ZYZ1TLWKRPCnW9HxYNwYNzYXu2tTDSI1hGOt30WXpZuC8Pz9EZY"/>
+<div class="absolute inset-0 border-2 border-primary-container/20 pointer-events-none"></div>
+<div class="absolute top-0 left-0 p-2 font-mono-data text-status-tiny text-primary-container/60">SCAN_ACTIVE_09%</div>
+<div class="absolute bottom-0 right-0 p-2 font-mono-data text-status-tiny text-primary-container/60">ARY_091_SRC</div>
+</div>
+<div class="w-full grid grid-cols-3 gap-2 mt-4">
+<div class="industrial-bevel-in bg-background-matte p-2 text-center">
+<div class="font-status-tiny text-outline-variant mb-1 uppercase">H_RATE</div>
+<div class="font-mono-data text-led-green">72 BPM</div>
+</div>
+<div class="industrial-bevel-in bg-background-matte p-2 text-center">
+<div class="font-status-tiny text-outline-variant mb-1 uppercase">S_STRESS</div>
+<div class="font-mono-data text-secondary-fixed-dim">LOW</div>
+</div>
+<div class="industrial-bevel-in bg-background-matte p-2 text-center">
+<div class="font-status-tiny text-outline-variant mb-1 uppercase">SYNC</div>
+<div class="font-mono-data text-primary-container">98.4%</div>
+</div>
+</div>
+</section>
+<section class="industrial-bevel-out bg-surface-dim p-4 flex-1">
+<h3 class="font-label-caps text-label-caps text-primary border-b border-border-graphite pb-2 mb-4">SYSTEM_TELEMETRY_LOG</h3>
+<div class="space-y-3 font-mono-data text-status-tiny">
+<div class="flex gap-2">
+<span class="text-outline-variant">[08:24:12]</span>
+<span class="text-on-surface">BIO_AUTH: SUCCESSFUL</span>
+</div>
+<div class="flex gap-2">
+<span class="text-outline-variant">[08:25:01]</span>
+<span class="text-on-surface">MEMORY_SEGMENT: READ_ONLY</span>
+</div>
+<div class="flex gap-2">
+<span class="text-outline-variant">[08:27:45]</span>
+<span class="text-led-green">UPLINK_STABLE: ORBIT_04</span>
+</div>
+<div class="flex gap-2">
+<span class="text-outline-variant">[08:30:11]</span>
+<span class="text-primary-container">CORE_TEMP: 42.1C (NOMINAL)</span>
+</div>
+<div class="flex gap-2 animate-pulse">
+<span class="text-outline-variant">[--:--:--]</span>
+<span class="text-on-surface-variant">LISTENING_FOR_COMMANDS...</span>
+</div>
+</div>
+</section>
+</div>
+<!-- Center Column: Technical Dossier -->
+<div class="col-span-12 lg:col-span-8 flex flex-col gap-gutter">
+<!-- Header Dossier Info -->
+<section class="industrial-bevel-out bg-surface-dim p-gutter">
+<div class="flex justify-between items-start mb-6">
+<div>
+<h1 class="font-display-lg text-display-lg text-primary-container font-black tracking-widest">ARYAMAN_AI</h1>
+<p class="font-label-caps text-label-caps text-outline-variant mt-1">CODE_NAME: "SENTINEL_ALPHA"</p>
+</div>
+<div class="text-right">
+<div class="inline-block px-4 py-1 bg-primary-container text-on-primary-container font-label-caps text-label-caps border border-primary">TOP_SECRET // EYES ONLY</div>
+<div class="mt-2 font-mono-data text-status-tiny text-outline">RECORD_ID: 98-442-CX-091</div>
+</div>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+<div class="space-y-1">
+<span class="block font-status-tiny text-outline uppercase">Primary Role</span>
+<span class="block font-title-sm text-title-sm text-on-surface">Lead AI Architect</span>
+</div>
+<div class="space-y-1">
+<span class="block font-status-tiny text-outline uppercase">Clearance</span>
+<span class="block font-title-sm text-title-sm text-led-red">LEVEL_04</span>
+</div>
+<div class="space-y-1">
+<span class="block font-status-tiny text-outline uppercase">Origin</span>
+<span class="block font-title-sm text-title-sm text-on-surface">Sector_091</span>
+</div>
+<div class="space-y-1">
+<span class="block font-status-tiny text-outline uppercase">Status</span>
+<span class="block font-title-sm text-title-sm text-led-green">DEPLOYED</span>
+</div>
+</div>
+<div class="industrial-bevel-in bg-background-matte p-4 mb-2">
+<h4 class="font-label-caps text-label-caps text-primary border-b border-border-graphite pb-1 mb-3">MISSION_TIMELINE</h4>
+<div class="space-y-6 relative ml-4">
+<div class="absolute left-[-13px] top-0 bottom-0 w-px bg-border-graphite"></div>
+<!-- Timeline Item -->
+<div class="relative">
+<div class="absolute left-[-16px] top-1 w-2 h-2 bg-primary border border-primary-container rounded-full shadow-[0_0_5px_#ea6b1e]"></div>
+<div class="pl-4">
+<div class="flex justify-between items-center mb-1">
+<span class="font-mono-data text-primary text-status-tiny">1996.04 - 1997.11</span>
+<span class="font-status-tiny text-outline-variant">OP_GHOST_WALKER</span>
+</div>
+<h5 class="font-title-sm text-title-sm text-secondary-fixed">Kernel Reconstruction Project</h5>
+<p class="font-body-base text-on-surface-variant text-status-tiny mt-1">Lead engineer for the OS-CORE baseline rewrite. Successfully implemented neural-bridge protocols for high-compute environment synchronization.</p>
+</div>
+</div>
+<!-- Timeline Item -->
+<div class="relative">
+<div class="absolute left-[-16px] top-1 w-2 h-2 bg-border-graphite border border-outline-variant rounded-full"></div>
+<div class="pl-4">
+<div class="flex justify-between items-center mb-1">
+<span class="font-mono-data text-primary text-status-tiny">1997.12 - 1998.08</span>
+<span class="font-status-tiny text-outline-variant">OP_SILENT_NET</span>
+</div>
+<h5 class="font-title-sm text-title-sm text-on-surface">Distributed Intelligence Framework</h5>
+<p class="font-body-base text-on-surface-variant text-status-tiny mt-1">Developed the first iteration of the 'Operator' shell, allowing remote human-AI consciousness pairing over low-latency satellite links.</p>
+</div>
+</div>
+<!-- Timeline Item -->
+<div class="relative">
+<div class="absolute left-[-16px] top-1 w-2 h-2 bg-led-red border border-led-red rounded-full animate-pulse shadow-[0_0_8px_#EF4444]"></div>
+<div class="pl-4">
+<div class="flex justify-between items-center mb-1">
+<span class="font-mono-data text-primary text-status-tiny">1998.09 - PRESENT</span>
+<span class="font-status-tiny text-outline-variant">OP_ARY_CURRENT</span>
+</div>
+<h5 class="font-title-sm text-title-sm text-on-surface">OS-CORE 98 Deployment</h5>
+<p class="font-body-base text-on-surface-variant text-status-tiny mt-1">Active supervision of the core neural network. Currently managing emergency override protocols for global data nodes.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Bottom Section: Core Tech Modules as Rack Hardware -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-gutter mt-auto pb-4">
+<!-- Module 1: Python -->
+<div class="industrial-bevel-out bg-surface-dim p-4 flex flex-col group hover:bg-surface-container-high transition-colors cursor-pointer">
+<div class="flex justify-between items-center mb-3">
+<span class="font-label-caps text-label-caps text-outline">CORE_MODULE_01</span>
+<div class="flex gap-1">
+<div class="led-indicator led-active"></div>
+<div class="led-indicator led-active"></div>
+</div>
+</div>
+<div class="flex items-center gap-3 mb-4">
+<div class="w-12 h-12 industrial-bevel-in bg-background-matte flex items-center justify-center p-2">
+<img class="w-full h-full object-contain filter grayscale invert brightness-125 contrast-125" data-alt="A stylized technical icon representing the Python programming language, rendered in an industrial 1998 workstation aesthetic with muted primary colors and subtle phosphor glow. The icon looks like it is etched into a metallic surface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBVORt_Xsq0Qoo5L0Hy2SbBnDuXIiAm-G8avGo1auDQ2WeP9rIFdovtnrHhdcgKfKGO_NfuFaiSsvCgiOH1S6oW2s4gWScBQS9DhIwuXGuB3ardYw3edUm1A2mxPMSIQxQKdwn4ZM0uVe-MvKkSlXab6jQwaQRQ6IffZVhE3FosUppAIsE3URsIvynuM7dyC96JG5MwaiJxvf6rqtP_gCx6IEoTtNBFFHJGiM81RjKTYNSzxLEQJlOJu7Qpa2k00_C0w3K6hbzElDfL"/>
+</div>
+<div>
+<span class="font-title-sm text-title-sm block">PYTHON_ENG</span>
+<span class="font-status-tiny text-led-green">MASTER_CLASS</span>
+</div>
+</div>
+<div class="w-full h-2 industrial-bevel-in bg-background-matte mb-2 overflow-hidden flex">
+<div class="h-full bg-primary-container w-[95%]"></div>
+</div>
+<div class="flex justify-between text-[9px] font-mono-data text-outline-variant uppercase">
+<span>LOAD: HIGH</span>
+<span>STABILITY: 99%</span>
+</div>
+</div>
+<!-- Module 2: OpenAI -->
+<div class="industrial-bevel-out bg-surface-dim p-4 flex flex-col group hover:bg-surface-container-high transition-colors cursor-pointer">
+<div class="flex justify-between items-center mb-3">
+<span class="font-label-caps text-label-caps text-outline">CORE_MODULE_02</span>
+<div class="flex gap-1">
+<div class="led-indicator led-active"></div>
+<div class="led-indicator led-standby"></div>
+</div>
+</div>
+<div class="flex items-center gap-3 mb-4">
+<div class="w-12 h-12 industrial-bevel-in bg-background-matte flex items-center justify-center p-2">
+<img class="w-full h-full object-contain filter grayscale invert brightness-125 contrast-125" data-alt="A futuristic industrial logo for a high-compute AI engine, featuring geometric interlocking shapes that resemble an eye and a circuit. The style is 90s corporate modern, with metallic textures and a primary burnt orange glow. Designed as if it were a physical badge on a server unit." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBPmyewEFF9UA4wtsqHPe1imsitz4PJuTwkaH0_gf2N1QmMuboANuEAnjWVDOH1gqEjruWEGQbFQONIaWKtsurBMkwEbvqIaa3-GM7-uLt1N1yHo6divzdHuBnrlPDWUwbvvvvKbcGSs3jk-6Wf2dn50HR66k5L3ShnQYeW121eituqnKpaC9P-BAxPO1DCPOw2Mb0X7b5_029Y3YkUBM78sJvuB6XqlpsyOlXQtgjf4UMCAzjLz5RLZ2gxzXAR8Q57lnIfJIOGWyRG"/>
+</div>
+<div>
+<span class="font-title-sm text-title-sm block">NEURAL_LLM</span>
+<span class="font-status-tiny text-secondary-fixed-dim">EXPERIMENTAL</span>
+</div>
+</div>
+<div class="w-full h-2 industrial-bevel-in bg-background-matte mb-2 overflow-hidden flex">
+<div class="h-full bg-primary-container w-[88%]"></div>
+</div>
+<div class="flex justify-between text-[9px] font-mono-data text-outline-variant uppercase">
+<span>SYNC: ACTIVE</span>
+<span>LATENCY: 12ms</span>
+</div>
+</div>
+<!-- Module 3: TensorFlow/Custom -->
+<div class="industrial-bevel-out bg-surface-dim p-4 flex flex-col group hover:bg-surface-container-high transition-colors cursor-pointer">
+<div class="flex justify-between items-center mb-3">
+<span class="font-label-caps text-label-caps text-outline">CORE_MODULE_03</span>
+<div class="flex gap-1">
+<div class="led-indicator led-active"></div>
+<div class="led-indicator led-alert"></div>
+</div>
+</div>
+<div class="flex items-center gap-3 mb-4">
+<div class="w-12 h-12 industrial-bevel-in bg-background-matte flex items-center justify-center p-2">
+<img class="w-full h-full object-contain filter grayscale invert brightness-125 contrast-125" data-alt="A technical hardware module icon for tensor processing, showing a grid of nodes connected by thick industrial traces. The design is reminiscent of late 90s server board labels, with technical notations and small warning symbols. Grayscale base with vibrant green and orange highlight accents." src="https://lh3.googleusercontent.com/aida-public/AB6AXuARIc9im3O9boeoZDqAKkkSwebwO1dz4SylPh-X7u1MVhgF2fK6bTgdRqscKUyjhFuO7B4Yras8EmmyPvvtc_FiJvOLgzLsNIXo64KOniX9ZTHwFww7oXqD7ee-Mu9vOc2ibuEpHvb5WYeATRZ8FHKzn9F5GXZK08X0QFCEbFk1NRKRHTcild8pZfbLiE3uqfvt8noj2Wyp9WfFYaEX4Dqb7wYFWjhtsaxBcnc3i7YHjLjZ4z6FZkGf7zghMADz9kzb2tCz0PBAVyuB"/>
+</div>
+<div>
+<span class="font-title-sm text-title-sm block">V_COMPUTE</span>
+<span class="font-status-tiny text-primary-container">CORE_INTEGRATION</span>
+</div>
+</div>
+<div class="w-full h-2 industrial-bevel-in bg-background-matte mb-2 overflow-hidden flex gap-0.5">
+<div class="h-full bg-primary-container w-[10%]"></div>
+<div class="h-full bg-primary-container w-[10%]"></div>
+<div class="h-full bg-primary-container w-[10%]"></div>
+<div class="h-full bg-primary-container w-[10%]"></div>
+<div class="h-full bg-primary-container w-[10%]"></div>
+<div class="h-full bg-primary-container w-[10%] opacity-50"></div>
+<div class="h-full bg-primary-container w-[10%] opacity-20"></div>
+</div>
+<div class="flex justify-between text-[9px] font-mono-data text-outline-variant uppercase">
+<span>ARRAY: TENSOR_B</span>
+<span>BUFF: OVERFLOW</span>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- System Status Bar / Footer -->
+<footer class="fixed bottom-0 w-full z-50 h-[32px] flex items-center justify-between px-gutter border-t border-border-graphite bg-surface-container-lowest">
+<div class="flex items-center gap-4">
+<span class="font-status-tiny text-status-tiny text-primary uppercase">OS-CORE_ACTIVE</span>
+<span class="font-status-tiny text-status-tiny text-led-green">KERNEL_LOG_STREAM: [OK] SYSTEM_STABLE_1998.09.24</span>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex gap-4">
+<a class="text-terminal-dim font-status-tiny hover:text-primary-container transition-colors" href="#">PRIVACY_ENCRYPTION</a>
+<a class="text-terminal-dim font-status-tiny hover:text-primary-container transition-colors" href="#">SYS_MANUAL</a>
+</div>
+<div class="h-4 w-px bg-border-graphite"></div>
+<span class="font-status-tiny text-status-tiny text-outline-variant">OPERATOR_091 // CONSOLE_4</span>
+</div>
+</footer>
+<!-- Interactive script for terminal feel -->
+<script>
+        document.addEventListener('keydown', function(e) {
+            // Simulate terminal activity on keypress
+            const logArea = document.querySelector('main section:nth-child(2) .space-y-3');
+            if (logArea) {
+                const newLog = document.createElement('div');
+                newLog.className = 'flex gap-2 animate-pulse';
+                const now = new Date();
+                const timeStr = `[${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}]`;
+                newLog.innerHTML = `<span class="text-outline-variant">${timeStr}</span><span class="text-secondary-fixed-dim">KEY_INT: ${e.key.toUpperCase()}</span>`;
+                logArea.prepend(newLog);
+                if (logArea.children.length > 8) {
+                    logArea.lastElementChild.remove();
+                }
+            }
+        });
+
+        // Periodic LED flicker for industrial realism
+        setInterval(() => {
+            const leds = document.querySelectorAll('.led-indicator');
+            const randomLed = leds[Math.floor(Math.random() * leds.length)];
+            const originalClass = randomLed.className;
+            randomLed.style.opacity = '0.5';
+            setTimeout(() => {
+                randomLed.style.opacity = '1';
+            }, 50);
+        }, 2000);
+    </script>
+</body></html>

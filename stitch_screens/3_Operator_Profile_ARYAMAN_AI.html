@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Operator Profile | KRYPTON_OS</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "surface-tint": "#FFB000",
+                        "on-primary": "#4A2800",
+                        "on-secondary-fixed-variant": "#5C4300",
+                        "inverse-primary": "#A04100",
+                        "outline": "#A78B7E",
+                        "surface-container": "#291D17",
+                        "surface-variant": "#40322B",
+                        "secondary-fixed": "#FFDFA0",
+                        "on-secondary": "#402D00",
+                        "tertiary": "#AAC7FF",
+                        "on-primary-fixed-variant": "#7A3000",
+                        "led-green": "#22C55E",
+                        "surface-dim": "#1C110C",
+                        "secondary-fixed-dim": "#FBBC00",
+                        "on-tertiary-fixed": "#001B3E",
+                        "on-secondary-container": "#6D5000",
+                        "background-matte": "#1A1100",
+                        "on-error": "#690005",
+                        "error-container": "#93000A",
+                        "primary-fixed": "#FFDBCC",
+                        "surface-container-low": "#251913",
+                        "primary": "#FFB000",
+                        "border-graphite": "#332200",
+                        "outline-variant": "#584238",
+                        "terminal-dim": "#662B00",
+                        "on-tertiary-container": "#002958",
+                        "surface-container-high": "#342721",
+                        "tertiary-fixed-dim": "#AAC7FF",
+                        "background": "#1A1100",
+                        "on-primary-container": "#4B1B00",
+                        "on-primary-fixed": "#351000",
+                        "on-error-container": "#FFDAD6",
+                        "secondary": "#FFD000",
+                        "surface-container-highest": "#40322B",
+                        "on-tertiary": "#002F64",
+                        "tertiary-container": "#3E90FF",
+                        "inverse-surface": "#F5DED4",
+                        "inverse-on-surface": "#3B2D27",
+                        "on-surface": "#FFE066",
+                        "surface-container-lowest": "#160C07",
+                        "tertiary-fixed": "#D6E3FF",
+                        "surface-bright": "#443630",
+                        "surface": "#1A1100",
+                        "primary-fixed-dim": "#FFB693",
+                        "on-surface-variant": "#E0C0B2",
+                        "primary-container": "#EA6B1E",
+                        "error": "#FFB4AB",
+                        "led-red": "#EF4444",
+                        "on-secondary-fixed": "#261A00",
+                        "surface-steel": "#261A00"
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.25rem",
+                        lg: "0.5rem",
+                        xl: "0.75rem",
+                        full: "9999px"
+                    },
+                    spacing: {
+                        "panel-margin": "8px",
+                        "unit": "4px",
+                        "gutter": "16px",
+                        "touch-target": "32px"
+                    },
+                    fontFamily: {
+                        "title-sm": ["IBM Plex Sans", "sans-serif"],
+                        "body-base": ["IBM Plex Sans", "sans-serif"],
+                        "headline-md": ["IBM Plex Sans", "sans-serif"],
+                        "mono-data": ["IBM Plex Mono", "monospace"],
+                        "display-lg": ["IBM Plex Sans", "sans-serif"],
+                        "status-tiny": ["IBM Plex Mono", "monospace"],
+                        "label-caps": ["IBM Plex Mono", "monospace"]
+                    },
+                    fontSize: {
+                        "title-sm": ["18px", { lineHeight: "1.4", fontWeight: "500" }],
+                        "body-base": ["14px", { lineHeight: "1.5", fontWeight: "400" }],
+                        "headline-md": ["24px", { lineHeight: "1.2", fontWeight: "600" }],
+                        "mono-data": ["13px", { lineHeight: "1.4", fontWeight: "400" }],
+                        "display-lg": ["32px", { lineHeight: "1.2", letterSpacing: "-0.02em", fontWeight: "600" }],
+                        "status-tiny": ["10px", { lineHeight: "1", fontWeight: "500" }],
+                        "label-caps": ["11px", { lineHeight: "1", letterSpacing: "0.05em", fontWeight: "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .scanlines {
+            background: linear-gradient(
+                to bottom,
+                rgba(255,255,255,0),
+                rgba(255,255,255,0) 50%,
+                rgba(0,0,0,0.1) 50%,
+                rgba(0,0,0,0.1)
+            );
+            background-size: 100% 4px;
+            pointer-events: none;
+        }
+        
+        .crt-flicker {
+            animation: flicker 0.15s infinite;
+        }
+
+        @keyframes flicker {
+            0% { opacity: 0.95; }
+            100% { opacity: 1; }
+        }
+
+        .industrial-bevel {
+            border-top: 1px solid rgba(255,255,255,0.1);
+            border-left: 1px solid rgba(255,255,255,0.1);
+            border-bottom: 1px solid rgba(0,0,0,0.8);
+            border-right: 1px solid rgba(0,0,0,0.8);
+            box-shadow: inset 1px 1px 0 rgba(255,255,255,0.05), inset -1px -1px 0 rgba(0,0,0,0.5);
+        }
+
+        .industrial-inset {
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            border-right: 1px solid rgba(255,255,255,0.1);
+            border-top: 1px solid rgba(0,0,0,0.8);
+            border-left: 1px solid rgba(0,0,0,0.8);
+            box-shadow: inset 2px 2px 4px rgba(0,0,0,0.5);
+        }
+        
+        .led-blink {
+            animation: blink 1.5s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+        
+        .scanner-sweep {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: rgba(255, 182, 147, 0.5);
+            box-shadow: 0 0 10px rgba(255, 182, 147, 0.8);
+            animation: sweep 4s infinite linear;
+        }
+        
+        @keyframes sweep {
+            0% { top: 0; }
+            50% { top: 100%; }
+            100% { top: 0; }
+        }
+    </style>
+</head>
+<body class="bg-background-matte text-on-background min-h-screen flex overflow-hidden scanlines crt-flicker relative">
+<!-- TopAppBar -->
+<header class="bg-surface-container dark:bg-surface-container text-primary dark:text-primary font-label-caps text-label-caps w-full h-12 border-b-2 border-border-graphite border-b-2 border-b-black/60 shadow-[0_1px_0_rgba(255,255,255,0.05)] flex justify-between items-center px-gutter sticky top-0 z-50 absolute w-full left-0 top-0 hidden">
+<div class="font-title-sm text-title-sm text-on-surface tracking-tighter">KRYPTON_OS_v4.2</div>
+<div class="flex gap-4">
+<span class="material-symbols-outlined hover:text-on-surface transition-all duration-100 ease-in-out cursor-pointer" style="font-variation-settings: 'FILL' 0;">settings_input_component</span>
+<span class="material-symbols-outlined hover:text-on-surface transition-all duration-100 ease-in-out cursor-pointer" style="font-variation-settings: 'FILL' 0;">notification_important</span>
+<span class="material-symbols-outlined hover:text-on-surface transition-all duration-100 ease-in-out cursor-pointer" style="font-variation-settings: 'FILL' 0;">power_settings_new</span>
+</div>
+</header>
+<!-- SideNavBar -->
+<nav class="bg-background-matte dark:bg-background-matte text-primary dark:text-primary font-mono-data text-mono-data uppercase tracking-wider h-screen w-64 border-r-2 border-border-graphite border-r-2 border-r-white/10 border-b-2 border-b-black/50 bg-surface-steel flex flex-col h-full py-panel-margin gap-unit z-40 relative">
+<div class="px-4 mb-4">
+<div class="font-headline-md text-headline-md font-bold text-primary dark:text-primary border-b-2 border-primary pb-2 mb-4">OS/98 WORKSTATION</div>
+<div class="flex items-center gap-2 mb-1">
+<img class="w-8 h-8 industrial-inset object-cover grayscale" data-alt="A small, low-resolution grayscale thumbnail image representing a system operator in an industrial setting, reminiscent of 1990s security badge photos." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDdQC8Ell-GgRNCKbUn1exhhiWk38p2WSQVsQIvtmEEyogJ5tvwbxHOjHYC6wdV6ab8Nx1TERPoA1YWrF2fQKejlCmvNpPOJuMLOtxJVOc_TIjEfzBaRsPoYJ7mjMkU7cIplyBvTssC7khHeLzLORzB30S5OxrAZH4qGTiwIYQjsfRcJ0-CQIoyi2SXpncrqoJvfC22R0leb-w8T4zVPc5DpibW_L9SitMnWRZ3uT7ALpk3TchSIyxK6nrHXLYM5nEdywS75ol26CLm"/>
+<div>
+<div class="font-mono-data text-mono-data">System Operator ID-098</div>
+<div class="font-status-tiny text-status-tiny text-on-surface-variant">AI-ENGINE_STABLE</div>
+</div>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto flex flex-col gap-1 px-2">
+<a class="text-on-surface-variant hover:text-primary px-4 py-3 border-l-4 border-transparent transition-colors hover:bg-surface-variant/50 flex items-center gap-3" href="#">
+<span class="material-symbols-outlined">terminal</span> Core Shell
+            </a>
+<a class="bg-terminal-dim text-primary border-l-4 border-primary px-4 py-3 shadow-[inset_2px_2px_4px_rgba(0,0,0,0.5)] flex items-center gap-3 active:translate-y-0.5 active:shadow-inner transition-all duration-75" href="#">
+<span class="material-symbols-outlined">memory</span> Process Sync
+            </a>
+<a class="text-on-surface-variant hover:text-primary px-4 py-3 border-l-4 border-transparent transition-colors hover:bg-surface-variant/50 flex items-center gap-3" href="#">
+<span class="material-symbols-outlined">receipt_long</span> Log Analytics
+            </a>
+<a class="text-on-surface-variant hover:text-primary px-4 py-3 border-l-4 border-transparent transition-colors hover:bg-surface-variant/50 flex items-center gap-3" href="#">
+<span class="material-symbols-outlined">analytics</span> Node Status
+            </a>
+<a class="text-on-surface-variant hover:text-primary px-4 py-3 border-l-4 border-transparent transition-colors hover:bg-surface-variant/50 flex items-center gap-3" href="#">
+<span class="material-symbols-outlined">developer_board</span> Hardware
+            </a>
+<a class="text-on-surface-variant hover:text-primary px-4 py-3 border-l-4 border-transparent transition-colors hover:bg-surface-variant/50 flex items-center gap-3" href="#">
+<span class="material-symbols-outlined">admin_panel_settings</span> Security
+            </a>
+</div>
+<div class="px-4 mt-auto">
+<button class="w-full bg-surface-container industrial-bevel py-2 text-primary hover:bg-surface-variant transition-colors active:translate-y-0.5 active:shadow-inner">
+                INITIATE REBOOT
+            </button>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="flex-1 p-8 overflow-y-auto relative bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:20px_20px]">
+<!-- Window Container -->
+<div class="max-w-6xl mx-auto bg-surface-steel industrial-bevel flex flex-col h-full border border-border-graphite shadow-2xl">
+<!-- Window Header -->
+<div class="h-10 bg-surface-container flex items-center justify-between px-4 border-b border-black/80 industrial-bevel">
+<div class="flex items-center gap-3">
+<div class="w-3 h-3 rounded-full bg-led-green led-blink shadow-[0_0_8px_#22C55E]"></div>
+<span class="font-mono-data text-mono-data text-primary uppercase tracking-wider">PERSONNEL RECORD: ARYAMAN_AI</span>
+</div>
+<div class="flex gap-1">
+<div class="w-4 h-4 bg-surface-variant border border-border-graphite"></div>
+<div class="w-4 h-4 bg-surface-variant border border-border-graphite"></div>
+<div class="w-4 h-4 bg-surface-variant border border-border-graphite"></div>
+</div>
+</div>
+<div class="flex flex-1 p-6 gap-6">
+<!-- Left Column -->
+<div class="w-1/3 flex flex-col gap-6">
+<!-- Portrait -->
+<div class="relative w-full aspect-square industrial-inset bg-surface-container-lowest p-2">
+<div class="absolute top-4 left-4 z-10 w-12 h-12 mix-blend-screen opacity-80">
+<img alt="" class="w-full h-full object-contain filter grayscale brightness-200 sepia hue-rotate-300" src="https://lh3.googleusercontent.com/aida/AP1WRLvJaWt2DwiDyPYkeoNpEeXFcmDyokYp36vcqb0i9YNfHHBPKPYDPuUiI1GXGsdtlpenLY__E3h_ioeoSbMYs378UblwwjN2ypvVMo5N70xLG22SdXObr1l-nw33B2O7Gd0oyZI65Zi5dWSTGdeNbFOWoWDfV0QyaaT-SqcD1nB0mDDAxSFiV2kr-oNNqOAATeigLowFoPEVjgBLKb8-6uidZEnHziQWoGNjZoxRVYC9kfZFdqq7Hlkn6MAM"/>
+</div>
+<div class="w-full h-full relative overflow-hidden">
+<img class="w-full h-full object-cover grayscale contrast-125 brightness-90 sepia hue-rotate-[-30deg] saturate-50 mix-blend-luminosity" data-alt="A highly detailed, gritty portrait of an industrial AI operator in a dim, harsh lighting environment. The aesthetic is heavily inspired by 1990s cyberpunk and mechanical engineering workstations. The subject is wearing technical gear." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCJaAUO54uH1L7dt5R8uIWu3ZX7WCsz_IFw1rKIS_HV8NsiVqpnXhRzf_bfBe5ATkZGRvkZxKoYqsABaWyYCicjURoJcyt0GCkU7kqLvyFPYCyFWKL5b6sYu5FsSBvgNQ-F7k1bcckiV6BsFIaSwiC_IC47lE2iNJzor64_7NW2Zfs8t03X0rQjiVM5t_QK6qGT__sLrTUHezg2vmNwbznVKpt53ZpBvxFZNgsyv4WTRH3jpL7-ZHJzXjvqjlCYvsHEju2QUXXGim-h"/>
+<div class="scanner-sweep"></div>
+<div class="absolute bottom-2 left-2 bg-black/80 px-2 py-1 border border-primary/30">
+<span class="font-status-tiny text-status-tiny text-primary led-blink">SCANNING...</span>
+</div>
+</div>
+</div>
+<!-- Status Panel -->
+<div class="industrial-inset bg-surface-container p-4">
+<h3 class="font-label-caps text-label-caps text-on-surface-variant mb-4 border-b border-border-graphite pb-2">SYS_STATUS</h3>
+<div class="flex flex-col gap-3">
+<div class="flex items-center justify-between">
+<span class="font-mono-data text-mono-data text-on-surface">LINK</span>
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-led-green shadow-[0_0_5px_#22C55E]"></div>
+<span class="font-mono-data text-mono-data text-led-green">ONLINE</span>
+</div>
+</div>
+<div class="flex items-center justify-between">
+<span class="font-mono-data text-mono-data text-on-surface">DIRECTIVE</span>
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-primary shadow-[0_0_5px_#ffb693] led-blink"></div>
+<span class="font-mono-data text-mono-data text-primary">MISSION_ACTIVE</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Column -->
+<div class="w-2/3 flex flex-col gap-6">
+<!-- Header Info -->
+<div class="flex justify-between items-end border-b-2 border-border-graphite pb-4">
+<div>
+<h1 class="font-display-lg text-display-lg text-on-surface uppercase">ARYAMAN PRADHAN</h1>
+<div class="font-mono-data text-mono-data text-primary mt-1">ENGINEER ID: 09-42-PRADHAN</div>
+</div>
+<img alt="" class="w-16 h-16 opacity-50 grayscale" src="https://lh3.googleusercontent.com/aida/AP1WRLvJaWt2DwiDyPYkeoNpEeXFcmDyokYp36vcqb0i9YNfHHBPKPYDPuUiI1GXGsdtlpenLY__E3h_ioeoSbMYs378UblwwjN2ypvVMo5N70xLG22SdXObr1l-nw33B2O7Gd0oyZI65Zi5dWSTGdeNbFOWoWDfV0QyaaT-SqcD1nB0mDDAxSFiV2kr-oNNqOAATeigLowFoPEVjgBLKb8-6uidZEnHziQWoGNjZoxRVYC9kfZFdqq7Hlkn6MAM"/>
+</div>
+<!-- Data Grid -->
+<div class="grid grid-cols-2 gap-4">
+<div class="industrial-inset bg-surface-container p-3 flex flex-col">
+<span class="font-status-tiny text-status-tiny text-on-surface-variant uppercase">Code Name</span>
+<span class="font-mono-data text-mono-data text-primary mt-1">ARYAMAN_AI</span>
+</div>
+<div class="industrial-inset bg-surface-container p-3 flex flex-col">
+<span class="font-status-tiny text-status-tiny text-on-surface-variant uppercase">Role</span>
+<span class="font-mono-data text-mono-data text-primary mt-1">AI Automation Eng.</span>
+</div>
+<div class="industrial-inset bg-surface-container p-3 flex flex-col">
+<span class="font-status-tiny text-status-tiny text-on-surface-variant uppercase">Clearance</span>
+<span class="font-mono-data text-mono-data text-led-green mt-1">AUTHORIZED_LEVEL_5</span>
+</div>
+<div class="industrial-inset bg-surface-container p-3 flex flex-col">
+<span class="font-status-tiny text-status-tiny text-on-surface-variant uppercase">Vitals</span>
+<span class="font-mono-data text-mono-data text-primary mt-1">NOMINAL</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>

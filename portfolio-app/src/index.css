@@ -1,0 +1,308 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ===== CRT / Retro Monitor Effects ===== */
+
+.crt-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  background:
+    linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%),
+    linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+  background-size: 100% 3px, 6px 100%;
+  z-index: 9999;
+  opacity: 0.5;
+}
+
+.crt-flicker {
+  animation: crt-flicker 0.15s infinite;
+}
+
+@keyframes crt-flicker {
+  0% { opacity: 0.97; }
+  50% { opacity: 1; }
+  100% { opacity: 0.98; }
+}
+
+.scanline {
+  position: fixed;
+  width: 100%;
+  height: 10px;
+  background: rgba(255, 255, 255, 0.03);
+  top: 0;
+  left: 0;
+  z-index: 9998;
+  pointer-events: none;
+  animation: scanline-sweep 8s linear infinite;
+}
+
+@keyframes scanline-sweep {
+  0% { top: -10%; }
+  100% { top: 110%; }
+}
+
+/* ===== Industrial Bevel Effects ===== */
+
+.bevel-outset {
+  border: 2px solid #332200;
+  box-shadow:
+    1px 1px 0px rgba(255, 255, 255, 0.1),
+    -1px -1px 0px rgba(0, 0, 0, 0.8);
+}
+
+.bevel-inset {
+  border: 2px solid #332200;
+  box-shadow:
+    inset 1px 1px 0px rgba(255, 255, 255, 0.1),
+    inset -1px -1px 0px rgba(0, 0, 0, 0.8);
+}
+
+.bevel-panel {
+  background-color: #291D17;
+  border: 2px solid #332200;
+  box-shadow:
+    1px 1px 0px rgba(255, 255, 255, 0.1),
+    -1px -1px 0px rgba(0, 0, 0, 0.8);
+}
+
+/* ===== LED Indicators ===== */
+
+.led-pulse-green {
+  box-shadow: 0 0 6px #22C55E, 0 0 12px rgba(34, 197, 94, 0.4);
+  animation: led-pulse 2s ease-in-out infinite;
+}
+
+.led-pulse-red {
+  box-shadow: 0 0 6px #EF4444, 0 0 12px rgba(239, 68, 68, 0.4);
+  animation: led-pulse-r 2s ease-in-out infinite;
+}
+
+@keyframes led-pulse {
+  0%, 100% { opacity: 1; box-shadow: 0 0 6px #22C55E, 0 0 12px rgba(34, 197, 94, 0.4); }
+  50% { opacity: 0.6; box-shadow: 0 0 3px #22C55E, 0 0 6px rgba(34, 197, 94, 0.2); }
+}
+
+@keyframes led-pulse-r {
+  0%, 100% { opacity: 1; box-shadow: 0 0 6px #EF4444, 0 0 12px rgba(239, 68, 68, 0.4); }
+  50% { opacity: 0.6; box-shadow: 0 0 3px #EF4444, 0 0 6px rgba(239, 68, 68, 0.2); }
+}
+
+/* ===== Boot Screen ===== */
+
+.boot-log-line {
+  opacity: 0;
+  transform: translateY(5px);
+  animation: boot-line-in 0.1s forwards;
+}
+
+@keyframes boot-line-in {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.boot-progress-bar {
+  display: flex;
+  gap: 2px;
+  height: 12px;
+  background-color: #251913;
+  border: 1px solid #584238;
+  padding: 1px;
+}
+
+.boot-progress-segment {
+  flex: 1;
+  background-color: transparent;
+  transition: background-color 0.08s;
+}
+
+.boot-progress-segment.active {
+  background-color: #FFB000;
+}
+
+.boot-flash {
+  animation: boot-flash 0.8s forwards;
+}
+
+@keyframes boot-flash {
+  0% { opacity: 0; }
+  15% { opacity: 0.8; }
+  100% { opacity: 0; }
+}
+
+/* ===== Text Decryption Effect ===== */
+
+.decrypt-char {
+  display: inline-block;
+  min-width: 0.6em;
+}
+
+/* ===== Terminal Cursor ===== */
+
+.cursor-block {
+  display: inline-block;
+  width: 8px;
+  height: 14px;
+  background-color: #FFB000;
+  animation: cursor-blink 1s step-end infinite;
+}
+
+@keyframes cursor-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* ===== Page Transitions ===== */
+
+.page-enter {
+  animation: page-load 0.4s ease-out;
+}
+
+@keyframes page-load {
+  0% { opacity: 0; transform: translateY(8px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== Redacted Text ===== */
+
+.redacted {
+  background-color: #FFB000;
+  color: #FFB000;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 0 2px;
+  user-select: none;
+}
+
+.redacted:hover,
+.redacted.revealed {
+  background-color: transparent;
+  color: #E0C0B2;
+}
+
+/* ===== Custom Scrollbar ===== */
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #160C07;
+  border-left: 1px solid #332200;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #40322B;
+  border: 2px solid #160C07;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #584238;
+}
+
+/* Firefox scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #40322B #160C07;
+}
+
+/* ===== Responsive Sidebar ===== */
+
+@media (max-width: 1024px) {
+  .sidebar-mobile-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 39;
+  }
+}
+
+/* ===== Form Inputs (Secure Terminal Style) ===== */
+
+input[type="text"],
+input[type="email"],
+textarea {
+  background-color: #160C07 !important;
+  border: 2px solid #332200 !important;
+  color: #FFE066 !important;
+  font-family: 'IBM Plex Mono', monospace !important;
+  caret-color: #FFB000;
+  box-shadow: inset 1px 1px 0px rgba(255, 255, 255, 0.1), inset -1px -1px 0px rgba(0, 0, 0, 0.8) !important;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+textarea:focus {
+  border-color: #FFB000 !important;
+  box-shadow: inset 1px 1px 0px rgba(255, 255, 255, 0.1), inset -1px -1px 0px rgba(0, 0, 0, 0.8), 0 0 8px rgba(255, 176, 0, 0.3) !important;
+  outline: none !important;
+  ring: none;
+}
+
+/* ===== Utility Animations ===== */
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.5s ease-out forwards;
+}
+
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-slide-up {
+  animation: slide-up 0.5s ease-out forwards;
+}
+
+/* ===== Blueprint Grid ===== */
+
+.blueprint-grid {
+  background-size: 40px 40px;
+  background-image:
+    linear-gradient(to right, rgba(162, 141, 125, 0.08) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(162, 141, 125, 0.08) 1px, transparent 1px);
+}
+
+.blueprint-node {
+  border: 1px solid #332200;
+  background: #1A1100;
+  position: relative;
+  transition: all 0.2s;
+}
+.blueprint-node:hover {
+  border-color: #EA6B1E;
+  box-shadow: 0 0 12px rgba(234, 107, 30, 0.15) inset;
+}
+.blueprint-node.active {
+  border-color: #EA6B1E;
+  box-shadow: 0 0 16px rgba(234, 107, 30, 0.25) inset, 0 0 20px rgba(234, 107, 30, 0.1);
+}
+
+.blueprint-connector {
+  stroke-dasharray: 6 4;
+  animation: dash-flow 1.5s linear infinite;
+}
+@keyframes dash-flow {
+  to { stroke-dashoffset: -20; }
+}
+
+.node-id {
+  position: absolute;
+  top: -8px;
+  left: -8px;
+  border: 1px solid #332200;
+  background: #0D0A00;
+  padding: 1px 5px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  z-index: 1;
+}

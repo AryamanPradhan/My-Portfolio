@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Secure Transmission Terminal | OS-CORE 98</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+        .cursor-blink { animation: blink 1s infinite; }
+        
+        .industrial-bevel-outset {
+            box-shadow: inset 1px 1px 0px 0px rgba(255,255,255,0.1), 
+                        1px 1px 0px 0px #000000;
+        }
+        .industrial-bevel-inset {
+            box-shadow: inset 1px 1px 2px 0px #000000,
+                        0.5px 0.5px 0px 0px rgba(255,255,255,0.05);
+        }
+        
+        .scanline-overlay {
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.02), rgba(0, 255, 0, 0.01), rgba(0, 0, 100, 0.02));
+            background-size: 100% 4px, 3px 100%;
+            pointer-events: none;
+        }
+
+        .led-pulse {
+            box-shadow: 0 0 8px #22C55E;
+            animation: pulse-glow 2s infinite;
+        }
+        @keyframes pulse-glow {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(0.95); }
+        }
+
+        /* Custom scrollbar for terminal feel */
+        ::-webkit-scrollbar { width: 12px; }
+        ::-webkit-scrollbar-track { background: #1c110c; border-left: 1px solid #333333; }
+        ::-webkit-scrollbar-thumb { background: #333333; border: 2px solid #1c110c; }
+        ::-webkit-scrollbar-thumb:hover { background: #4b1b00; }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "primary-container": "#ea6b1e",
+                      "tertiary": "#aac7ff",
+                      "on-surface": "#f5ded4",
+                      "surface-variant": "#40322b",
+                      "secondary-fixed-dim": "#fbbc00",
+                      "surface-dim": "#1c110c",
+                      "on-tertiary-fixed": "#001b3e",
+                      "background-matte": "#0D0D0D",
+                      "surface-container-highest": "#40322b",
+                      "led-red": "#EF4444",
+                      "border-graphite": "#333333",
+                      "secondary": "#ffe2ab",
+                      "primary": "#ffb693",
+                      "on-tertiary-container": "#002958",
+                      "surface-tint": "#ffb693",
+                      "secondary-fixed": "#ffdfa0",
+                      "on-error": "#690005",
+                      "error": "#ffb4ab",
+                      "on-secondary-container": "#6d5000",
+                      "on-background": "#f5ded4",
+                      "on-primary-fixed": "#351000",
+                      "inverse-primary": "#a04100",
+                      "on-secondary": "#402d00",
+                      "on-primary-container": "#4b1b00",
+                      "surface-steel": "#1A1A1A",
+                      "outline": "#a78b7e",
+                      "on-surface-variant": "#e0c0b2",
+                      "led-green": "#22C55E",
+                      "surface-container-low": "#251913",
+                      "on-primary": "#562000",
+                      "on-error-container": "#ffdad6",
+                      "error-container": "#93000a",
+                      "secondary-container": "#ffbf00",
+                      "tertiary-container": "#3e90ff",
+                      "surface": "#1c110c",
+                      "surface-container": "#291d17",
+                      "background": "#1c110c",
+                      "outline-variant": "#584238",
+                      "on-tertiary": "#002f64",
+                      "inverse-on-surface": "#3b2d27",
+                      "tertiary-fixed-dim": "#aac7ff",
+                      "surface-container-lowest": "#160c07",
+                      "primary-fixed-dim": "#ffb693",
+                      "on-secondary-fixed": "#261a00",
+                      "primary-fixed": "#ffdbcc",
+                      "on-secondary-fixed-variant": "#5c4300",
+                      "surface-bright": "#443630",
+                      "terminal-dim": "#662B00",
+                      "surface-container-high": "#342721",
+                      "inverse-surface": "#f5ded4",
+                      "on-tertiary-fixed-variant": "#00458d",
+                      "tertiary-fixed": "#d6e3ff",
+                      "on-primary-fixed-variant": "#7a3000"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "touch-target": "32px",
+                      "unit": "4px",
+                      "panel-margin": "8px",
+                      "gutter": "16px"
+              },
+              "fontFamily": {
+                      "status-tiny": ["IBM Plex Mono"],
+                      "mono-data": ["IBM Plex Mono"],
+                      "title-sm": ["IBM Plex Sans"],
+                      "headline-md": ["IBM Plex Sans"],
+                      "body-base": ["IBM Plex Sans"],
+                      "label-caps": ["IBM Plex Mono"],
+                      "display-lg": ["IBM Plex Sans"]
+              },
+              "fontSize": {
+                      "status-tiny": ["10px", {"lineHeight": "1", "fontWeight": "500"}],
+                      "mono-data": ["13px", {"lineHeight": "1.4", "fontWeight": "400"}],
+                      "title-sm": ["18px", {"lineHeight": "1.4", "fontWeight": "500"}],
+                      "headline-md": ["24px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                      "body-base": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                      "label-caps": ["11px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                      "display-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600"}]
+              }
+            },
+          },
+        }
+      </script>
+</head>
+<body class="bg-surface-dim text-on-surface font-body-base overflow-hidden">
+<!-- TopNavBar -->
+<header class="fixed top-0 w-full z-50 flex justify-between items-center px-gutter py-unit h-[64px] bg-background-matte border-b-2 border-border-graphite shadow-[0_1px_0_0_rgba(255,182,147,0.1)]">
+<div class="flex items-center gap-4">
+<span class="font-display-lg text-display-lg font-black text-primary-container uppercase tracking-tighter">OS-CORE 98 v4.2</span>
+<div class="h-6 w-[2px] bg-border-graphite mx-2"></div>
+<span class="font-mono-data text-mono-data text-led-green">SYS_STABLE: 99.9%</span>
+</div>
+<div class="flex items-center gap-6">
+<div class="hidden md:flex gap-6 font-mono-data text-mono-data">
+<a class="text-on-surface-variant hover:text-primary-fixed" href="#">WORKSTATION</a>
+<a class="text-on-surface-variant hover:text-primary-fixed" href="#">TELEMETRY</a>
+<a class="text-primary font-bold border-b-2 border-primary pb-1" href="#">COMMS</a>
+</div>
+<div class="flex gap-2">
+<span class="material-symbols-outlined text-primary-container p-2 hover:bg-surface-variant transition-colors cursor-pointer">security</span>
+<span class="material-symbols-outlined text-primary-container p-2 hover:bg-surface-variant transition-colors cursor-pointer">terminal</span>
+<span class="material-symbols-outlined text-primary-container p-2 hover:bg-surface-variant transition-colors cursor-pointer">settings</span>
+</div>
+</div>
+</header>
+<!-- SideNavBar (Hidden on Mobile) -->
+<aside class="fixed left-0 top-[64px] bottom-[32px] w-64 hidden md:flex flex-col z-40 bg-surface-dim border-r-2 border-border-graphite">
+<div class="p-6 border-b-2 border-border-graphite bg-surface-container-low">
+<div class="font-headline-md text-headline-md text-primary mb-1">OPERATOR STATUS</div>
+<div class="font-status-tiny text-status-tiny text-outline">LEVEL 4 CLEARANCE</div>
+<div class="mt-4 flex items-center gap-3 bg-surface-dim p-2 border-2 border-border-graphite">
+<div class="w-10 h-10 bg-surface-container-highest industrial-bevel-inset flex items-center justify-center">
+<span class="material-symbols-outlined text-on-surface-variant">person</span>
+</div>
+<div>
+<div class="font-label-caps text-label-caps">OPERATOR_091</div>
+<div class="font-status-tiny text-status-tiny text-led-green">ONLINE</div>
+</div>
+</div>
+</div>
+<nav class="flex-1 p-2 space-y-1 overflow-y-auto">
+<div class="flex flex-row items-center gap-4 text-outline border-2 border-transparent p-4 hover:bg-surface-container-highest hover:text-primary-fixed-dim cursor-pointer transition-all">
+<span class="material-symbols-outlined">desktop_windows</span>
+<span class="font-label-caps text-label-caps">WORKSTATION</span>
+</div>
+<div class="flex flex-row items-center gap-4 text-outline border-2 border-transparent p-4 hover:bg-surface-container-highest hover:text-primary-fixed-dim cursor-pointer transition-all">
+<span class="material-symbols-outlined">monitoring</span>
+<span class="font-label-caps text-label-caps">TELEMETRY</span>
+</div>
+<div class="flex flex-row items-center gap-4 text-outline border-2 border-transparent p-4 hover:bg-surface-container-highest hover:text-primary-fixed-dim cursor-pointer transition-all">
+<span class="material-symbols-outlined">badge</span>
+<span class="font-label-caps text-label-caps">PROFILE</span>
+</div>
+<div class="flex flex-row items-center gap-4 text-outline border-2 border-transparent p-4 hover:bg-surface-container-highest hover:text-primary-fixed-dim cursor-pointer transition-all">
+<span class="material-symbols-outlined">folder_managed</span>
+<span class="font-label-caps text-label-caps">FILES</span>
+</div>
+<div class="flex flex-row items-center gap-4 bg-primary-container text-on-primary-container border-2 border-t-primary border-l-primary border-r-on-primary-container border-b-on-primary-container p-4 translate-x-0.5 translate-y-0.5">
+<span class="material-symbols-outlined">settings_input_antenna</span>
+<span class="font-label-caps text-label-caps">COMMS</span>
+</div>
+</nav>
+<div class="p-4 border-t-2 border-border-graphite">
+<button class="w-full py-3 bg-error-container text-on-error-container font-label-caps text-label-caps border-2 border-t-error border-l-error border-r-on-error border-b-on-error active:scale-95 transition-transform">
+                INITIATE OVERRIDE
+            </button>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="md:ml-64 mt-[64px] mb-[32px] h-[calc(100vh-96px)] p-panel-margin bg-background relative overflow-hidden flex flex-col md:flex-row gap-gutter">
+<div class="scanline-overlay absolute inset-0 z-10 pointer-events-none"></div>
+<!-- Left Column: System Status Widgets -->
+<div class="hidden lg:flex flex-col w-72 gap-gutter shrink-0 z-20">
+<div class="flex-1 bg-surface-container p-4 border-2 border-border-graphite industrial-bevel-outset">
+<div class="font-label-caps text-label-caps text-primary border-b border-border-graphite pb-2 mb-4">UPLINK_STABILITY</div>
+<div class="space-y-4">
+<div class="flex items-center justify-between">
+<span class="font-status-tiny text-status-tiny uppercase">Signal Strength</span>
+<span class="font-mono-data text-mono-data text-led-green">-42 dBm</span>
+</div>
+<div class="h-2 w-full bg-surface-dim border border-border-graphite flex">
+<div class="h-full w-4/5 bg-led-green"></div>
+<div class="h-full w-1/5 bg-transparent border-l border-border-graphite"></div>
+</div>
+<div class="grid grid-cols-8 gap-1">
+<div class="h-4 bg-led-green"></div>
+<div class="h-4 bg-led-green"></div>
+<div class="h-4 bg-led-green"></div>
+<div class="h-4 bg-led-green"></div>
+<div class="h-4 bg-led-green opacity-50"></div>
+<div class="h-4 bg-surface-dim"></div>
+<div class="h-4 bg-surface-dim"></div>
+<div class="h-4 bg-surface-dim"></div>
+</div>
+</div>
+<div class="mt-8 font-label-caps text-label-caps text-primary border-b border-border-graphite pb-2 mb-4">ENCRYPTION_ENGINE</div>
+<div class="flex items-center gap-4 mb-4">
+<div class="w-3 h-3 rounded-full bg-led-green led-pulse"></div>
+<span class="font-status-tiny text-status-tiny">ENCRYPTED_STREAM_V4</span>
+</div>
+<div class="bg-surface-dim p-2 border border-border-graphite font-mono-data text-mono-data text-[11px] leading-tight text-outline h-32 overflow-hidden opacity-80">
+<div>&gt; AUTHENTICATING...</div>
+<div>&gt; KEY_EXCHANGE_COMPLETE</div>
+<div>&gt; SHAKING_HANDS_0xFF12</div>
+<div>&gt; TUNNEL_ESTABLISHED</div>
+<div>&gt; WAITING_FOR_OPERATOR_INPUT...</div>
+<div class="cursor-blink">_</div>
+</div>
+</div>
+<div class="h-48 bg-surface-container p-4 border-2 border-border-graphite industrial-bevel-outset relative overflow-hidden">
+
+<div class="relative z-10">
+<div class="font-label-caps text-label-caps text-primary mb-2">COORD_LOCATOR</div>
+<div class="font-status-tiny text-status-tiny text-secondary mb-4">REGION: NORTH_DATA_HUB</div>
+<div class="aspect-square bg-surface-dim border border-border-graphite flex items-center justify-center">
+<span class="material-symbols-outlined text-4xl text-outline opacity-40">radar</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Center Column: Main Transmission Terminal -->
+<div class="flex-1 flex flex-col z-20">
+<div class="bg-surface-container flex-1 border-2 border-border-graphite industrial-bevel-outset flex flex-col relative overflow-hidden">
+<!-- Terminal Header -->
+<div class="bg-surface-container-high border-b-2 border-border-graphite px-4 py-3 flex justify-between items-center">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary-container">send</span>
+<h2 class="font-label-caps text-label-caps text-on-surface">TRANSMISSION_PAYLOAD_TERMINAL_V9</h2>
+</div>
+<div class="flex gap-1">
+<div class="w-3 h-3 border border-border-graphite industrial-bevel-outset bg-surface-container"></div>
+<div class="w-3 h-3 border border-border-graphite industrial-bevel-outset bg-surface-container"></div>
+<div class="w-3 h-3 border border-border-graphite industrial-bevel-outset bg-primary-container"></div>
+</div>
+</div>
+<div class="flex-1 p-6 md:p-8 overflow-y-auto space-y-8">
+<!-- Intro Text -->
+<div class="max-w-2xl">
+<h1 class="font-headline-md text-headline-md text-primary mb-2">INITIATE SECURE HANDSHAKE</h1>
+<p class="font-body-base text-on-surface-variant">Configure your project metadata below. Transmission is buffered in an encrypted vault until the 'Execute' command is issued.</p>
+</div>
+<form class="space-y-10 max-w-2xl">
+<!-- Project Classification -->
+<div class="space-y-3">
+<label class="font-label-caps text-label-caps text-outline block">01 // PROJECT_CLASSIFICATION</label>
+<div class="relative">
+<select class="w-full bg-surface-dim border-2 border-border-graphite text-on-surface font-mono-data p-4 appearance-none industrial-bevel-inset focus:ring-1 focus:ring-primary outline-none cursor-pointer">
+<option>TOP_SECRET_CORE_UPGRADE</option>
+<option>INTERNAL_TELEMETRY_REVIEW</option>
+<option>THIRD_PARTY_HARDWARE_INTEGRATION</option>
+<option>SYSTEM_ARCHITECTURE_CONSULT</option>
+</select>
+<span class="material-symbols-outlined absolute right-4 top-4 pointer-events-none text-primary">expand_more</span>
+</div>
+</div>
+<!-- Budget Slider -->
+<div class="space-y-4">
+<div class="flex justify-between items-center">
+<label class="font-label-caps text-label-caps text-outline">02 // ALLOCATED_CREDITS (HARDWARE_INDEX)</label>
+<span class="font-mono-data text-mono-data text-primary-container bg-surface-dim px-3 py-1 border border-border-graphite" id="budget-value">$250k - $500k</span>
+</div>
+<div class="relative py-4">
+<input class="w-full h-3 bg-surface-dim rounded-none appearance-none cursor-pointer industrial-bevel-inset accent-primary-container" max="1000" min="0" step="10" type="range"/>
+<div class="flex justify-between mt-2 font-status-tiny text-status-tiny text-outline opacity-60">
+<span>MIN_VAL</span>
+<span>MED_VAL</span>
+<span>MAX_VAL</span>
+</div>
+</div>
+</div>
+<!-- Timeline Dropdown -->
+<div class="space-y-3">
+<label class="font-label-caps text-label-caps text-outline block">03 // DELIVERY_TIMELINE</label>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+<button class="p-4 bg-surface-dim border-2 border-border-graphite hover:border-primary transition-colors text-left group" type="button">
+<div class="font-label-caps text-label-caps text-outline group-hover:text-primary mb-1">PHASE_01</div>
+<div class="font-mono-data text-mono-data">Q3_FISCAL_1998</div>
+</button>
+<button class="p-4 bg-primary-container border-2 border-t-primary border-l-primary border-r-on-primary-container border-b-on-primary-container text-left group" type="button">
+<div class="font-label-caps text-label-caps text-on-primary-container mb-1">PHASE_02</div>
+<div class="font-mono-data text-mono-data text-on-primary-container">Q4_FISCAL_1998</div>
+</button>
+<button class="p-4 bg-surface-dim border-2 border-border-graphite hover:border-primary transition-colors text-left group" type="button">
+<div class="font-label-caps text-label-caps text-outline group-hover:text-primary mb-1">PHASE_03</div>
+<div class="font-mono-data text-mono-data">Q1_FISCAL_1999</div>
+</button>
+</div>
+</div>
+<!-- Message Block -->
+<div class="space-y-3">
+<label class="font-label-caps text-label-caps text-outline block">04 // TRANSMISSION_BODY</label>
+<div class="bg-surface-dim border-2 border-border-graphite industrial-bevel-inset p-4 relative min-h-[160px]">
+<textarea class="w-full bg-transparent border-none focus:ring-0 text-on-surface font-mono-data resize-none p-0" placeholder="Type message payload here..." rows="5"></textarea>
+<div class="absolute bottom-2 right-2 cursor-blink font-mono-data text-primary text-2xl">█</div>
+</div>
+</div>
+<!-- Submit Section -->
+<div class="pt-6 flex flex-col md:flex-row gap-6 items-center">
+<button class="w-full md:w-auto px-12 py-5 bg-primary-container text-on-primary-container font-headline-md text-headline-md border-4 border-t-primary border-l-primary border-r-on-primary-container border-b-on-primary-container hover:brightness-110 active:translate-x-1 active:translate-y-1 transition-all" type="submit">
+                                EXECUTE_TRANS
+                            </button>
+<div class="flex items-center gap-4 bg-surface-dim p-4 border-2 border-border-graphite flex-1 w-full">
+<div class="w-4 h-4 rounded-full bg-led-green led-pulse"></div>
+<div class="flex-1">
+<div class="font-label-caps text-label-caps text-on-surface">SECURITY_STATUS: ENCRYPTED</div>
+<div class="font-status-tiny text-status-tiny text-outline">AES-1998-ALPHA HARDWARE_LOCK</div>
+</div>
+<span class="material-symbols-outlined text-led-green">lock</span>
+</div>
+</div>
+</form>
+</div>
+<!-- Terminal Footer -->
+<div class="bg-surface-container-low border-t-2 border-border-graphite p-2 flex justify-between font-status-tiny text-status-tiny text-outline overflow-hidden whitespace-nowrap">
+<div class="flex gap-4">
+<span>SYS_READY: TRUE</span>
+<span class="text-led-green">BUFFER_FREE: 89%</span>
+<span>MTU: 1500</span>
+</div>
+<div class="hidden md:block">
+                        PACKET_RECV: 091.22.4 // CPU_LOAD: 12% // KERNEL_STABLE_1998
+                    </div>
+</div>
+</div>
+</div>
+<!-- Right Column: Contextual Stats -->
+<div class="hidden xl:flex flex-col w-64 gap-gutter shrink-0 z-20">
+<div class="bg-surface-container p-4 border-2 border-border-graphite industrial-bevel-outset h-full">
+<div class="font-label-caps text-label-caps text-primary border-b border-border-graphite pb-2 mb-4">GLOBAL_ACTIVITY</div>
+<div class="space-y-6">
+<div class="p-3 bg-surface-dim border border-border-graphite">
+<div class="font-status-tiny text-status-tiny text-outline mb-1">ACTIVE_SESSIONS</div>
+<div class="font-headline-md text-headline-md text-secondary">4,192</div>
+</div>
+<div class="p-3 bg-surface-dim border border-border-graphite">
+<div class="font-status-tiny text-status-tiny text-outline mb-1">TOTAL_TRANSACTIONS</div>
+<div class="font-headline-md text-headline-md text-on-tertiary-container">2.8B</div>
+</div>
+<div class="mt-auto">
+<div class="font-label-caps text-label-caps text-primary mb-2">SYSTEM_CHASSIS</div>
+<div class="w-full h-40 bg-cover bg-center border border-border-graphite grayscale hover:grayscale-0 transition-all cursor-pointer" data-alt="A macro photography shot of an industrial server rack with heavy steel brushed metal surfaces, glowing amber LED indicators, and thick mechanical toggle switches. The lighting is low and atmospheric with deep orange hues reflecting off the metallic surfaces in a 1990s high-end workstation aesthetic." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuB9WyuyGLeb3Vw2g1Mpu6mKdGfiCh-ZI7_SAiZB1uwagU0zfaoctzg37RxRdP_qjtpx5Ciu2c9o5BQSJSuzSK1mXcDIMr2hMzaflzGC85j7YT0PyGWZSvjQ0dTIu3c_XBzsmIGYyADsSgBFO47x7pFng9hvkKpZvSnQgFy0SmuulZnAb8eZ-EKX4IOO2vUtZ5LMzuHndcrRVkg-1-lCDmQc_eODupUgMJg4oglsD-6yDAsYfTF0dYXhgeq4_TywPV1OSmLCSRzP6UUE')"></div>
+<div class="mt-2 font-status-tiny text-status-tiny text-outline">MODEL: OS-X98 INDUSTRIAL</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer Status Bar -->
+<footer class="fixed bottom-0 w-full z-50 h-[32px] flex items-center justify-between px-gutter border-t-2 border-border-graphite bg-surface-container-lowest font-mono-data text-mono-data text-led-green">
+<div class="flex gap-4">
+<span class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-led-green"></span> KERNEL_LOG_STREAM: [OK]</span>
+<span class="hidden md:inline">SYSTEM_STABLE_1998.09.24</span>
+</div>
+<div class="flex gap-6 items-center">
+<a class="text-terminal-dim hover:text-primary-container transition-colors" href="#">PRIVACY_ENCRYPTION</a>
+<a class="text-terminal-dim hover:text-primary-container transition-colors" href="#">SYS_MANUAL</a>
+<div class="h-full px-4 bg-primary-container text-on-primary-container font-bold">OPERATOR_LOGGED_IN</div>
+</div>
+</footer>
+<script>
+        // Micro-interaction for budget slider
+        const range = document.querySelector('input[type="range"]');
+        const budgetVal = document.getElementById('budget-value');
+        
+        range.addEventListener('input', (e) => {
+            const val = e.target.value;
+            if (val < 250) {
+                budgetVal.innerText = "$10k - $50k";
+            } else if (val < 500) {
+                budgetVal.innerText = "$50k - $250k";
+            } else if (val < 750) {
+                budgetVal.innerText = "$250k - $1M";
+            } else {
+                budgetVal.innerText = "$1M+ ENTERPRISE";
+            }
+        });
+
+        // Toggle Phase selection
+        const phaseBtns = document.querySelectorAll('button[type="button"]');
+        phaseBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                phaseBtns.forEach(b => {
+                    b.classList.remove('bg-primary-container', 'text-on-primary-container', 'border-t-primary', 'border-l-primary', 'border-r-on-primary-container', 'border-b-on-primary-container');
+                    b.classList.add('bg-surface-dim', 'border-border-graphite');
+                    b.querySelector('div:first-child').classList.remove('text-on-primary-container');
+                    b.querySelector('div:first-child').classList.add('text-outline');
+                    b.querySelector('div:last-child').classList.remove('text-on-primary-container');
+                });
+                btn.classList.add('bg-primary-container', 'text-on-primary-container', 'border-t-primary', 'border-l-primary', 'border-r-on-primary-container', 'border-b-on-primary-container');
+                btn.classList.remove('bg-surface-dim', 'border-border-graphite');
+                btn.querySelector('div:first-child').classList.remove('text-outline');
+                btn.querySelector('div:first-child').classList.add('text-on-primary-container');
+                btn.querySelector('div:last-child').classList.add('text-on-primary-container');
+            });
+        });
+    </script>
+</body></html>

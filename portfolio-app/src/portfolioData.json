@@ -1,0 +1,312 @@
+{
+  "personal": {
+    "name": "Aryaman Pradhan",
+    "callsign": "ARYAMAN",
+    "title": "AI Strategist",
+    "headline": "If you do it every week, it shouldn't need you.",
+    "subheadline": "I write Python that takes over the repeating parts of a business — the research, the replies, the onboarding, the publishing — and hands the judgment calls back to a human.",
+    "tagline": "I build systems in Python that replace the manual work your team repeats every week — research, replies, onboarding, publishing — so they can focus on the decisions that actually need a human.",
+    "bio": "I work with marketing and creative agencies to turn their recurring operational work into software that runs itself. The builds are Python against real APIs — Notion, Gmail, Slack, Sheets — with language models handling the parts that need judgment, and human approval gates on anything that reaches a customer. No no-code platforms, no per-run billing, no vendor lock-in.",
+    "location": "India — Remote",
+    "availability": "AVAILABLE FOR WORK",
+    "focus": "Marketing & creative agencies",
+    "engagement": "Project-based, retainer preferred"
+  },
+  "contact": {
+    "email": "aryamanacepradhan@gmail.com",
+    "github": "github.com/aryaman",
+    "linkedin": "linkedin.com/in/aryaman"
+  },
+  "services": [
+    {
+      "name": "AI Agents & Assistants",
+      "desc": "Custom agents that research, draft, classify, and act — built directly on the Claude and OpenAI APIs."
+    },
+    {
+      "name": "Workflow Automation",
+      "desc": "End-to-end business workflows written in Python against real APIs — Notion, Gmail, Drive, Slack, Sheets."
+    },
+    {
+      "name": "AI Strategy Consulting",
+      "desc": "Scoping where AI actually pays off in a business, and where it quietly doesn't. Written specs before code."
+    },
+    {
+      "name": "Content & Marketing Automation",
+      "desc": "Research, drafting, and publishing pipelines with human approval gates so nothing ships unreviewed."
+    }
+  ],
+  "stack": [
+    { "category": "LANGUAGES", "items": ["Python", "JavaScript", "SQL", "Bash"] },
+    { "category": "AI / LLM", "items": ["Claude API", "OpenAI API", "DeepEval", "Prompt & Eval Design"] },
+    { "category": "RESEARCH / DATA", "items": ["Tavily", "Firecrawl", "SQLite", "PostgreSQL"] },
+    { "category": "PLATFORM APIS", "items": ["Notion API", "Gmail API", "Google Drive API", "Google Sheets API", "Slack API", "Twilio"] },
+    { "category": "BACKEND", "items": ["FastAPI", "Webhooks", "Cron Workers", "Render"] },
+    { "category": "FRONTEND", "items": ["React", "Vite", "Tailwind CSS"] }
+  ],
+  "principles": [
+    "Every AI component ships with an eval harness — structural checks and scored rubrics — so output quality is measured, not assumed.",
+    "Human approval gates on anything customer-facing. The model drafts; a person decides what goes out.",
+    "Every generated claim carries a source URL. If it can't be cited, it doesn't ship.",
+    "Built directly against APIs in Python — no no-code middleware, no per-run billing, no platform you don't own.",
+    "Scoped to fail visibly. A silent wrong answer is more expensive than a loud error.",
+    "One codebase per client, configured through environment — not forked, not rewritten, not wrapped in a platform."
+  ],
+  "projects": [
+    {
+      "codename": "AI ASSISTED ONBOARDING SYSTEM",
+      "name": "Agency Client Onboarding Automation",
+      "type": "Workflow Automation",
+      "status": "COMPLETE",
+      "date": "v1",
+      "brief": "Deal closed in Notion, fully provisioned client workspace. Zero manual steps.",
+      "objective": "Automates the first five steps of agency client onboarding: a Notion deal marked Won triggers client workspace creation, a welcome email, intake-form ingestion back into Notion, and generation of the onboarding checklist — with no manual setup in between.",
+      "tech": ["Python", "Notion API", "Gmail API", "Google Drive API"],
+      "facts": {
+        "tests": "153+ passing",
+        "budgetCeiling": "₹1,000",
+        "tooling": "Free / native only",
+        "manualSteps": "0"
+      },
+      "outcomes": [
+        "Deal-won to fully provisioned client workspace with no human touch",
+        "Built entirely on free-tier and native APIs to hold a hard budget ceiling",
+        "153+ tests covering the pipeline end to end"
+      ],
+      "loom": "https://www.loom.com/embed/5d53a2a00d4146828647144998e71586",
+      "workflow": [
+        {
+          "step": 1,
+          "title": "DEAL CLOSED",
+          "mode": "auto",
+          "items": ["Create client record", "Start onboarding workflow", "Notify internal team"]
+        },
+        {
+          "step": 2,
+          "title": "WELCOME & INFO COLLECTION",
+          "mode": "auto",
+          "items": ["Welcome email", "Intake form", "Contract (if applicable)", "Invoice / payment link", "Kickoff scheduling link"],
+          "receives": ["Business info & goals", "Brand assets", "Team contacts", "Technical requirements", "Integrations", "Communication prefs"]
+        },
+        {
+          "step": 3,
+          "title": "VALIDATION & DATA PREP",
+          "mode": "auto",
+          "items": ["Required fields", "Contract status", "Payment status", "Missing files", "Access credentials", "Duplicates"],
+          "note": "Auto-reminders sent until complete"
+        },
+        {
+          "step": 4,
+          "title": "HUMAN REVIEW",
+          "mode": "hybrid",
+          "items": ["Scope differs from proposal", "Unrealistic timeline", "Custom integrations", "High-value client", "Contract modifications", "Missing technical info"],
+          "note": "No risks → proceed. Risks → human review"
+        },
+        {
+          "step": 5,
+          "title": "WORKSPACE SETUP",
+          "mode": "auto",
+          "items": ["Notion client project", "Slack channel", "Internal task board", "Shared docs space", "Calendar event (kickoff)", "Team permissions"]
+        },
+        {
+          "step": 6,
+          "title": "AI PROJECT PREP",
+          "mode": "auto",
+          "items": ["Client summary", "Business overview", "Project brief", "Technical checklist", "Kickoff agenda", "Initial milestones"]
+        },
+        {
+          "step": 7,
+          "title": "KICKOFF MEETING",
+          "mode": "human",
+          "items": ["Confirm goals", "Review deliverables", "Validate timeline", "Establish communication", "Define success metrics"],
+          "note": "AI records, summarizes, assigns action items post-meeting"
+        }
+      ]
+    },
+    {
+      "codename": "SANDPIPER",
+      "name": "AI WhatsApp Hotel Receptionist",
+      "type": "AI Assistant",
+      "status": "IN BUILD",
+      "date": "2026",
+      "brief": "AI receptionist on WhatsApp — answers guests, books rooms, declines what it doesn't know.",
+      "objective": "An AI receptionist that handles hotel guests over WhatsApp — answering questions on amenities, policies, location, and cancellation, and booking rooms end-to-end against a property management system.",
+      "tech": ["Python", "FastAPI", "Claude API", "Twilio WhatsApp"],
+      "facts": {
+        "channel": "WhatsApp",
+        "booking": "End-to-end",
+        "scope": "Bounded FAQ domain",
+        "fabrication": "Declines, never invents"
+      },
+      "outcomes": [
+        "Books a real reservation, not just captures a lead",
+        "Refuses gracefully outside its known domain rather than inventing hotel policy",
+        "Conversation-only surface — no dashboard needed to run it"
+      ]
+    },
+    {
+      "codename": "CONTENT GENERATION SYSTEM",
+      "name": "Football Content Research Pipeline",
+      "type": "Client Engagement",
+      "status": "ACTIVE",
+      "date": "2026 — PRESENT",
+      "brief": "Automated research-to-script pipeline for a football creator. Two human gates, zero hosting.",
+      "objective": "An automated research-to-script pipeline for a short-form football content creator. Takes a client-curated queue of football legends, researches the best chronologically-fitting stories for each with sourced references, and produces a complete script — with two human approval gates handled entirely inside Notion.",
+      "tech": ["Python", "OpenAI API", "Tavily", "Notion API", "Render Cron", "DeepEval"],
+      "facts": {
+        "approvalGates": "2 (human)",
+        "cadence": "Mon & Thu",
+        "cronJobs": "4 independent",
+        "alwaysOnServers": "0"
+      },
+      "outcomes": [
+        "Approval happens in Notion via checkbox — no chat bot, no always-on host, no monthly hosting bill",
+        "Every story candidate and every researched fact carries a mandatory source URL",
+        "AI drafts one complete script; the human decides how to split it into episodes",
+        "Eval harness gates the research and script agents before anything ships"
+      ],
+      "workflow": [
+        {
+          "step": 1,
+          "title": "ADD PLAYER",
+          "mode": "human",
+          "items": ["Add player to the Player Queue", "One-time entry — never re-queued"]
+        },
+        {
+          "step": 2,
+          "title": "SCHEDULER PICKS OLDEST PLAYER",
+          "mode": "auto",
+          "items": ["Runs Monday & Thursday", "Picks the oldest un-researched player"]
+        },
+        {
+          "step": 3,
+          "title": "FIND STORY CANDIDATES",
+          "mode": "auto",
+          "items": ["AI finds 5–10 best story angles", "Iconic + personal moments", "Chronological fit considered", "Each candidate has a source URL"]
+        },
+        {
+          "step": 4,
+          "title": "STORY CANDIDATES IN NOTION",
+          "mode": "auto",
+          "items": ["Rows created in Story Candidates DB", "Story | Summary | Source URL", "Selected checkbox", "Feedback field"]
+        },
+        {
+          "step": 5,
+          "title": "GATE 1 — STORY APPROVAL",
+          "mode": "human",
+          "items": ["Review candidates in Notion", "Check ONE box to approve", "Optional note in Feedback"],
+          "note": "No notifications — you check Notion on your own schedule"
+        },
+        {
+          "step": 6,
+          "title": "APPROVAL DETECTION",
+          "mode": "auto",
+          "items": ["System checks periodically", "1 selected → Story Approved", "0 selected → Stale", "Multiple → Needs Fix"]
+        },
+        {
+          "step": 7,
+          "title": "DEEP RESEARCH",
+          "mode": "auto",
+          "items": ["Deep research on the approved story", "Timeline, quotes, context, stats", "Conflicting views included", "Every fact has a source URL"]
+        },
+        {
+          "step": 8,
+          "title": "SCRIPT GENERATION",
+          "mode": "auto",
+          "items": ["AI writes the ENTIRE story as one script", "Hook options", "Full narrative", "Format recommendation", "No splitting — one complete script"]
+        },
+        {
+          "step": 9,
+          "title": "GATE 2 — SCRIPT APPROVAL",
+          "mode": "human",
+          "items": ["Review the full script in Notion", "Check 'Script Approved'", "Optional note in Feedback"],
+          "note": "No notifications — you check Notion on your own schedule"
+        },
+        {
+          "step": 10,
+          "title": "APPROVAL DETECTION",
+          "mode": "auto",
+          "items": ["System checks periodically", "Approved → Ready to Produce", "Not approved → Stale"]
+        },
+        {
+          "step": 11,
+          "title": "READY TO PRODUCE",
+          "mode": "human",
+          "items": ["Split script across 2–4 video series", "Start production"]
+        }
+      ]
+    },
+    {
+      "codename": "SPEED-TO-LEAD",
+      "name": "Inbound Lead Response Service",
+      "type": "Product",
+      "status": "SHIPPED",
+      "date": "v1.1",
+      "brief": "Webhook fires, lead enriched, Slack pings, personalized reply sent — before competitors pick up.",
+      "objective": "A resellable lead-response service for small businesses. A web-form webhook fires, the lead's site is scraped for context, the team gets a Slack alert, and the lead gets a personalized reply by email — before a competitor answers.",
+      "tech": ["Python", "FastAPI", "Slack API", "Gmail SMTP", "SQLite", "PostgreSQL"],
+      "facts": {
+        "deployModel": "Clone & configure",
+        "config": "Fully env-driven",
+        "storage": "SQLite → Postgres",
+        "personalization": "LLM + template fallback"
+      },
+      "outcomes": [
+        "Every client-specific value lives in env — nothing hardcoded, so a new install is a config change",
+        "Background worker handles enrichment so the webhook always returns fast",
+        "Falls back to templates when no LLM is configured — the service never hard-depends on one"
+      ]
+    },
+    {
+      "codename": "COLD OUTREACH",
+      "name": "Prospect Research & Outreach Pipeline",
+      "type": "Workflow Automation",
+      "status": "RUNNING",
+      "date": "2026",
+      "brief": "Scrapes prospects, writes rule-constrained cold copy, tracks the full pipeline in Sheets.",
+      "objective": "An automated outreach pipeline that researches prospects from their own web presence, generates a personalized cold email per prospect against a locked copy format, and tracks the whole pipeline in Sheets.",
+      "tech": ["Python", "Firecrawl", "Claude API", "Gmail API", "Google Sheets API"],
+      "facts": {
+        "research": "Automated scrape",
+        "copy": "Rule-constrained",
+        "tracking": "Google Sheets",
+        "status": "In production use"
+      },
+      "outcomes": [
+        "Personalization comes from real scraped context, not merge-field templates",
+        "Copy rules enforced programmatically — length, formatting, and pitch structure",
+        "Runs as my own outreach engine, not a demo"
+      ]
+    },
+    {
+      "codename": "ARYAMAN_OS",
+      "name": "This Portfolio Terminal",
+      "type": "Frontend",
+      "status": "ACTIVE",
+      "date": "2026",
+      "brief": "This site. CRT terminal UI, interactive shell, every data point from one JSON file.",
+      "objective": "The site you are reading. A retro-industrial CRT terminal interface built as a single-page React app, with a boot sequence, an interactive shell, and every data point driven from one structured source file.",
+      "tech": ["React", "Vite", "Tailwind CSS", "React Router"],
+      "facts": {
+        "dataSource": "Single JSON file",
+        "pages": "3",
+        "shell": "Interactive",
+        "dependencies": "Minimal"
+      },
+      "outcomes": [
+        "All content driven from one structured data file — no copy duplicated across pages",
+        "Working command shell with real commands, not a scripted animation",
+        "Boot sequence, CRT scanlines, and bevelled panels built in CSS with no image assets"
+      ]
+    }
+  ],
+  "knowledgeBase": [
+    {
+      "name": "Business Master Hub",
+      "desc": "A 15-domain operating knowledge base — sales, marketing, negotiation, finance, strategy, systems thinking, and more."
+    },
+    {
+      "name": "Persistent AI Memory Vault",
+      "desc": "An Obsidian vault an AI assistant reads and writes across sessions, so project context and decisions survive between them."
+    }
+  ]
+}
