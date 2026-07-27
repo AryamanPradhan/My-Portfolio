@@ -39,7 +39,22 @@ function readBody(req) {
   }
 }
 
+/**
+ * Last line of defence. An uncaught throw in a serverless function returns an
+ * opaque platform 500 and can surface a stack trace, so nothing is allowed to
+ * escape — the caller gets the same generic message as any other failure.
+ */
 export default async function handler(req, res) {
+  try {
+    return await handleContact(req, res);
+  } catch (err) {
+    console.error('[contact] unhandled error:', err);
+    if (res.headersSent) return undefined;
+    return send(res, 500, { ok: false, error: GENERIC_ERROR });
+  }
+}
+
+async function handleContact(req, res) {
   if (req.method === 'OPTIONS') {
     res.setHeader('Allow', 'POST, OPTIONS');
     return res.status(204).end();

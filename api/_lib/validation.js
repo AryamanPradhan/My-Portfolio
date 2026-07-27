@@ -128,7 +128,13 @@ export function detectBot(body) {
   // that fills it is walking the DOM rather than reading the page.
   if (asString(body?.website).trim() !== '') return 'honeypot filled';
 
-  const elapsed = Number(body?.elapsedMs);
+  // Convert only from types that cannot run caller code. Number() on an
+  // arbitrary object invokes its valueOf/toString, which can throw — and a
+  // throw here is an unhandled 500 rather than a rejected submission.
+  const raw = body?.elapsedMs;
+  const elapsed = typeof raw === 'number' ? raw
+    : typeof raw === 'string' ? Number(raw)
+    : NaN;
   if (!Number.isFinite(elapsed) || elapsed < 0) return 'missing timing signal';
   if (elapsed < MIN_ELAPSED_MS) return `submitted in ${elapsed}ms`;
   if (elapsed > MAX_ELAPSED_MS) return 'stale form';

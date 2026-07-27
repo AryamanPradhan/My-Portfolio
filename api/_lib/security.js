@@ -76,16 +76,29 @@ export async function checkRateLimit(ip) {
   // Identify by IP. An unknown IP shares a single bucket, which is intentional:
   // if the platform ever stops giving us an IP, the whole endpoint throttles
   // rather than opening up.
-  const [burst, daily] = await Promise.all([
-    rl.burst.limit(ip),
-    rl.daily.limit(ip),
-  ]);
+  //
+  // Checked in sequence, not in parallel: consuming a daily token for a request
+  // the hourly window already refused would let rejected retries drain the
+  // daily budget, locking someone out for a day over one bad afternoon.
+  const burst = await rl.burst.limit(ip);
+  if (!burst.success) {
+    return {
+      configured: true,
+      allowed: false,
+      retryAfter: Math.max(1, Math.ceil(((burst.reset ?? 0) - Date.now()) / 1000)),
+    };
+  }
 
-  const blocked = !burst.success || !daily.success;
-  const reset = Math.max(burst.reset ?? 0, daily.reset ?? 0);
-  const retryAfter = blocked ? Math.max(1, Math.ceil((reset - Date.now()) / 1000)) : 0;
+  const daily = await rl.daily.limit(ip);
+  if (!daily.success) {
+    return {
+      configured: true,
+      allowed: false,
+      retryAfter: Math.max(1, Math.ceil(((daily.reset ?? 0) - Date.now()) / 1000)),
+    };
+  }
 
-  return { configured: true, allowed: !blocked, retryAfter };
+  return { configured: true, allowed: true, retryAfter: 0 };
 }
 
 /**

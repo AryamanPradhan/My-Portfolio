@@ -89,9 +89,12 @@ export default function Contact() {
     pushLog(`[TX] Encoding payload (${form.message.trim().length} chars)...`, '[TX] Transmitting...');
 
     try {
+      // Without a deadline a stalled connection leaves the form disabled and
+      // "TRANSMITTING..." forever, with no way back to the mailto fallback.
       const res = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        signal: AbortSignal.timeout(20000),
         body: JSON.stringify({
           ...form,
           website,
@@ -119,11 +122,13 @@ export default function Contact() {
       setStatus('error');
       setNotice(payload.error || 'Transmission failed.');
       pushLog(`[ERR] ${payload.error || 'Transmission failed.'}`);
-    } catch {
-      // Network-level failure: offline, blocked, or the function is down.
+    } catch (err) {
+      // Network-level failure: offline, blocked, timed out, or function down.
+      const timedOut = err?.name === 'TimeoutError' || err?.name === 'AbortError';
+      const msg = timedOut ? 'The server took too long to respond.' : 'Could not reach the server.';
       setStatus('error');
-      setNotice('Could not reach the server.');
-      pushLog('[ERR] Could not reach the server.', '[SYS] Fall back to your own mail client below.');
+      setNotice(msg);
+      pushLog(`[ERR] ${msg}`, '[SYS] Fall back to your own mail client below.');
     }
   };
 
