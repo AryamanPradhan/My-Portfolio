@@ -141,6 +141,97 @@
         "Books a real reservation, not just captures a lead",
         "Refuses gracefully outside its known domain rather than inventing hotel policy",
         "Conversation-only surface — no dashboard needed to run it"
+      ],
+      "workflow": [
+        {
+          "step": 1,
+          "title": "MESSAGE IN",
+          "mode": "auto",
+          "items": [
+            "Twilio delivers the WhatsApp message",
+            "FastAPI webhook accepts it",
+            "Match to guest and thread",
+            "Load conversation state"
+          ],
+          "note": "WhatsApp is the only surface — there is no dashboard"
+        },
+        {
+          "step": 2,
+          "title": "INTENT CLASSIFICATION",
+          "mode": "auto",
+          "items": [
+            "Amenities",
+            "Policies",
+            "Location & directions",
+            "Cancellation",
+            "Booking",
+            "Outside the domain"
+          ]
+        },
+        {
+          "step": 3,
+          "title": "GROUNDED ANSWER",
+          "mode": "auto",
+          "items": [
+            "Answer from the property's own facts",
+            "Stay inside the bounded FAQ domain",
+            "Keep it to what was actually asked",
+            "Carry the thread's context"
+          ],
+          "receives": [
+            "Amenity list",
+            "House policies",
+            "Location details",
+            "Cancellation terms"
+          ]
+        },
+        {
+          "step": 4,
+          "title": "SCOPE GATE",
+          "mode": "hybrid",
+          "items": [
+            "In domain → answer",
+            "Not in domain → say so plainly",
+            "Never invent hotel policy",
+            "Never guess a price or a rule"
+          ],
+          "note": "Declining is the correct answer, not a failure"
+        },
+        {
+          "step": 5,
+          "title": "BOOKING INTENT",
+          "mode": "auto",
+          "items": [
+            "Dates in and out",
+            "Number of guests",
+            "Room type",
+            "Confirm back before committing"
+          ]
+        },
+        {
+          "step": 6,
+          "title": "RESERVATION",
+          "mode": "auto",
+          "items": [
+            "Check availability in the PMS",
+            "Write the reservation",
+            "Return the confirmation to the guest",
+            "Record it against the thread"
+          ],
+          "note": "A real booking in the property management system, not a captured lead"
+        },
+        {
+          "step": 7,
+          "title": "STAFF HANDOFF",
+          "mode": "human",
+          "items": [
+            "Anything declined at the scope gate",
+            "Exceptions and special requests",
+            "Complaints",
+            "Guest asks for a person"
+          ],
+          "note": "The bot's limit is a routing rule, not a dead end"
+        }
       ]
     },
     {
