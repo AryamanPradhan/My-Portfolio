@@ -6,9 +6,14 @@ import { Ratelimit } from '@upstash/ratelimit';
 import { Redis } from '@upstash/redis';
 
 /**
- * Two windows stacked. The short one blunts a burst; the daily one stops a
- * patient attacker from trickling through the short window all day.
+ * Three windows stacked, narrowest first.
+ *
+ * The minute window only enforces spacing — on its own it would allow 1440
+ * sends a day, so it is a companion to the hourly and daily ceilings, never a
+ * replacement for them. The hourly window blunts a burst; the daily one stops a
+ * patient attacker from trickling through the shorter windows all day.
  */
+const MINUTE = { tokens: 1, window: '1 m' };
 const BURST = { tokens: 5, window: '1 h' };
 const DAILY = { tokens: 15, window: '24 h' };
 
@@ -30,6 +35,12 @@ function getLimiters() {
 
   const redis = Redis.fromEnv();
   limiters = {
+    minute: new Ratelimit({
+      redis,
+      limiter: Ratelimit.slidingWindow(MINUTE.tokens, MINUTE.window),
+      prefix: 'contact:minute',
+      analytics: false,
+    }),
     burst: new Ratelimit({
       redis,
       limiter: Ratelimit.slidingWindow(BURST.tokens, BURST.window),
@@ -77,25 +88,19 @@ export async function checkRateLimit(ip) {
   // if the platform ever stops giving us an IP, the whole endpoint throttles
   // rather than opening up.
   //
-  // Checked in sequence, not in parallel: consuming a daily token for a request
-  // the hourly window already refused would let rejected retries drain the
-  // daily budget, locking someone out for a day over one bad afternoon.
-  const burst = await rl.burst.limit(ip);
-  if (!burst.success) {
-    return {
-      configured: true,
-      allowed: false,
-      retryAfter: Math.max(1, Math.ceil(((burst.reset ?? 0) - Date.now()) / 1000)),
-    };
-  }
-
-  const daily = await rl.daily.limit(ip);
-  if (!daily.success) {
-    return {
-      configured: true,
-      allowed: false,
-      retryAfter: Math.max(1, Math.ceil(((daily.reset ?? 0) - Date.now()) / 1000)),
-    };
+  // Narrowest window first, and in sequence rather than in parallel. Consuming
+  // an hourly or daily token for a request the minute window already refused
+  // would let rejected retries drain the longer budgets, locking someone out
+  // for a day over one impatient afternoon.
+  for (const window of [rl.minute, rl.burst, rl.daily]) {
+    const result = await window.limit(ip);
+    if (!result.success) {
+      return {
+        configured: true,
+        allowed: false,
+        retryAfter: Math.max(1, Math.ceil(((result.reset ?? 0) - Date.now()) / 1000)),
+      };
+    }
   }
 
   return { configured: true, allowed: true, retryAfter: 0 };

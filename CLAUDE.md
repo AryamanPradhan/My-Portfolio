@@ -90,7 +90,7 @@ and emails the submission on. Checks run cheapest-first and each has a reason:
 |-------|-----------|
 | Same-origin check | The `Origin` header must match the host the request was addressed to (`x-forwarded-host`). Works on any domain with no config; `ALLOWED_ORIGINS` is an optional extra |
 | Body size cap | 16 KB, refused before parsing |
-| Rate limit | 5/hour and 15/day per IP via Upstash. **Fails closed** — if Upstash is unconfigured the endpoint 503s rather than running unmetered |
+| Rate limit | 1/minute, 5/hour and 15/day per IP via Upstash, checked narrowest window first so a refused request does not spend a longer window's budget. **Fails closed** — if Upstash is unconfigured the endpoint 503s rather than running unmetered |
 | Honeypot | `website` field, hidden off-screen; filled means bot |
 | Timing | Rejects submissions under 3s or over 24h after page load |
 | Validation | Length caps, email shape, disposable-domain blocklist, control-char and CRLF stripping (SMTP header injection) |

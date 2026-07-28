@@ -95,9 +95,14 @@ async function handleContact(req, res) {
 
   if (!limit.allowed) {
     res.setHeader('Retry-After', String(limit.retryAfter));
+    // A short wait means the per-minute window tripped, which happens after a
+    // single send — telling that person they have "sent a few already" would
+    // just be wrong. A long wait means an hourly or daily ceiling.
     return send(res, 429, {
       ok: false,
-      error: "You've sent a few already — give it a little while, or email me directly.",
+      error: limit.retryAfter <= 120
+        ? 'That one is on its way — give it a minute before sending another.'
+        : "You've sent a few already — try again later, or email me directly.",
     });
   }
 
