@@ -15,7 +15,10 @@ function Node({ step, mode, isActive, onClick }) {
     >
       <div className={`node-id ${m.idColor}`}>N-{String(step.step).padStart(2, '0')}</div>
 
-      <div className="flex items-center justify-between mb-2">
+      {/* Wraps rather than overflowing: at phone widths the grid leaves these
+          nodes narrow enough that a 24px icon plus the HUMAN badge no longer
+          fit on one line. */}
+      <div className="flex items-center justify-between gap-1 mb-2 flex-wrap">
         <span className={`material-symbols-outlined text-2xl ${m.color}`} style={{ fontVariationSettings: "'FILL' 0" }}>
           {m.icon}
         </span>
@@ -24,7 +27,10 @@ function Node({ step, mode, isActive, onClick }) {
         </span>
       </div>
 
-      <div className="font-mono-data text-on-surface text-[14px] font-semibold leading-tight mb-1">
+      {/* break-words, not truncate: a step title is the one thing in the node
+          that must stay readable, and single words like CLASSIFICATION are
+          wider than the node at 390px. */}
+      <div className="font-mono-data text-on-surface text-[14px] font-semibold leading-tight mb-1 break-words">
         {step.title}
       </div>
       <div className="font-mono-data text-outline text-[12px] mt-auto">
@@ -160,7 +166,7 @@ export default function WorkflowDiagram({ steps, codename }) {
         <Connectors containerRef={gridRef} steps={steps} />
 
         {/* Row 1 */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 relative z-10">
+        <div className="blueprint-grid grid grid-cols-2 md:grid-cols-4 gap-3 relative z-10">
           {topRow.map((step, i) => (
             <div key={step.step} data-node>
               <Node
@@ -175,7 +181,7 @@ export default function WorkflowDiagram({ steps, codename }) {
 
         {/* Row 2 */}
         {bottomRow.length > 0 && (
-          <div className={`grid gap-3 mt-3 relative z-10`} style={{ gridTemplateColumns: `repeat(${Math.min(bottomRow.length, 4)}, minmax(0, 1fr))` }}>
+          <div className="blueprint-grid grid gap-3 mt-3 relative z-10" style={{ gridTemplateColumns: `repeat(${Math.min(bottomRow.length, 4)}, minmax(0, 1fr))` }}>
             {bottomRow.map((step, i) => {
               const globalIdx = topRow.length + i;
               return (

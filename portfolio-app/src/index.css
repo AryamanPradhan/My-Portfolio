@@ -299,6 +299,16 @@ textarea:focus {
   to { stroke-dashoffset: -20; }
 }
 
+/* Below ~380px, two workflow nodes side by side leave roughly 76px of usable
+   width inside each card — narrower than the mode icon and its badge together.
+   Stack them instead. !important is required because the second row sets
+   grid-template-columns inline, which no class can override. */
+@media (max-width: 379px) {
+  .blueprint-grid {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+}
+
 .node-id {
   position: absolute;
   top: -8px;

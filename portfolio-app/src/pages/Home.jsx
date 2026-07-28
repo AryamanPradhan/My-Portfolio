@@ -253,7 +253,7 @@ export default function Home() {
                     <span className="material-symbols-outlined text-primary-container text-lg flex-shrink-0">star</span>
                     <div className="min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className="font-mono-data text-primary text-[16px] font-semibold">{op.codename}</span>
+                        <span className="font-mono-data text-primary text-[16px] font-semibold min-w-0 break-words">{op.codename}</span>
                         <span className={`font-label-caps text-[12px] px-2 py-0.5 ${STATUS_STYLES[op.status] || STATUS_STYLES.COMPLETE}`}>
                           {op.status}
                         </span>
@@ -300,7 +300,7 @@ export default function Home() {
                     <span className="material-symbols-outlined text-primary-container text-lg flex-shrink-0">folder_special</span>
                     <div className="min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className="font-mono-data text-primary text-[16px] font-semibold">{op.codename}</span>
+                        <span className="font-mono-data text-primary text-[16px] font-semibold min-w-0 break-words">{op.codename}</span>
                         <span className={`font-label-caps text-[12px] px-2 py-0.5 ${STATUS_STYLES[op.status] || STATUS_STYLES.COMPLETE}`}>
                           {op.status}
                         </span>
@@ -466,9 +466,14 @@ export default function Home() {
                   <div className="font-label-caps text-outline text-[12px] mb-2">KEY FACTS</div>
                   <div className="space-y-1.5">
                     {Object.entries(openProject.facts).map(([key, val]) => (
+                      // The value is the variable-length half, so it is the one
+                      // allowed to wrap. It previously carried flex-shrink-0,
+                      // which made long values like "Declines, never invents"
+                      // push straight out of the panel in the narrow 3-column
+                      // layout.
                       <div key={key} className="flex justify-between gap-2 font-mono-data text-[13px]">
-                        <span className="text-on-surface-variant">{labelFor(key)}</span>
-                        <span className="text-primary text-right flex-shrink-0">{val}</span>
+                        <span className="text-on-surface-variant flex-shrink-0">{labelFor(key)}</span>
+                        <span className="text-primary text-right min-w-0 break-words">{val}</span>
                       </div>
                     ))}
                   </div>

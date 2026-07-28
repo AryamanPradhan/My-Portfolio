@@ -69,7 +69,10 @@ export default function Layout() {
             to="/contact"
             className="bevel-outset bg-primary text-on-primary px-3 lg:px-4 py-1.5 font-label-caps font-bold text-[13px] lg:text-[14px] hover:bg-primary-container active:translate-y-0.5 transition-all whitespace-nowrap"
           >
-            START A PROJECT
+            {/* The full label plus the wordmark overruns a 320px viewport. The
+                sidebar and hero still carry the full call to action. */}
+            <span className="hidden min-[380px]:inline">START A PROJECT</span>
+            <span className="min-[380px]:hidden">CONTACT</span>
           </Link>
         </div>
       </nav>
