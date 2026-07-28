@@ -95,7 +95,11 @@ export default function Home() {
   return (
     <div className="h-full grid grid-cols-1 lg:grid-cols-12 gap-4 page-enter">
 
-      <section className="lg:col-span-9 h-full flex flex-col gap-4 overflow-y-auto pr-0 lg:pr-2">
+      {/* [&>*]:shrink-0 is load-bearing. This is a fixed-height flex column, so
+          its children default to flex-shrink:1 and get compressed to fit rather
+          than overflowing into the scroll. The hero carries overflow-hidden, so
+          it was compressed to zero height and silently disappeared. */}
+      <section className="lg:col-span-9 h-full flex flex-col gap-4 overflow-y-auto pr-0 lg:pr-2 [&>*]:shrink-0">
 
         {/* Hero */}
         <div className="bevel-outset bg-surface-dim relative overflow-hidden">
