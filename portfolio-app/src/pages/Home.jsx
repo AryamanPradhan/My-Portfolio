@@ -5,6 +5,7 @@ import InteractiveTerminal from '../components/InteractiveTerminal';
 import CtaBand from '../components/CtaBand';
 import WorkflowDiagram from '../components/WorkflowDiagram';
 import data from '../portfolioData.json';
+import { TECH_ICONS } from '../techIcons';
 
 const { personal, contact, services, stack, projects } = data;
 
@@ -176,7 +177,10 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 lg:gap-4">
             {services.map(service => (
               <div key={service.name} className="bevel-inset bg-background-matte/60 p-4">
-                <div className="font-label-caps text-label-caps text-primary-container mb-1.5">{service.name}</div>
+                {/* No text-label-caps here: that token sets its own font-size
+                    and is emitted after arbitrary values, so it would override
+                    the 18px and leave the heading smaller than its own body. */}
+                <div className="font-label-caps text-primary-container text-[18px] font-semibold leading-snug mb-2">{service.name}</div>
                 <div className="font-body-base text-on-surface-variant text-[15px] leading-relaxed">{service.desc}</div>
               </div>
             ))}
@@ -196,12 +200,32 @@ export default function Home() {
             {stack.map(group => (
               <div key={group.category} className="bevel-inset bg-background-matte/60 p-3">
                 <div className="font-label-caps text-primary-container text-[13px] mb-2">{group.category}</div>
-                <div className="flex flex-wrap gap-1">
-                  {group.items.map(item => (
-                    <span key={item} className="bg-surface-container-lowest text-on-surface-variant font-mono-data text-[12px] px-1.5 py-0.5 border border-border-graphite/30">
-                      {item}
-                    </span>
-                  ))}
+                <div className="flex flex-wrap gap-1.5">
+                  {group.items.map(item => {
+                    const icon = TECH_ICONS[item];
+                    return (
+                      <span
+                        key={item}
+                        className="inline-flex items-center gap-1.5 bg-surface-container-lowest text-on-surface-variant font-mono-data text-[13px] px-2 py-1 border border-border-graphite/30"
+                      >
+                        {/* Logos inherit currentColor rather than their brand
+                            hex, so the chips stay inside the amber palette. The
+                            official colour is kept in techIcons.js if that
+                            should ever change. */}
+                        {icon?.type === 'brand' && (
+                          <svg viewBox="0 0 24 24" aria-hidden="true" className="w-4 h-4 flex-shrink-0 fill-current text-primary-container">
+                            <path d={icon.path} />
+                          </svg>
+                        )}
+                        {icon?.type === 'symbol' && (
+                          <span className="material-symbols-outlined text-primary-container flex-shrink-0 text-[16px] leading-none" aria-hidden="true">
+                            {icon.name}
+                          </span>
+                        )}
+                        {item}
+                      </span>
+                    );
+                  })}
                 </div>
               </div>
             ))}
