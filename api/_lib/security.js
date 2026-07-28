@@ -2,59 +2,49 @@
  * Transport-level defences: who is calling, from where, and how often.
  */
 
-import { Ratelimit } from '@upstash/ratelimit';
-import { Redis } from '@upstash/redis';
-
 /**
- * Three windows stacked, narrowest first.
+ * Three sliding windows stacked, narrowest first.
  *
  * The minute window only enforces spacing — on its own it would allow 1440
  * sends a day, so it is a companion to the hourly and daily ceilings, never a
  * replacement for them. The hourly window blunts a burst; the daily one stops a
- * patient attacker from trickling through the shorter windows all day.
+ * patient sender trickling through the shorter windows all day.
  */
-const MINUTE = { tokens: 1, window: '1 m' };
-const BURST = { tokens: 5, window: '1 h' };
-const DAILY = { tokens: 15, window: '24 h' };
+const WINDOWS = [
+  { tokens: 1, ms: 60_000 },
+  { tokens: 5, ms: 60 * 60_000 },
+  { tokens: 15, ms: 24 * 60 * 60_000 },
+];
 
-let limiters = null;
+const LONGEST_MS = Math.max(...WINDOWS.map(w => w.ms));
 
 /**
- * Build the limiters once per warm instance.
+ * Counters live in the instance's memory, not in Redis.
  *
- * Returns null when Upstash is not configured. Callers must treat that as a
- * hard failure rather than an open door — an unmetered contact endpoint is a
- * spam relay, and the browser falls back to mailto so no enquiry is lost.
+ * Be honest about what that buys. A serverless instance is not a shared,
+ * durable store: each one keeps its own map, Vercel may run several at once,
+ * and a cold start wipes the lot. So these limits hold against an impatient
+ * visitor and against casual scripted abuse hitting a warm instance, and they
+ * do not hold against someone patient enough to wait out a cold start or lucky
+ * enough to be balanced onto a fresh instance.
+ *
+ * That is the accepted trade for having no external dependency. The honeypot,
+ * timing gate, origin check and validation all still apply, and none of them
+ * cap volume — this is the only thing that does.
+ *
+ * ip -> ascending array of hit timestamps in ms
  */
-function getLimiters() {
-  if (limiters !== null) return limiters;
+const hits = new Map();
 
-  if (!process.env.UPSTASH_REDIS_REST_URL || !process.env.UPSTASH_REDIS_REST_TOKEN) {
-    return null;
+/** Stop a long-lived warm instance accumulating IPs forever. */
+const MAX_TRACKED_IPS = 5000;
+
+function sweep(now) {
+  for (const [ip, times] of hits) {
+    const live = times.filter(t => now - t < LONGEST_MS);
+    if (live.length === 0) hits.delete(ip);
+    else hits.set(ip, live);
   }
-
-  const redis = Redis.fromEnv();
-  limiters = {
-    minute: new Ratelimit({
-      redis,
-      limiter: Ratelimit.slidingWindow(MINUTE.tokens, MINUTE.window),
-      prefix: 'contact:minute',
-      analytics: false,
-    }),
-    burst: new Ratelimit({
-      redis,
-      limiter: Ratelimit.slidingWindow(BURST.tokens, BURST.window),
-      prefix: 'contact:burst',
-      analytics: false,
-    }),
-    daily: new Ratelimit({
-      redis,
-      limiter: Ratelimit.slidingWindow(DAILY.tokens, DAILY.window),
-      prefix: 'contact:daily',
-      analytics: false,
-    }),
-  };
-  return limiters;
 }
 
 /**
@@ -78,32 +68,36 @@ export function getClientIp(req) {
 }
 
 /**
- * @returns {{ configured: boolean, allowed: boolean, retryAfter: number }}
+ * Identify by IP. An unknown IP shares a single bucket, which is intentional:
+ * if the platform ever stops giving us one, the whole endpoint throttles rather
+ * than opening up.
+ *
+ * @returns {{ allowed: boolean, retryAfter: number }}
  */
-export async function checkRateLimit(ip) {
-  const rl = getLimiters();
-  if (!rl) return { configured: false, allowed: false, retryAfter: 0 };
+export function checkRateLimit(ip) {
+  const now = Date.now();
 
-  // Identify by IP. An unknown IP shares a single bucket, which is intentional:
-  // if the platform ever stops giving us an IP, the whole endpoint throttles
-  // rather than opening up.
-  //
-  // Narrowest window first, and in sequence rather than in parallel. Consuming
-  // an hourly or daily token for a request the minute window already refused
-  // would let rejected retries drain the longer budgets, locking someone out
-  // for a day over one impatient afternoon.
-  for (const window of [rl.minute, rl.burst, rl.daily]) {
-    const result = await window.limit(ip);
-    if (!result.success) {
+  if (hits.size > MAX_TRACKED_IPS) sweep(now);
+
+  const times = (hits.get(ip) || []).filter(t => now - t < LONGEST_MS);
+
+  // Narrowest window first. A refused request is not recorded at all, so
+  // retrying against a closed minute window cannot quietly drain the hourly or
+  // daily budget and lock someone out for a day over one impatient afternoon.
+  for (const w of WINDOWS) {
+    const inWindow = times.filter(t => now - t < w.ms);
+    if (inWindow.length >= w.tokens) {
+      const oldest = inWindow[0];
       return {
-        configured: true,
         allowed: false,
-        retryAfter: Math.max(1, Math.ceil(((result.reset ?? 0) - Date.now()) / 1000)),
+        retryAfter: Math.max(1, Math.ceil((oldest + w.ms - now) / 1000)),
       };
     }
   }
 
-  return { configured: true, allowed: true, retryAfter: 0 };
+  times.push(now);
+  hits.set(ip, times);
+  return { allowed: true, retryAfter: 0 };
 }
 
 /**

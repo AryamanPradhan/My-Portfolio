@@ -14,7 +14,7 @@ Personal portfolio site themed as a retro-industrial "classified intelligence do
 - **Tailwind CSS 3** with class-based dark mode (permanently dark via `<body class="dark">`)
 - **TypeScript** installed for type-checking only (`tsc && vite build`); all source files are `.jsx`, not `.tsx`
 - **Google Fonts** loaded via CDN in index.html: IBM Plex Mono and IBM Plex Sans, plus Material Symbols Outlined icons
-- **Vercel serverless functions** (Node, ESM) in `api/` for the contact form — Resend for delivery, Upstash Redis for rate limiting
+- **Vercel serverless functions** (Node, ESM) in `api/` for the contact form — Resend for delivery; rate limiting is in-process with no external store
 
 ## Commands
 
@@ -50,6 +50,8 @@ portfolio-app/           # The React application (Vercel builds this)
     portfolioData.json   # Site content: personal, contact, services, projects
     pages/               # Home.jsx, About.jsx, Contact.jsx
     components/          # BootScreen, CtaBand, DecryptText, InteractiveTerminal, WorkflowDiagram
+    lib/
+      sound.js           # Web Audio UI beeps + the global click/hover delegation
     assets/              # Static images (hero.png, SVGs)
   public/
     icons.svg            # SVG sprite sheet (social icons: bluesky, discord, github, x)
@@ -58,7 +60,7 @@ api/                     # Vercel serverless functions (root package.json owns t
   contact.js             # POST /api/contact — the only endpoint
   _lib/                  # Underscore prefix keeps these out of the route table
     validation.js        # Field validation, sanitisation, bot heuristics
-    security.js          # Origin allowlist, client IP, Upstash rate limiters
+    security.js          # Same-origin check, client IP, in-memory rate limiter
     mail.js              # Resend delivery
 
 vercel.json              # Build commands, SPA rewrites, asset caching
@@ -90,7 +92,7 @@ and emails the submission on. Checks run cheapest-first and each has a reason:
 |-------|-----------|
 | Same-origin check | The `Origin` header must match the host the request was addressed to (`x-forwarded-host`). Works on any domain with no config; `ALLOWED_ORIGINS` is an optional extra |
 | Body size cap | 16 KB, refused before parsing |
-| Rate limit | 1/minute, 5/hour and 15/day per IP via Upstash, checked narrowest window first so a refused request does not spend a longer window's budget. **Fails closed** — if Upstash is unconfigured the endpoint 503s rather than running unmetered |
+| Rate limit | 1/minute, 5/hour and 15/day per IP, counted in the function's own memory. Narrowest window first, and a refused request is not recorded, so retries cannot drain a longer window's budget. **Per-instance and lost on cold start** — this stops impatient visitors and casual scripted abuse, not a patient attacker |
 | Honeypot | `website` field, hidden off-screen; filled means bot |
 | Timing | Rejects submissions under 3s or over 24h after page load |
 | Validation | Length caps, email shape, disposable-domain blocklist, control-char and CRLF stripping (SMTP header injection) |
@@ -119,3 +121,22 @@ Custom CSS classes used throughout the JSX (defined in `index.css` or needing to
 - **One network call in the whole app**: the contact form's POST. Everything else is static content from `portfolioData.json` or hardcoded in JSX
 - **The contact form degrades to `mailto:`** on any API failure, so a broken or unconfigured backend never costs an enquiry. Preserve that fallback when touching `Contact.jsx`
 - **Client-side validation is a courtesy, not a control** — `api/_lib/validation.js` is the authority. The two sets of limits are kept in sync by hand
+
+## UI Sound
+
+`src/lib/sound.js` synthesises every beep with the Web Audio API — no audio
+files, so the "one network call" rule above still holds. `useUiSounds()` is
+mounted once in `App.jsx` and delegates from `document`, so any
+`a[href]`, `button`, `[role="button"]`, `input[type=submit]`, `summary`, or
+`.sound-click` element beeps on press and ticks on mouse hover without wiring
+up a handler. Add `data-no-sound` to an element (or an ancestor) to opt out.
+
+Call `play('name')` from `sound.js` for the non-generic cues — `success`,
+`error`, `key`, `toggle` — as `Contact.jsx` and `InteractiveTerminal.jsx` do.
+Sound is **on by default**, muteable from the speaker control in the top nav,
+and the choice persists in `localStorage` under `aryaman-os-sound`. To ship it
+muted by default, flip the comparison in `readPreference()`.
+
+The AudioContext is built lazily on the first sound, never at import: browsers
+suspend a context created outside a user gesture. Everything is wrapped so a
+blocked or missing AudioContext silently no-ops rather than breaking a click.

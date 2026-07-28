@@ -78,20 +78,9 @@ async function handleContact(req, res) {
 
   const ip = getClientIp(req);
 
-  let limit;
-  try {
-    limit = await checkRateLimit(ip);
-  } catch (err) {
-    console.error('[contact] rate limit backend failed:', err);
-    return send(res, 503, { ok: false, error: GENERIC_ERROR });
-  }
-
-  // Fail closed. An unmetered contact endpoint is a spam relay, and the form
-  // falls back to mailto on any error, so no genuine enquiry is lost.
-  if (!limit.configured) {
-    console.error('[contact] Upstash env vars missing — refusing to accept submissions.');
-    return send(res, 503, { ok: false, error: GENERIC_ERROR });
-  }
+  // In-process now, so there is no backend to fail and nothing to fail closed
+  // against. The outer handler still catches anything unexpected.
+  const limit = checkRateLimit(ip);
 
   if (!limit.allowed) {
     res.setHeader('Retry-After', String(limit.retryAfter));
