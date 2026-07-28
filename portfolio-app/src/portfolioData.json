@@ -275,6 +275,97 @@
         "Personalization comes from real scraped context, not merge-field templates",
         "Copy rules enforced programmatically — length, formatting, and pitch structure",
         "Runs as my own outreach engine, not a demo"
+      ],
+      "workflow": [
+        {
+          "step": 1,
+          "title": "PROSPECT INTAKE",
+          "mode": "auto",
+          "items": [
+            "Read prospect list from Sheets",
+            "Normalise company name and domain",
+            "Drop rows already contacted",
+            "Queue the remainder for research"
+          ],
+          "note": "The sheet is the single source of truth for pipeline state"
+        },
+        {
+          "step": 2,
+          "title": "WEB RESEARCH",
+          "mode": "auto",
+          "items": [
+            "Crawl the prospect's own site",
+            "Capture services and positioning",
+            "Capture recent work and posts",
+            "Store raw context per prospect"
+          ],
+          "receives": [
+            "Homepage & services pages",
+            "About & team pages",
+            "Case studies",
+            "Public posts"
+          ]
+        },
+        {
+          "step": 3,
+          "title": "CONTEXT EXTRACTION",
+          "mode": "auto",
+          "items": [
+            "Summarise what the business actually does",
+            "Identify the work they repeat by hand",
+            "Pull one specific, citable detail",
+            "Score whether there is enough signal"
+          ],
+          "note": "Too little context → skipped, not guessed at"
+        },
+        {
+          "step": 4,
+          "title": "COPY GENERATION",
+          "mode": "auto",
+          "items": [
+            "Draft against a locked copy format",
+            "Open on the prospect's own detail",
+            "Tie it to one concrete automation",
+            "Single ask, no attachments"
+          ]
+        },
+        {
+          "step": 5,
+          "title": "RULE VALIDATION",
+          "mode": "auto",
+          "items": [
+            "Length ceiling",
+            "Formatting constraints",
+            "Pitch structure",
+            "Personalisation actually present",
+            "No claim without a source"
+          ],
+          "note": "Fails the rules → regenerated, never sent as-is"
+        },
+        {
+          "step": 6,
+          "title": "HUMAN REVIEW",
+          "mode": "human",
+          "items": [
+            "Read the drafted email",
+            "Verify the personalisation is true",
+            "Approve, edit, or reject",
+            "Rejections feed back into the rules"
+          ],
+          "note": "Nothing reaches a prospect without a person approving it"
+        },
+        {
+          "step": 7,
+          "title": "SEND & TRACK",
+          "mode": "auto",
+          "items": [
+            "Send via Gmail",
+            "Write sent state back to Sheets",
+            "Record timestamp and copy version",
+            "Flag replies for follow-up"
+          ],
+          "note": "Whole pipeline readable in one sheet"
+        }
       ]
     },
     {
