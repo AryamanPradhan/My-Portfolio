@@ -151,7 +151,10 @@ export default function Layout() {
         </div>
 
         <div className="p-4 border-t-2 border-border-graphite">
-          <div className="font-mono-data text-mono-data text-outline leading-relaxed">
+          {/* 13px, not the 14px mono-data token: the longest line is 23 mono
+              characters and the rail leaves 192px, which 14px overruns by a
+              hair and wraps to an orphaned word. */}
+          <div className="font-mono-data text-outline text-[13px] leading-relaxed">
             <div>STACK: PYTHON / FASTAPI</div>
             <div>AI: CLAUDE + OPENAI API</div>
             <div className="text-primary-container mt-1">THIS SITE: REACT + VITE</div>
