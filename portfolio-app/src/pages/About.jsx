@@ -3,7 +3,7 @@ import DecryptText from '../components/DecryptText';
 import CtaBand from '../components/CtaBand';
 import data from '../portfolioData.json';
 
-const { personal, contact, principles, knowledgeBase, projects } = data;
+const { personal, contact, principles, projects } = data;
 
 export default function About() {
   const [revealed, setRevealed] = useState(new Set());
@@ -104,8 +104,8 @@ export default function About() {
             <div className="font-mono-data text-on-surface-variant text-[16px] leading-loose">
               <p className="mb-3">
                 Most automation work I see is assembled from {reveal('r1', 'no-code platforms billed per task run')}, which
-                looks fast until the workflow needs real error handling. Everything I ship is {reveal('r2', 'hand-written Python calling APIs directly')} —
-                slower to start, far cheaper and more controllable once it is running unattended.
+                looks fast until the workflow needs real error handling. Everything I ship is {reveal('r2', 'hand-written Python calling APIs directly')}.
+                Slower to start, far cheaper and more controllable once it is running unattended.
               </p>
               <p className="mb-3">
                 The failure mode I design against hardest is {reveal('r3', 'an AI system that confidently invents facts')}. So
@@ -114,11 +114,11 @@ export default function About() {
               </p>
               <p>
                 On one client build I dropped an entire chat-bot approval layer late in design because a
-                simpler {reveal('r6', 'checkbox inside the tool the client already opens daily')} did the same job — and removed
+                simpler {reveal('r6', 'checkbox inside the tool the client already opens daily')} did the same job and removed
                 the always-on server it would have required.
               </p>
               <div className="text-outline text-[13px] mt-4 italic">
-                [ {revealed.size} of 6 revealed — click any highlighted block ]
+                [ {revealed.size} of 6 revealed // click any highlighted block ]
               </div>
             </div>
           </div>
@@ -143,20 +143,8 @@ export default function About() {
                   <div className="font-mono-data text-primary-container text-[14px]">{p.codename}</div>
                   <div className="flex justify-between mt-1 gap-2">
                     <span className="font-status-tiny text-outline text-[12px] truncate">{p.type}</span>
-                    <span className="font-status-tiny text-led-green text-[12px] flex-shrink-0">{p.status}</span>
+                    <span className={`font-status-tiny text-[12px] flex-shrink-0 ${p.status === 'SHIPPED' ? 'text-led-green' : p.status === 'IN BUILD' ? 'text-primary' : 'text-outline'}`}>{p.status}</span>
                   </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="bevel-outset bg-surface-container-high p-4">
-            <div className="font-label-caps text-label-caps text-outline mb-3">KNOWLEDGE BASE</div>
-            <div className="space-y-3">
-              {knowledgeBase.map(kb => (
-                <div key={kb.name}>
-                  <div className="font-mono-data text-primary text-[14px] mb-0.5">{kb.name}</div>
-                  <p className="font-body-base text-on-surface-variant text-[15px] leading-relaxed">{kb.desc}</p>
                 </div>
               ))}
             </div>

@@ -50,8 +50,6 @@ portfolio-app/           # The React application (Vercel builds this)
     portfolioData.json   # Site content: personal, contact, services, projects
     pages/               # Home.jsx, About.jsx, Contact.jsx
     components/          # BootScreen, CtaBand, DecryptText, InteractiveTerminal, WorkflowDiagram
-    lib/
-      sound.js           # Web Audio UI beeps + the global click/hover delegation
     assets/              # Static images (hero.png, SVGs)
   public/
     icons.svg            # SVG sprite sheet (social icons: bluesky, discord, github, x)
@@ -121,22 +119,4 @@ Custom CSS classes used throughout the JSX (defined in `index.css` or needing to
 - **One network call in the whole app**: the contact form's POST. Everything else is static content from `portfolioData.json` or hardcoded in JSX
 - **The contact form degrades to `mailto:`** on any API failure, so a broken or unconfigured backend never costs an enquiry. Preserve that fallback when touching `Contact.jsx`
 - **Client-side validation is a courtesy, not a control** — `api/_lib/validation.js` is the authority. The two sets of limits are kept in sync by hand
-
-## UI Sound
-
-`src/lib/sound.js` synthesises every beep with the Web Audio API — no audio
-files, so the "one network call" rule above still holds. `useUiSounds()` is
-mounted once in `App.jsx` and delegates from `document`, so any
-`a[href]`, `button`, `[role="button"]`, `input[type=submit]`, `summary`, or
-`.sound-click` element beeps on press and ticks on mouse hover without wiring
-up a handler. Add `data-no-sound` to an element (or an ancestor) to opt out.
-
-Call `play('name')` from `sound.js` for the non-generic cues — `success`,
-`error`, `key`, `toggle` — as `Contact.jsx` and `InteractiveTerminal.jsx` do.
-Sound is **on by default**, muteable from the speaker control in the top nav,
-and the choice persists in `localStorage` under `aryaman-os-sound`. To ship it
-muted by default, flip the comparison in `readPreference()`.
-
-The AudioContext is built lazily on the first sound, never at import: browsers
-suspend a context created outside a user gesture. Everything is wrapped so a
-blocked or missing AudioContext silently no-ops rather than breaking a click.
+- **The site is silent** — there is no audio anywhere, by choice

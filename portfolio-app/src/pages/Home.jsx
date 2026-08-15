@@ -10,11 +10,9 @@ import { TECH_ICONS } from '../techIcons';
 const { personal, contact, services, stack, projects } = data;
 
 const STATUS_STYLES = {
-  ACTIVE: 'text-led-green bg-led-green/10 border border-led-green/30',
-  RUNNING: 'text-led-green bg-led-green/10 border border-led-green/30',
+  SHIPPED: 'text-led-green bg-led-green/10 border border-led-green/30',
   'IN BUILD': 'text-primary bg-primary/10 border border-primary/30',
-  SHIPPED: 'text-primary-container bg-primary-container/10 border border-primary-container/30',
-  COMPLETE: 'text-outline bg-surface-container-low border border-border-graphite/30',
+  INTERNAL: 'text-outline bg-surface-container-low border border-border-graphite/30',
 };
 
 const FACT_LABELS = {
@@ -78,7 +76,7 @@ export default function Home() {
     }
   }, [openProject]);
 
-  const activeCount = projects.filter(p => ['ACTIVE', 'RUNNING', 'IN BUILD'].includes(p.status)).length;
+  const activeCount = projects.filter(p => ['SHIPPED', 'IN BUILD'].includes(p.status)).length;
 
   const SPOTLIGHT_CODENAMES = ['AI ASSISTED ONBOARDING SYSTEM', 'SANDPIPER'];
   const spotlightProjects = projects.filter(p => SPOTLIGHT_CODENAMES.includes(p.codename));
@@ -254,7 +252,7 @@ export default function Home() {
                     <div className="min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
                         <span className="font-mono-data text-primary text-[16px] font-semibold min-w-0 break-words">{op.codename}</span>
-                        <span className={`font-label-caps text-[12px] px-2 py-0.5 ${STATUS_STYLES[op.status] || STATUS_STYLES.COMPLETE}`}>
+                        <span className={`font-label-caps text-[12px] px-2 py-0.5 ${STATUS_STYLES[op.status] || STATUS_STYLES.INTERNAL}`}>
                           {op.status}
                         </span>
                         <span className="font-label-caps text-[12px] px-2 py-0.5 text-outline bg-surface-container-low border border-border-graphite/30 hidden sm:inline">
@@ -301,7 +299,7 @@ export default function Home() {
                     <div className="min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
                         <span className="font-mono-data text-primary text-[16px] font-semibold min-w-0 break-words">{op.codename}</span>
-                        <span className={`font-label-caps text-[12px] px-2 py-0.5 ${STATUS_STYLES[op.status] || STATUS_STYLES.COMPLETE}`}>
+                        <span className={`font-label-caps text-[12px] px-2 py-0.5 ${STATUS_STYLES[op.status] || STATUS_STYLES.INTERNAL}`}>
                           {op.status}
                         </span>
                         <span className="font-label-caps text-[12px] px-2 py-0.5 text-outline bg-surface-container-low border border-border-graphite/30 hidden sm:inline">
@@ -433,7 +431,7 @@ export default function Home() {
 
             {/* Status bar */}
             <div className="bg-surface-dim border-x-2 border-border-graphite/60 px-4 py-1.5 flex items-center gap-3 flex-shrink-0">
-              <span className={`font-label-caps text-[12px] px-2 py-0.5 ${STATUS_STYLES[openProject.status] || STATUS_STYLES.COMPLETE}`}>
+              <span className={`font-label-caps text-[12px] px-2 py-0.5 ${STATUS_STYLES[openProject.status] || STATUS_STYLES.INTERNAL}`}>
                 {openProject.status}
               </span>
               <span className="font-label-caps text-[12px] px-2 py-0.5 text-outline bg-surface-container-low border border-border-graphite/30">
