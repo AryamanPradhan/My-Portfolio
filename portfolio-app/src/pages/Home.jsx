@@ -78,7 +78,7 @@ export default function Home() {
 
   const activeCount = projects.filter(p => ['SHIPPED', 'IN BUILD'].includes(p.status)).length;
 
-  const SPOTLIGHT_CODENAMES = ['AI ASSISTED ONBOARDING SYSTEM', 'SANDPIPER'];
+  const SPOTLIGHT_CODENAMES = ['AI ASSISTED ONBOARDING SYSTEM', 'HOTEL AI GUIDE'];
   const spotlightProjects = projects.filter(p => SPOTLIGHT_CODENAMES.includes(p.codename));
   const otherProjects = projects.filter(p => !SPOTLIGHT_CODENAMES.includes(p.codename));
 
@@ -500,8 +500,20 @@ export default function Home() {
                 </div>
               )}
 
-              {openProject.loom && (
+              {(openProject.loom || openProject.live) && (
                 <div className="flex flex-wrap gap-2 pt-3 border-t border-border-graphite/40">
+                  {openProject.live && (
+                    <a
+                      href={openProject.live}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="bevel-outset bg-surface-container-highest text-primary px-4 py-2 font-label-caps text-[13px] hover:text-primary-container active:translate-y-0.5 transition-all flex items-center gap-2"
+                    >
+                      <span className="material-symbols-outlined text-sm">language</span>
+                      VIEW LIVE SITE
+                    </a>
+                  )}
+                  {openProject.loom && (
                   <a
                     href={openProject.loom.replace('/embed/', '/share/')}
                     target="_blank"
@@ -511,6 +523,7 @@ export default function Home() {
                     <span className="material-symbols-outlined text-sm">play_circle</span>
                     WATCH DEMO
                   </a>
+                  )}
                 </div>
               )}
             </div>

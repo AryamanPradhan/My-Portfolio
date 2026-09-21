@@ -4,7 +4,7 @@
     "callsign": "ARYAMAN",
     "title": "AI Strategist",
     "headline": "Give your team back the hours repetitive work is taking.",
-    "subheadline": "I build AI-integrated workflow systems that take over the work your business repeats every week — research, replies, onboarding, publishing — so your people spend their time on decisions that actually need judgment.",
+    "subheadline": "I build AI-integrated workflow systems that take over the work your business repeats every week, like research, replies, onboarding and publishing, so your people spend their time on decisions that actually need judgment.",
     "tagline": "I give teams back the hours they lose to repetitive work — Python automation built against the tools you already use.",
     "bio": "I work with marketing and creative agencies to turn their recurring operational work into software that runs itself. The builds are Python against real APIs (Notion, Gmail, Slack, Sheets) with language models handling the parts that need judgment, and human approval gates on anything that reaches a customer. No no-code platforms, no per-run billing, no vendor lock-in.",
     "location": "India, Remote",
@@ -123,114 +123,120 @@
       ]
     },
     {
-      "codename": "SANDPIPER",
-      "name": "AI WhatsApp Hotel Receptionist",
+      "codename": "HOTEL AI GUIDE",
+      "name": "Grounded Website Assistant for Hotels",
       "type": "AI Assistant",
-      "status": "IN BUILD",
+      "status": "SHIPPED",
       "date": "2026",
-      "brief": "AI receptionist on WhatsApp — answers guests, books rooms, declines what it doesn't know.",
-      "objective": "An AI receptionist that handles hotel guests over WhatsApp — answering questions on amenities, policies, location, and cancellation, and booking rooms end-to-end against a property management system.",
-      "tech": ["Python", "FastAPI", "Claude API", "Twilio WhatsApp"],
+      "live": "https://hotel-website-five-xi.vercel.app/",
+      "brief": "One script tag on a hotel's site. Answers only from the owner's own documents, cites them, declines the rest.",
+      "objective": "A grounded assistant dropped onto the hotel and homestay websites I build. It answers a visitor's questions using only that property's own published documents, cites the source behind every claim, and declines rather than guesses. It deliberately does not transact: availability, bookings and payment stay with the booking engine.",
+      "tech": [
+        "Python",
+        "FastAPI",
+        "OpenAI API",
+        "Cohere Rerank",
+        "Qdrant",
+        "SQLite",
+        "Logfire"
+      ],
       "facts": {
-        "channel": "WhatsApp",
-        "booking": "End-to-end",
-        "scope": "Bounded FAQ domain",
-        "fabrication": "Declines, never invents"
+        "pipeline": "Fixed, not an agent loop",
+        "tests": "300 passing",
+        "embed": "One script tag",
+        "spendCap": "Daily, per property"
       },
       "outcomes": [
-        "Books a real reservation, not just captures a lead",
-        "Refuses gracefully outside its known domain rather than inventing hotel policy",
-        "Conversation-only surface — no dashboard needed to run it"
+        "Every property-specific claim is checked against its sources by a second, blocking model pass. An answer that fails is never shown",
+        "Retrieved documents are screened for prompt injection, because owner-supplied is not the same as trusted",
+        "A public endpoint that costs money per call: origin allowlist, per-IP rate limit, and a daily spend cap per property",
+        "Every deflected question is logged, so the gaps in a property's content surface as a to-do list instead of staying hidden"
       ],
       "workflow": [
         {
           "step": 1,
-          "title": "MESSAGE IN",
+          "title": "VISITOR ASKS",
           "mode": "auto",
           "items": [
-            "Twilio delivers the WhatsApp message",
-            "FastAPI webhook accepts it",
-            "Match to guest and thread",
-            "Load conversation state"
+            "Widget on the property's site",
+            "Streams over SSE",
+            "Origin header identifies the property",
+            "Server-signed session token"
           ],
-          "note": "WhatsApp is the only surface — there is no dashboard"
+          "note": "Shadow DOM, so it never touches the host site's styling"
         },
         {
           "step": 2,
-          "title": "INTENT CLASSIFICATION",
+          "title": "SCREEN",
           "mode": "auto",
           "items": [
-            "Amenities",
-            "Policies",
-            "Location & directions",
-            "Cancellation",
-            "Booking",
-            "Outside the domain"
+            "Prompt injection in the message",
+            "Prompt injection in the chat history",
+            "Redact PII before the prompt",
+            "Check the property's spend cap"
           ]
         },
         {
           "step": 3,
-          "title": "GROUNDED ANSWER",
+          "title": "PLAN",
           "mode": "auto",
           "items": [
-            "Answer from the property's own facts",
-            "Stay inside the bounded FAQ domain",
-            "Keep it to what was actually asked",
-            "Carry the thread's context"
-          ],
-          "receives": [
-            "Amenity list",
-            "House policies",
-            "Location details",
-            "Cancellation terms"
+            "Rewrite the question to stand alone",
+            "Split into 1–3 search queries",
+            "Carry the conversation's context"
           ]
         },
         {
           "step": 4,
-          "title": "SCOPE GATE",
-          "mode": "hybrid",
+          "title": "RETRIEVE & RERANK",
+          "mode": "auto",
           "items": [
-            "In domain → answer",
-            "Not in domain → say so plainly",
-            "Never invent hotel policy",
-            "Never guess a price or a rule"
+            "Hybrid dense + BM25 in Qdrant",
+            "Fused with RRF",
+            "Scoped to one property",
+            "Cohere reranks 40 candidates"
           ],
-          "note": "Declining is the correct answer, not a failure"
+          "receives": [
+            "House rules",
+            "Room details",
+            "Dining & amenities",
+            "Location & directions"
+          ],
+          "note": "Nothing above threshold → deflect, don't answer"
         },
         {
           "step": 5,
-          "title": "BOOKING INTENT",
+          "title": "ANSWER",
           "mode": "auto",
           "items": [
-            "Dates in and out",
-            "Number of guests",
-            "Room type",
-            "Confirm back before committing"
+            "Sources fenced as data",
+            "A citation required per claim",
+            "Only what the sources cover"
           ]
         },
         {
           "step": 6,
-          "title": "RESERVATION",
-          "mode": "auto",
+          "title": "VERIFY",
+          "mode": "hybrid",
           "items": [
-            "Check availability in the PMS",
-            "Write the reservation",
-            "Return the confirmation to the guest",
-            "Record it against the thread"
+            "Second model checks every property-specific claim",
+            "Blocking, not advisory",
+            "Uncited answer → deflect",
+            "Declining is a designed response"
           ],
-          "note": "A real booking in the property management system, not a captured lead"
+          "note": "An answer that fails verification is never shown"
         },
         {
           "step": 7,
-          "title": "STAFF HANDOFF",
+          "title": "CITE & LOG",
           "mode": "human",
           "items": [
-            "Anything declined at the scope gate",
-            "Exceptions and special requests",
-            "Complaints",
-            "Guest asks for a person"
+            "Show only the sources actually cited",
+            "Date-stamped: 'as published on…'",
+            "Log the turn and any deflection reason",
+            "Owner reviews deflected questions"
           ],
-          "note": "The bot's limit is a routing rule, not a dead end"
+          "note": "Recurring deflections tell the owner which page to write next"
         }
       ]
     },
@@ -457,6 +463,34 @@
           ],
           "note": "Whole pipeline readable in one sheet"
         }
+      ]
+    },
+    {
+      "codename": "GLASS HOTEL",
+      "name": "WhatsApp-First Hotel Website",
+      "type": "Frontend",
+      "status": "INTERNAL",
+      "date": "2026",
+      "live": "https://hotel-website-five-xi.vercel.app/",
+      "brief": "Demo hotel site: bookings go straight to WhatsApp, questions go to the Hotel AI Guide.",
+      "objective": "A single-page hotel website built as the demo property for the Hotel AI Guide. The booking bar turns dates, guests and room choice into a pre-filled WhatsApp message to the front desk, and the Guide widget answers visitors' questions from the hotel's own documents.",
+      "tech": [
+        "Next.js",
+        "React",
+        "TypeScript",
+        "Tailwind CSS",
+        "Vercel"
+      ],
+      "facts": {
+        "booking": "WhatsApp deep link",
+        "backend": "None",
+        "content": "Typed config files",
+        "assistant": "Hotel AI Guide"
+      },
+      "outcomes": [
+        "Booking needs no backend: the enquiry arrives in WhatsApp already filled in",
+        "All hotel content lives in typed config files, so reskinning it for a new property is a data change",
+        "Serves as the live demo corpus and eval set for the Hotel AI Guide"
       ]
     },
     {
