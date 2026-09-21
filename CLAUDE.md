@@ -52,7 +52,7 @@ portfolio-app/           # The React application (Vercel builds this)
     components/          # BootScreen, CtaBand, DecryptText, InteractiveTerminal, WorkflowDiagram
     assets/              # Static images (hero.png, SVGs)
   public/
-    icons.svg            # SVG sprite sheet (social icons: bluesky, discord, github, x)
+    icons.svg            # SVG sprite sheet (social icons: bluesky, discord, x)
 
 api/                     # Vercel serverless functions (root package.json owns their deps)
   contact.js             # POST /api/contact — the only endpoint
