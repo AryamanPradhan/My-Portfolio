@@ -1,7 +1,6 @@
 {
   "personal": {
     "name": "Aryaman Pradhan",
-    "callsign": "ARYAMAN",
     "title": "AI Strategist",
     "headline": "Give your team back the hours repetitive work is taking.",
     "subheadline": "I build AI-integrated workflow systems that take over the work your business repeats every week, like research, replies, onboarding and publishing, so your people spend their time on decisions that actually need judgment.",
@@ -509,16 +508,6 @@
         "Working command shell with real commands, not a scripted animation",
         "Boot sequence, CRT scanlines, and bevelled panels built in CSS with no image assets"
       ]
-    }
-  ],
-  "knowledgeBase": [
-    {
-      "name": "Business Master Hub",
-      "desc": "A 15-domain operating knowledge base — sales, marketing, negotiation, finance, strategy, systems thinking, and more."
-    },
-    {
-      "name": "Persistent AI Memory Vault",
-      "desc": "An Obsidian vault an AI assistant reads and writes across sessions, so project context and decisions survive between them."
     }
   ]
 }

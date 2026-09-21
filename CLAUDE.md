@@ -53,10 +53,7 @@ portfolio-app/           # The React application (Vercel builds this)
     stackData.js         # Stack section tools; `usedIn` is derived from each project's `tech`
     techIcons.js         # Simple Icons paths (monochrome) or Material Symbol fallbacks per tool
     pages/               # Home.jsx, About.jsx, Stack.jsx, Contact.jsx
-    components/          # BootScreen, CtaBand, DecryptText, InteractiveTerminal, StackSection, WorkflowDiagram
-    assets/              # Static images (hero.png, SVGs)
-  public/
-    icons.svg            # SVG sprite sheet (social icons: bluesky, discord, x)
+    components/          # BootScreen, Bots, CtaBand, DecryptText, InteractiveTerminal, StackSection, WorkflowDiagram
 
 api/                     # Vercel serverless functions (root package.json owns their deps)
   contact.js             # POST /api/contact — the only endpoint
@@ -67,8 +64,6 @@ api/                     # Vercel serverless functions (root package.json owns t
 
 vercel.json              # Build commands, SPA rewrites, asset caching
 .env.example             # Template for the API's environment variables
-apply_palette.py         # Helper to update palette in design reference files
-download_screens.py      # Helper to download design reference screens
 ```
 
 ## Routing
@@ -111,11 +106,11 @@ prefix — that ships the value to the browser.
 
 The Tailwind config (`tailwind.config.js`) defines an extensive custom color palette with Material Design 3-inspired tokens: `primary`, `on-primary`, `surface-dim`, `surface-container-high`, `led-green`, `led-red`, `border-graphite`, `background-matte`, `surface-steel`, `terminal-dim`, etc.
 
-Custom CSS classes used throughout the JSX (defined in `index.css` or needing to be ported from `stitch_screens/` references):
+Custom CSS classes used throughout the JSX, all defined in `index.css`:
 - `bevel-outset` / `bevel-inset` — industrial raised/inset border effects
 - `crt-overlay` — CRT scanline effect overlay
 - `led-pulse-green` — LED pulsing animation
-- Custom font utilities (`font-body-base`, `font-display-lg`, `font-mono-data`, `font-label-caps`, `font-status-tiny`) mapping to IBM Plex families
+- Custom font utilities (`font-body-base`, `font-display-lg`, `font-mono-data`, `font-label-caps`, `font-status-tiny`) mapping to Inter (sans) and JetBrains Mono (mono)
 
 ## Key Patterns
 

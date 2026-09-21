@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import data from './portfolioData.json';
+import { GreeterBot, PaintedName } from './components/Bots';
 
 const { personal, contact } = data;
 
@@ -47,12 +48,15 @@ export default function Layout() {
             </span>
           </button>
 
-          <Link
-            to="/"
-            className="font-display-lg text-lg lg:text-xl font-black text-primary uppercase tracking-[0.25em] drop-shadow-[0_0_8px_rgba(255,176,0,0.4)] hover:text-primary-container transition-colors"
-          >
-            ARYAMAN
-          </Link>
+          {/* Two small robots painting the name; the margins make room for them. */}
+          <PaintedName className="sm:mr-11 lg:mr-0 xl:ml-8 xl:mr-11">
+            <Link
+              to="/"
+              className="block font-display-lg text-lg lg:text-xl font-black text-primary uppercase tracking-[0.25em] drop-shadow-[0_0_8px_rgba(255,176,0,0.4)] hover:text-primary-container transition-colors"
+            >
+              ARYAMAN
+            </Link>
+          </PaintedName>
           <div className="h-5 w-px bg-border-graphite hidden xl:block"></div>
           <div className="font-mono-data text-mono-data text-outline hidden xl:block truncate">
             {personal.title.toUpperCase()}
@@ -66,13 +70,15 @@ export default function Layout() {
               key={link.to}
               to={link.to}
               aria-current={isActive(link.to) ? 'page' : undefined}
-              className={`flex items-center gap-2 px-4 border-b-2 -mb-[2px] transition-colors ${
+              className={`flex items-center gap-2 px-3 xl:px-4 border-b-2 -mb-[2px] transition-colors ${
                 isActive(link.to)
                   ? 'border-primary text-primary bg-primary/10'
                   : 'border-transparent text-outline hover:text-primary-fixed-dim hover:bg-surface-container-highest'
               }`}
             >
-              <span className="material-symbols-outlined text-lg">{link.icon}</span>
+              {/* Icons only from xl: at lg the four links plus both sides of
+                  the header are too wide to stay centred with them. */}
+              <span className="material-symbols-outlined text-lg hidden xl:inline">{link.icon}</span>
               <span className="font-label-caps text-label-caps whitespace-nowrap">{link.label}</span>
             </Link>
           ))}
@@ -137,6 +143,8 @@ export default function Layout() {
           </div>
         </>
       )}
+
+      <GreeterBot phosphor={location.pathname === '/stack'} />
 
       {/* Main Content */}
       <main className="mt-[56px] lg:mt-[64px] p-3 lg:p-4 h-[calc(100vh-56px)] lg:h-[calc(100vh-64px)] overflow-hidden">

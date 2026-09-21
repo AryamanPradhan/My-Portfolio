@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useId } from 'react';
 
 const MODE = {
   auto:   { color: 'text-led-green',          border: 'border-led-green/50',   bg: 'bg-led-green/5',   label: 'AUTO',      icon: 'smart_toy',  dot: '#22C55E', idColor: 'text-led-green' },
@@ -65,6 +65,8 @@ function Node({ step, mode, isActive, onClick }) {
   );
 }
 
+const TITLE_Y = 60; // px from a node's top to its title line
+
 function Connectors({ containerRef, steps }) {
   const [dims, setDims] = useState(null);
 
@@ -95,35 +97,63 @@ function Connectors({ containerRef, steps }) {
     return () => ro.disconnect();
   }, [containerRef, steps]);
 
+  const markerId = useId().replace(/:/g, '');
   if (!dims || dims.rects.length < 2) return null;
 
-  const lines = [];
+  // One orthogonal path per hop. Nodes are on the same row when their tops
+  // line up (not their centres, which drift when a node is expanded), and
+  // every in-row arrow runs at title height, so a row's arrows form one
+  // straight line however tall its nodes get. A hop to the next row goes down
+  // into the gap, across, and down into the node: nothing runs diagonally or
+  // under a node.
+  const paths = [];
   for (let i = 0; i < dims.rects.length - 1; i++) {
     const a = dims.rects[i];
     const b = dims.rects[i + 1];
-    const sameRow = Math.abs(a.cy - b.cy) < 60;
-
+    const mode = MODE[steps[i].mode] ? steps[i].mode : 'auto';
+    const sameRow = Math.abs(a.top - b.top) < 8;
+    let d;
     if (sameRow) {
-      lines.push({ x1: a.right, y1: a.cy, x2: b.left, y2: b.cy, mode: steps[i].mode });
+      const y = a.top + TITLE_Y;
+      d = `M ${a.right} ${y} H ${b.left - 2}`;
     } else {
-      const midX = a.cx;
       const midY = a.bottom + (b.top - a.bottom) / 2;
-      lines.push({ x1: a.cx, y1: a.bottom, x2: midX, y2: midY, mode: steps[i].mode });
-      lines.push({ x1: midX, y1: midY, x2: b.cx, y2: b.top, mode: steps[i].mode });
+      d = `M ${a.cx} ${a.bottom} V ${midY} H ${b.cx} V ${b.top - 2}`;
     }
+    paths.push({ d, mode });
   }
 
   return (
     <svg className="absolute inset-0 w-full h-full pointer-events-none z-0" style={{ overflow: 'visible' }}>
-      {lines.map((l, i) => (
-        <line
-          key={i}
-          x1={l.x1} y1={l.y1} x2={l.x2} y2={l.y2}
-          stroke={MODE[l.mode]?.dot || '#EA6B1E'}
-          strokeWidth="1.5"
-          opacity="0.5"
-          className="blueprint-connector"
-        />
+      <defs>
+        {Object.entries(MODE).map(([key, m]) => (
+          <marker
+            key={key}
+            id={`${markerId}-${key}`}
+            viewBox="0 0 8 8"
+            refX="7"
+            refY="4"
+            markerWidth="8"
+            markerHeight="8"
+            orient="auto"
+          >
+            <path d="M0,0 L8,4 L0,8 z" fill={m.dot} />
+          </marker>
+        ))}
+      </defs>
+      {paths.map((p, i) => (
+        <g key={i} fill="none" strokeLinejoin="miter">
+          {/* The track: solid and steady, so the route reads at a glance. */}
+          <path d={p.d} stroke={MODE[p.mode].dot} strokeWidth="2" opacity="0.35" />
+          {/* The flow: bright dashes moving along it, ending in an arrow. */}
+          <path
+            d={p.d}
+            stroke={MODE[p.mode].dot}
+            strokeWidth="2"
+            className="blueprint-connector"
+            markerEnd={`url(#${markerId}-${p.mode})`}
+          />
+        </g>
       ))}
     </svg>
   );
@@ -166,7 +196,7 @@ export default function WorkflowDiagram({ steps, codename }) {
         <Connectors containerRef={gridRef} steps={steps} />
 
         {/* Row 1 */}
-        <div className="blueprint-grid grid grid-cols-2 md:grid-cols-4 gap-3 relative z-10">
+        <div className="blueprint-grid grid grid-cols-2 md:grid-cols-4 items-start gap-x-6 md:gap-x-8 gap-y-10 relative z-10">
           {topRow.map((step, i) => (
             <div key={step.step} data-node>
               <Node
@@ -181,7 +211,12 @@ export default function WorkflowDiagram({ steps, codename }) {
 
         {/* Row 2 */}
         {bottomRow.length > 0 && (
-          <div className="blueprint-grid grid gap-3 mt-3 relative z-10" style={{ gridTemplateColumns: `repeat(${Math.min(bottomRow.length, 4)}, minmax(0, 1fr))` }}>
+          // Two columns on phones like the top row; from md the last row
+          // shares the full width between however many steps it holds.
+          <div
+            className="blueprint-grid grid grid-cols-2 md:[grid-template-columns:var(--cols)] items-start gap-x-6 md:gap-x-8 gap-y-10 mt-10 relative z-10"
+            style={{ '--cols': `repeat(${Math.min(bottomRow.length, 4)}, minmax(0, 1fr))` }}
+          >
             {bottomRow.map((step, i) => {
               const globalIdx = topRow.length + i;
               return (

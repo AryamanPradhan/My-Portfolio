@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import DecryptText from '../components/DecryptText';
 import data from '../portfolioData.json';
+import { ScribeBot, WelderBot } from '../components/Bots';
 
 const { personal, contact, services } = data;
 
@@ -9,8 +10,13 @@ const { personal, contact, services } = data;
 const LIMITS = {
   name: { min: 2, max: 80 },
   email: { max: 160 },
+  project: { max: 60 },
   message: { min: 20, max: 4000 },
 };
+
+// "Other" is sent as "Other: <what they typed>", inside the project cap.
+const OTHER_PREFIX = 'Other: ';
+const OTHER_MAX = LIMITS.project.max - OTHER_PREFIX.length;
 
 const EMAIL_RE = /^[^\s@,;:<>"'\\]+@[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)+$/i;
 
@@ -42,6 +48,28 @@ function buildMailto(form) {
 
 export default function Contact() {
   const [form, setForm] = useState({ name: '', email: '', project: '', message: '' });
+  // The typewriter robot in the message box types while the visitor does,
+  // and settles back down shortly after they stop.
+  const [typing, setTyping] = useState(false);
+  const typingTimer = useRef(null);
+  const nameRef = useRef(null);
+  const emailRef = useRef(null);
+  const otherRef = useRef(null);
+  const messageRef = useRef(null);
+
+  // "What do you need?" has an Other option that opens a box to describe it.
+  const [otherOpen, setOtherOpen] = useState(false);
+  const [otherText, setOtherText] = useState('');
+  const projectValue = otherOpen
+    ? (otherText.trim() ? `${OTHER_PREFIX}${otherText.trim()}` : 'Other')
+    : form.project;
+  useEffect(() => { if (otherOpen) otherRef.current?.focus(); }, [otherOpen]);
+  useEffect(() => () => clearTimeout(typingTimer.current), []);
+  const nudgeTyping = () => {
+    setTyping(true);
+    clearTimeout(typingTimer.current);
+    typingTimer.current = setTimeout(() => setTyping(false), 700);
+  };
   // Honeypot. Hidden from people and from assistive tech, so anything that
   // fills it is a bot walking the DOM rather than reading the page.
   const [website, setWebsite] = useState('');
@@ -97,6 +125,7 @@ export default function Contact() {
         signal: AbortSignal.timeout(20000),
         body: JSON.stringify({
           ...form,
+          project: projectValue,
           website,
           elapsedMs: Date.now() - mountedAt.current,
         }),
@@ -107,6 +136,8 @@ export default function Contact() {
       if (res.ok && payload.ok) {
         setStatus('sent');
         setForm({ name: '', email: '', project: '', message: '' });
+        setOtherOpen(false);
+        setOtherText('');
         setErrors({});
         pushLog('[TX] Acknowledged — message delivered.', '[SYS] I usually reply within a day.');
         return;
@@ -172,7 +203,8 @@ export default function Contact() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
         {/* Form */}
         <div className="lg:col-span-7 flex flex-col gap-4">
-          <div className="bevel-outset bg-surface-dim p-4 lg:p-6">
+          <div className="relative bevel-outset bg-surface-dim p-4 lg:p-6">
+            <WelderBot right="10%" />
             <div className="flex items-center gap-2 mb-1">
               <span className="material-symbols-outlined text-primary text-sm">edit_note</span>
               <span className="font-label-caps text-label-caps text-primary">START A CONVERSATION</span>
@@ -198,19 +230,23 @@ export default function Contact() {
 
               <div>
                 <label htmlFor="contact-name" className="font-label-caps text-outline text-[13px] block mb-1.5">YOUR NAME</label>
-                <input
-                  id="contact-name"
-                  name="name"
-                  autoComplete="name"
-                  type="text"
-                  value={form.name}
-                  maxLength={LIMITS.name.max}
-                  onChange={e => setForm(prev => ({ ...prev, name: e.target.value }))}
-                  placeholder="Who's writing?"
-                  className={`w-full px-3 py-2 text-[16px] ${errors.name ? 'border border-led-red' : ''}`}
-                  aria-invalid={Boolean(errors.name)}
-                  disabled={sending}
-                />
+                <div className="relative">
+                  <input
+                    ref={nameRef}
+                    id="contact-name"
+                    name="name"
+                    autoComplete="name"
+                    type="text"
+                    value={form.name}
+                    maxLength={LIMITS.name.max}
+                    onChange={e => { setForm(prev => ({ ...prev, name: e.target.value })); nudgeTyping(); }}
+                    placeholder="Who's writing?"
+                    className={`w-full pl-3 pr-10 py-2 text-[16px] caret-transparent ${errors.name ? 'border border-led-red' : ''}`}
+                    aria-invalid={Boolean(errors.name)}
+                    disabled={sending}
+                  />
+                  <ScribeBot targetRef={nameRef} typing={typing} />
+                </div>
                 {errors.name && (
                   <div className="font-mono-data text-led-red text-[13px] mt-1">{errors.name}</div>
                 )}
@@ -218,19 +254,23 @@ export default function Contact() {
 
               <div>
                 <label htmlFor="contact-email" className="font-label-caps text-outline text-[13px] block mb-1.5">YOUR EMAIL</label>
-                <input
-                  id="contact-email"
-                  name="email"
-                  autoComplete="email"
-                  type="email"
-                  value={form.email}
-                  maxLength={LIMITS.email.max}
-                  onChange={e => setForm(prev => ({ ...prev, email: e.target.value }))}
-                  placeholder="where I should reply"
-                  className={`w-full px-3 py-2 text-[16px] ${errors.email ? 'border border-led-red' : ''}`}
-                  aria-invalid={Boolean(errors.email)}
-                  disabled={sending}
-                />
+                <div className="relative">
+                  <input
+                    ref={emailRef}
+                    id="contact-email"
+                    name="email"
+                    autoComplete="email"
+                    type="email"
+                    value={form.email}
+                    maxLength={LIMITS.email.max}
+                    onChange={e => { setForm(prev => ({ ...prev, email: e.target.value })); nudgeTyping(); }}
+                    placeholder="where I should reply"
+                    className={`w-full pl-3 pr-10 py-2 text-[16px] caret-transparent ${errors.email ? 'border border-led-red' : ''}`}
+                    aria-invalid={Boolean(errors.email)}
+                    disabled={sending}
+                  />
+                  <ScribeBot targetRef={emailRef} typing={typing} />
+                </div>
                 {errors.email && (
                   <div className="font-mono-data text-led-red text-[13px] mt-1">{errors.email}</div>
                 )}
@@ -244,9 +284,9 @@ export default function Contact() {
                       type="button"
                       key={s.name}
                       disabled={sending}
-                      onClick={() => setForm(prev => ({ ...prev, project: prev.project === s.name ? '' : s.name }))}
+                      onClick={() => { setOtherOpen(false); setForm(prev => ({ ...prev, project: prev.project === s.name ? '' : s.name })); }}
                       className={`font-mono-data text-[13px] px-2 py-1 border transition-all disabled:opacity-50 ${
-                        form.project === s.name
+                        !otherOpen && form.project === s.name
                           ? 'bg-primary text-on-primary border-primary'
                           : 'bg-surface-container-lowest text-on-surface-variant border-border-graphite/40 hover:text-primary'
                       }`}
@@ -254,23 +294,60 @@ export default function Contact() {
                       {s.name}
                     </button>
                   ))}
+                  <button
+                    type="button"
+                    disabled={sending}
+                    aria-expanded={otherOpen}
+                    aria-controls="contact-other"
+                    onClick={() => { setOtherOpen(open => !open); setForm(prev => ({ ...prev, project: '' })); }}
+                    className={`font-mono-data text-[13px] px-2 py-1 border transition-all disabled:opacity-50 ${
+                      otherOpen
+                        ? 'bg-primary text-on-primary border-primary'
+                        : 'bg-surface-container-lowest text-on-surface-variant border-border-graphite/40 hover:text-primary'
+                    }`}
+                  >
+                    Other
+                  </button>
                 </div>
+                {otherOpen && (
+                  <div className="relative mt-2">
+                    <label htmlFor="contact-other" className="sr-only">What do you need?</label>
+                    <input
+                      ref={otherRef}
+                      id="contact-other"
+                      name="project-other"
+                      type="text"
+                      value={otherText}
+                      maxLength={OTHER_MAX}
+                      onChange={e => { setOtherText(e.target.value); nudgeTyping(); }}
+                      placeholder="Tell me in a few words"
+                      className="w-full pl-3 pr-10 py-2 text-[16px] caret-transparent"
+                      disabled={sending}
+                    />
+                    <ScribeBot targetRef={otherRef} typing={typing} />
+                  </div>
+                )}
               </div>
 
               <div>
                 <label htmlFor="contact-message" className="font-label-caps text-outline text-[13px] block mb-1.5">MESSAGE</label>
-                <textarea
-                  id="contact-message"
-                  name="message"
-                  value={form.message}
-                  maxLength={LIMITS.message.max}
-                  onChange={e => setForm(prev => ({ ...prev, message: e.target.value }))}
-                  placeholder="What are you trying to automate, and what does it cost you today?"
-                  rows={6}
-                  className={`w-full px-3 py-2 text-[16px] resize-none ${errors.message ? 'border border-led-red' : ''}`}
-                  aria-invalid={Boolean(errors.message)}
-                  disabled={sending}
-                />
+                <div className="relative">
+                  <textarea
+                    ref={messageRef}
+                    id="contact-message"
+                    name="message"
+                    value={form.message}
+                    maxLength={LIMITS.message.max}
+                    onChange={e => { setForm(prev => ({ ...prev, message: e.target.value })); nudgeTyping(); }}
+                    placeholder="What are you trying to automate, and what does it cost you today?"
+                    rows={6}
+                    className={`w-full px-3 pt-2 pb-10 text-[16px] resize-none caret-transparent ${errors.message ? 'border border-led-red' : ''}`}
+                    aria-invalid={Boolean(errors.message)}
+                    disabled={sending}
+                  />
+                  {/* The typewriter robot is the cursor here, so the real caret is hidden. */}
+                  <ScribeBot targetRef={messageRef} typing={typing || sending} rest="corner" />
+                </div>
                 {errors.message && (
                   <div className="font-mono-data text-led-red text-[13px] mt-1">{errors.message}</div>
                 )}
@@ -308,7 +385,7 @@ export default function Contact() {
                   {/* The enquiry is not lost just because the API is: hand the
                       already-typed message to their own mail client. */}
                   <a
-                    href={buildMailto(form)}
+                    href={buildMailto({ ...form, project: projectValue })}
                     className="inline-block bevel-outset bg-surface-container-highest text-primary px-3 py-2 font-label-caps text-[13px] font-bold hover:text-primary-container"
                   >
                     OPEN IN MY MAIL APP INSTEAD

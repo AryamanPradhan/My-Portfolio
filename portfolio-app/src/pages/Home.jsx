@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import DecryptText from '../components/DecryptText';
 import CtaBand from '../components/CtaBand';
 import WorkflowDiagram from '../components/WorkflowDiagram';
+import { RepairBot } from '../components/Bots';
 import data from '../portfolioData.json';
 import { slugify } from '../stackData';
 
@@ -25,6 +25,65 @@ const FACT_LABELS = {
 };
 
 const labelFor = (key) => FACT_LABELS[key] || key.replace(/([A-Z])/g, ' $1').toUpperCase();
+
+function ProjectRow({ project, icon, onOpen }) {
+  // This site's own file is "under repair": a robot fixing its button. On
+  // phones the button drops to its own line so the robot has room beside it.
+  const repair = project.codename === 'ARYAMAN_OS';
+  return (
+    <div className="bevel-inset bg-background-matte/40 px-3 lg:px-4 py-3">
+      <div className={`flex items-center justify-between gap-3 ${repair ? 'flex-wrap sm:flex-nowrap' : ''}`}>
+        <div className={`flex items-center gap-3 min-w-0 ${repair ? 'basis-full sm:basis-auto' : ''}`}>
+          <span className="material-symbols-outlined text-primary-container text-lg flex-shrink-0">{icon}</span>
+          <div className="min-w-0">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="font-mono-data text-primary text-[16px] font-semibold min-w-0 break-words">{project.codename}</span>
+              <span className={`font-label-caps text-[12px] px-2 py-0.5 ${STATUS_STYLES[project.status] || STATUS_STYLES.INTERNAL}`}>
+                {project.status}
+              </span>
+              <span className="font-label-caps text-[12px] px-2 py-0.5 text-outline bg-surface-container-low border border-border-graphite/30 hidden sm:inline">
+                {project.type.toUpperCase()}
+              </span>
+            </div>
+            <div className="font-mono-data text-on-surface-variant text-[14px] mt-1 line-clamp-1">
+              {project.brief || project.name}
+            </div>
+          </div>
+        </div>
+        {/* Purely cosmetic; the button works as normal. The margin keeps room
+            for the robot where the row is tight. */}
+        <div className={`relative flex-shrink-0 ${repair ? 'ml-auto sm:ml-12 lg:ml-0' : ''}`}>
+          {repair && <RepairBot />}
+          <button
+            onClick={() => onOpen(project)}
+            className="bevel-outset bg-surface-container-highest text-primary px-3 py-1.5 font-label-caps text-[13px] hover:text-primary-container hover:bg-surface-container-high active:translate-y-0.5 transition-all flex items-center gap-1.5"
+          >
+            <span className="material-symbols-outlined text-sm">open_in_new</span>
+            OPEN FILE
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ProjectPanel({ icon, title, subtitle, projects, onOpen }) {
+  return (
+    <div className="bevel-outset bg-surface-dim p-4 lg:p-6">
+      <div className="flex items-center justify-between mb-1 gap-3">
+        <div className="flex items-center gap-2">
+          <span className="material-symbols-outlined text-primary text-lg">{icon}</span>
+          <span className="font-label-caps text-label-caps text-primary">{title}</span>
+        </div>
+        <span className="font-mono-data text-outline text-[13px] hidden sm:block">{projects.length} FILES</span>
+      </div>
+      <div className="font-status-tiny text-outline text-[12px] mb-4">{subtitle}</div>
+      <div className="space-y-2">
+        {projects.map((p) => <ProjectRow key={p.codename} project={p} icon={icon} onOpen={onOpen} />)}
+      </div>
+    </div>
+  );
+}
 
 export default function Home() {
   const [time, setTime] = useState(new Date().toISOString().replace('T', ' ').substring(0, 19));
@@ -70,7 +129,7 @@ export default function Home() {
     { label: 'BUILDS', value: 'UNATTENDED SYSTEMS', color: 'text-primary-container' },
     { label: 'BASE', value: 'INDIA — REMOTE', color: 'text-on-surface-variant' },
     { label: 'STACK', value: 'PYTHON', color: 'text-primary-container' },
-    { label: 'CLIENTS', value: 'AGENCIES', color: 'text-on-surface-variant' },
+    { label: 'CLIENTS', value: 'SMALL & MEDIUM BUSINESSES', color: 'text-on-surface-variant' },
   ];
 
   return (
@@ -98,12 +157,6 @@ export default function Home() {
 
             <div className="flex flex-col lg:flex-row items-start gap-6 lg:gap-8">
               <div className="flex-1">
-                <DecryptText
-                  text={personal.name.toUpperCase()}
-                  as="div"
-                  className="font-mono-data text-primary-container text-[16px] lg:text-sm tracking-[0.3em] uppercase mb-3"
-                  speed={40}
-                />
                 <h1 className="font-display-lg text-3xl md:text-4xl lg:text-5xl font-black text-primary uppercase tracking-tighter leading-[1.05] mb-5 drop-shadow-[0_0_15px_rgba(255,176,0,0.4)] max-w-2xl">
                   {personal.headline}
                 </h1>
@@ -155,102 +208,25 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Spotlight Projects */}
-        <div className="bevel-outset bg-surface-dim p-4 lg:p-6">
-          <div className="flex items-center justify-between mb-1 gap-3">
-            <div className="flex items-center gap-2">
-              <span className="material-symbols-outlined text-primary text-lg">star</span>
-              <span className="font-label-caps text-label-caps text-primary">SPOTLIGHT PROJECTS</span>
-            </div>
-            <span className="font-mono-data text-outline text-[13px] hidden sm:block">{spotlightProjects.length} FILES</span>
-          </div>
-          <div className="font-status-tiny text-outline text-[12px] mb-4">
-            FEATURED BUILDS &nbsp;|&nbsp; PRIMARY LANGUAGE: PYTHON
-          </div>
+        <ProjectPanel
+          icon="star"
+          title="SPOTLIGHT PROJECTS"
+          subtitle={<>FEATURED BUILDS &nbsp;|&nbsp; PRIMARY LANGUAGE: PYTHON</>}
+          projects={spotlightProjects}
+          onOpen={setOpenProject}
+        />
 
-          <div className="space-y-2">
-            {spotlightProjects.map((op) => (
-              <div key={op.codename} className="bevel-inset bg-background-matte/40 px-3 lg:px-4 py-3">
-                <div className="flex items-center justify-between gap-3">
-                  <div className="flex items-center gap-3 min-w-0">
-                    <span className="material-symbols-outlined text-primary-container text-lg flex-shrink-0">star</span>
-                    <div className="min-w-0">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <span className="font-mono-data text-primary text-[16px] font-semibold min-w-0 break-words">{op.codename}</span>
-                        <span className={`font-label-caps text-[12px] px-2 py-0.5 ${STATUS_STYLES[op.status] || STATUS_STYLES.INTERNAL}`}>
-                          {op.status}
-                        </span>
-                        <span className="font-label-caps text-[12px] px-2 py-0.5 text-outline bg-surface-container-low border border-border-graphite/30 hidden sm:inline">
-                          {op.type.toUpperCase()}
-                        </span>
-                      </div>
-                      <div className="font-mono-data text-on-surface-variant text-[14px] mt-1 line-clamp-1">
-                        {op.brief || op.name}
-                      </div>
-                    </div>
-                  </div>
-                  <button
-                    onClick={() => setOpenProject(op)}
-                    className="bevel-outset bg-surface-container-highest text-primary px-3 py-1.5 font-label-caps text-[13px] hover:text-primary-container hover:bg-surface-container-high active:translate-y-0.5 transition-all flex-shrink-0 flex items-center gap-1.5"
-                  >
-                    <span className="material-symbols-outlined text-sm">open_in_new</span>
-                    OPEN FILE
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Other Projects */}
-        <div className="bevel-outset bg-surface-dim p-4 lg:p-6">
-          <div className="flex items-center justify-between mb-1 gap-3">
-            <div className="flex items-center gap-2">
-              <span className="material-symbols-outlined text-primary text-lg">folder_special</span>
-              <span className="font-label-caps text-label-caps text-primary">OTHER PROJECTS // BUILD LOG</span>
-            </div>
-            <span className="font-mono-data text-outline text-[13px] hidden sm:block">{otherProjects.length} FILES</span>
-          </div>
-          <div className="font-status-tiny text-outline text-[12px] mb-4">
-            {otherProjects.length} BUILDS &nbsp;|&nbsp; {activeCount} LIVE OR IN BUILD &nbsp;|&nbsp; PRIMARY LANGUAGE: PYTHON
-          </div>
-
-          <div className="space-y-2">
-            {otherProjects.map((op) => (
-              <div key={op.codename} className="bevel-inset bg-background-matte/40 px-3 lg:px-4 py-3">
-                <div className="flex items-center justify-between gap-3">
-                  <div className="flex items-center gap-3 min-w-0">
-                    <span className="material-symbols-outlined text-primary-container text-lg flex-shrink-0">folder_special</span>
-                    <div className="min-w-0">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <span className="font-mono-data text-primary text-[16px] font-semibold min-w-0 break-words">{op.codename}</span>
-                        <span className={`font-label-caps text-[12px] px-2 py-0.5 ${STATUS_STYLES[op.status] || STATUS_STYLES.INTERNAL}`}>
-                          {op.status}
-                        </span>
-                        <span className="font-label-caps text-[12px] px-2 py-0.5 text-outline bg-surface-container-low border border-border-graphite/30 hidden sm:inline">
-                          {op.type.toUpperCase()}
-                        </span>
-                      </div>
-                      <div className="font-mono-data text-on-surface-variant text-[14px] mt-1 line-clamp-1">
-                        {op.brief || op.name}
-                      </div>
-                    </div>
-                  </div>
-                  <button
-                    onClick={() => setOpenProject(op)}
-                    className="bevel-outset bg-surface-container-highest text-primary px-3 py-1.5 font-label-caps text-[13px] hover:text-primary-container hover:bg-surface-container-high active:translate-y-0.5 transition-all flex-shrink-0 flex items-center gap-1.5"
-                  >
-                    <span className="material-symbols-outlined text-sm">open_in_new</span>
-                    OPEN FILE
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+        <ProjectPanel
+          icon="folder_special"
+          title="OTHER PROJECTS // BUILD LOG"
+          subtitle={<>{otherProjects.length} BUILDS &nbsp;|&nbsp; {activeCount} LIVE OR IN BUILD &nbsp;|&nbsp; PRIMARY LANGUAGE: PYTHON</>}
+          projects={otherProjects}
+          onOpen={setOpenProject}
+        />
 
         {/* CTA */}
         <CtaBand
+          builder={false}
           heading="Got something that should be running itself?"
           sub="Tell me the workflow that eats your team's week. I'll tell you honestly whether automation is worth it — and what it would take to build."
         />

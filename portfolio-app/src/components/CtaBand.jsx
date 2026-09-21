@@ -1,12 +1,14 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import data from '../portfolioData.json';
+import { BuilderBot } from './Bots';
 
 const { contact } = data;
 
-export default function CtaBand({ heading, sub }) {
+export default function CtaBand({ heading, sub, builder = true }) {
   return (
-    <div className="bevel-outset bg-surface-container-high p-5 lg:p-7">
+    <div className="relative bevel-outset bg-surface-container-high p-5 lg:p-7">
+      {builder && <BuilderBot />}
       <div className="flex flex-col lg:flex-row lg:items-center gap-5 lg:gap-8">
         <div className="flex-1">
           <div className="font-headline-md text-xl lg:text-2xl text-primary font-bold tracking-wide mb-2">

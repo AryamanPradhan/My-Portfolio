@@ -1,12 +1,12 @@
 /**
- * Logos for the tech stack chips.
+ * Logos for the Stack page's tool tiles.
  *
  * Brand paths are lifted from Simple Icons (CC0, 24x24 viewBox) and inlined
  * rather than imported, so the site carries 24 path strings instead of a
  * 3450-icon dependency. Regenerate by re-running the extraction script if a
  * tool is added.
  *
- * `hex` is the official brand colour. Nothing renders in it today - the chips
+ * `hex` is the official brand colour. Nothing renders in it today - the tiles
  * use currentColor to stay inside the amber palette - but it is kept so
  * switching to full colour is a one-line change.
  *

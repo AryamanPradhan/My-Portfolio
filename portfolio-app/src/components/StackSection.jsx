@@ -3,6 +3,7 @@ import { gsap } from 'gsap';
 import '@fontsource/vt323';
 import '@fontsource/ibm-plex-mono/400.css';
 import { STACK_GROUPS, STACK_GROUP_LABELS, STACK_TOOLS } from '../stackData';
+import { BrokenTileBot } from './Bots';
 
 /**
  * The tool stack, printed like a directory listing on an amber CRT.
@@ -352,7 +353,7 @@ export default function StackSection({ onOpenBuild }) {
                   >
                     <span
                       className={
-                        'flex items-center justify-center w-16 h-16 sm:w-[72px] sm:h-[72px] border ' +
+                        'relative flex items-center justify-center w-16 h-16 sm:w-[72px] sm:h-[72px] border ' +
                         'data-[burn]:border-phosphor-burn ' +
                         'group-focus-visible:bg-phosphor group-focus-visible:text-phosphor-black group-focus-visible:border-phosphor group-focus-visible:shadow-phosphor ' +
                         (isSel
@@ -361,6 +362,9 @@ export default function StackSection({ onOpenBuild }) {
                       }
                     >
                       <Glyph icon={t.icon} />
+                      {/* Git is "broken" and under repair: a joke about broken
+                          builds. Cosmetic only; the tile works as normal. */}
+                      {t.slug === 'git' && <BrokenTileBot />}
                     </span>
                     <span
                       className={`text-[0.8125rem] leading-tight text-center break-words max-w-full ${

@@ -77,19 +77,9 @@
   animation: led-pulse 2s ease-in-out infinite;
 }
 
-.led-pulse-red {
-  box-shadow: 0 0 6px #EF4444, 0 0 12px rgba(239, 68, 68, 0.4);
-  animation: led-pulse-r 2s ease-in-out infinite;
-}
-
 @keyframes led-pulse {
   0%, 100% { opacity: 1; box-shadow: 0 0 6px #22C55E, 0 0 12px rgba(34, 197, 94, 0.4); }
   50% { opacity: 0.6; box-shadow: 0 0 3px #22C55E, 0 0 6px rgba(34, 197, 94, 0.2); }
-}
-
-@keyframes led-pulse-r {
-  0%, 100% { opacity: 1; box-shadow: 0 0 6px #EF4444, 0 0 12px rgba(239, 68, 68, 0.4); }
-  50% { opacity: 0.6; box-shadow: 0 0 3px #EF4444, 0 0 6px rgba(239, 68, 68, 0.2); }
 }
 
 /* ===== Boot Screen ===== */
@@ -131,13 +121,6 @@
   0% { opacity: 0; }
   15% { opacity: 0.8; }
   100% { opacity: 0; }
-}
-
-/* ===== Text Decryption Effect ===== */
-
-.decrypt-char {
-  display: inline-block;
-  min-width: 0.6em;
 }
 
 /* ===== Terminal Cursor ===== */
@@ -322,8 +305,8 @@ textarea:focus {
 }
 
 /* ===== Cursor =====
-   A pixel arrow in the phosphor amber, inverted over anything clickable - the
-   same inverted video the Stack tiles use for selection. Native cursors via
+   A pixel arrow in the phosphor amber, turning into a pixel pointing hand
+   over anything clickable - the retro "you can click this" signal. Native cursors via
    SVG, not a JS follower: no lag, no script, and touch devices never see it.
    Drawn on an 11x16 grid at 2x (22x32 stays under every browser's size cap);
    the hotspot is the tip at (1,1), so 2 2. Text fields keep the I-beam. */
@@ -340,10 +323,59 @@ label[for],
 [role="button"],
 .cursor-pointer,
 .redacted {
-  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='32' viewBox='0 0 11 16' shape-rendering='crispEdges'%3E%3Cpath d='M1 1V13L4 10L6 15L8 14L6 9H10Z' fill='%23050300' stroke='%23FFB000'/%3E%3C/svg%3E") 2 2, pointer;
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='27' viewBox='0 0 16 18' shape-rendering='crispEdges'%3E%3Crect x='5' y='0' width='2' height='1' fill='%23050300'/%3E%3Crect x='4' y='1' width='1' height='1' fill='%23050300'/%3E%3Crect x='5' y='1' width='1' height='1' fill='%23FFD27A'/%3E%3Crect x='6' y='1' width='1' height='1' fill='%23FFB000'/%3E%3Crect x='7' y='1' width='1' height='1' fill='%23050300'/%3E%3Crect x='4' y='2' width='1' height='1' fill='%23050300'/%3E%3Crect x='5' y='2' width='1' height='1' fill='%23FFD27A'/%3E%3Crect x='6' y='2' width='1' height='1' fill='%23FFB000'/%3E%3Crect x='7' y='2' width='1' height='1' fill='%23050300'/%3E%3Crect x='4' y='3' width='1' height='1' fill='%23050300'/%3E%3Crect x='5' y='3' width='1' height='1' fill='%23FFD27A'/%3E%3Crect x='6' y='3' width='1' height='1' fill='%23FFB000'/%3E%3Crect x='7' y='3' width='1' height='1' fill='%23050300'/%3E%3Crect x='4' y='4' width='1' height='1' fill='%23050300'/%3E%3Crect x='5' y='4' width='1' height='1' fill='%23FFD27A'/%3E%3Crect x='6' y='4' width='1' height='1' fill='%23FFB000'/%3E%3Crect x='7' y='4' width='3' height='1' fill='%23050300'/%3E%3Crect x='4' y='5' width='1' height='1' fill='%23050300'/%3E%3Crect x='5' y='5' width='1' height='1' fill='%23FFD27A'/%3E%3Crect x='6' y='5' width='1' height='1' fill='%23FFB000'/%3E%3Crect x='7' y='5' width='1' height='1' fill='%23050300'/%3E%3Crect x='8' y='5' width='1' height='1' fill='%23FFD27A'/%3E%3Crect x='9' y='5' width='1' height='1' fill='%23FFB000'/%3E%3Crect x='10' y='5' width='2' height='1' fill='%23050300'/%3E%3Crect x='4' y='6' width='1' height='1' fill='%23050300'/%3E%3Crect x='5' y='6' width='1' height='1' fill='%23FFD27A'/%3E%3Crect x='6' y='6' width='1' height='1' fill='%23FFB000'/%3E%3Crect x='7' y='6' width='1' height='1' fill='%23050300'/%3E%3Crect x='8' y='6' width='1' height='1' fill='%23FFD27A'/%3E%3Crect x='9' y='6' width='1' height='1' fill='%23FFB000'/%3E%3Crect x='10' y='6' width='1' height='1' fill='%23050300'/%3E%3Crect x='11' y='6' width='1' height='1' fill='%23FFD27A'/%3E%3Crect x='12' y='6' width='2' height='1' fill='%23050300'/%3E%3Crect x='1' y='7' width='2' height='1' fill='%23050300'/%3E%3Crect x='4' y='7' width='1' height='1' fill='%23050300'/%3E%3Crect x='5' y='7' width='1' height='1' fill='%23FFD27A'/%3E%3Crect x='6' y='7' width='1' height='1' fill='%23FFB000'/%3E%3Crect x='7' y='7' width='1' height='1' fill='%23050300'/%3E%3Crect x='8' y='7' width='1' height='1' fill='%23FFD27A'/%3E%3Crect x='9' y='7' width='1' height='1' fill='%23FFB000'/%3E%3Crect x='10' y='7' width='1' height='1' fill='%23050300'/%3E%3Crect x='11' y='7' width='1' height='1' fill='%23FFD27A'/%3E%3Crect x='12' y='7' width='2' height='1' fill='%23FFB000'/%3E%3Crect x='14' y='7' width='1' height='1' fill='%23050300'/%3E%3Crect x='0' y='8' width='1' height='1' fill='%23050300'/%3E%3Crect x='1' y='8' width='1' height='1' fill='%23FFD27A'/%3E%3Crect x='2' y='8' width='1' height='1' fill='%23FFB000'/%3E%3Crect x='3' y='8' width='2' height='1' fill='%23050300'/%3E%3Crect x='5' y='8' width='9' height='1' fill='%23FFB000'/%3E%3Crect x='14' y='8' width='1' height='1' fill='%23050300'/%3E%3Crect x='0' y='9' width='1' height='1' fill='%23050300'/%3E%3Crect x='1' y='9' width='1' height='1' fill='%23FFD27A'/%3E%3Crect x='2' y='9' width='2' height='1' fill='%23FFB000'/%3E%3Crect x='4' y='9' width='1' height='1' fill='%23050300'/%3E%3Crect x='5' y='9' width='9' height='1' fill='%23FFB000'/%3E%3Crect x='14' y='9' width='1' height='1' fill='%23050300'/%3E%3Crect x='1' y='10' width='1' height='1' fill='%23050300'/%3E%3Crect x='2' y='10' width='1' height='1' fill='%23FFD27A'/%3E%3Crect x='3' y='10' width='10' height='1' fill='%23FFB000'/%3E%3Crect x='13' y='10' width='1' height='1' fill='%23B87E00'/%3E%3Crect x='14' y='10' width='1' height='1' fill='%23050300'/%3E%3Crect x='2' y='11' width='1' height='1' fill='%23050300'/%3E%3Crect x='3' y='11' width='1' height='1' fill='%23FFD27A'/%3E%3Crect x='4' y='11' width='9' height='1' fill='%23FFB000'/%3E%3Crect x='13' y='11' width='1' height='1' fill='%23B87E00'/%3E%3Crect x='14' y='11' width='1' height='1' fill='%23050300'/%3E%3Crect x='2' y='12' width='1' height='1' fill='%23050300'/%3E%3Crect x='3' y='12' width='10' height='1' fill='%23FFB000'/%3E%3Crect x='13' y='12' width='1' height='1' fill='%23B87E00'/%3E%3Crect x='14' y='12' width='1' height='1' fill='%23050300'/%3E%3Crect x='3' y='13' width='1' height='1' fill='%23050300'/%3E%3Crect x='4' y='13' width='8' height='1' fill='%23FFB000'/%3E%3Crect x='12' y='13' width='1' height='1' fill='%23B87E00'/%3E%3Crect x='13' y='13' width='1' height='1' fill='%23050300'/%3E%3Crect x='3' y='14' width='1' height='1' fill='%23050300'/%3E%3Crect x='4' y='14' width='8' height='1' fill='%23FFB000'/%3E%3Crect x='12' y='14' width='1' height='1' fill='%23B87E00'/%3E%3Crect x='13' y='14' width='1' height='1' fill='%23050300'/%3E%3Crect x='4' y='15' width='1' height='1' fill='%23050300'/%3E%3Crect x='5' y='15' width='6' height='1' fill='%23FFB000'/%3E%3Crect x='11' y='15' width='1' height='1' fill='%23B87E00'/%3E%3Crect x='12' y='15' width='1' height='1' fill='%23050300'/%3E%3Crect x='4' y='16' width='1' height='1' fill='%23050300'/%3E%3Crect x='5' y='16' width='6' height='1' fill='%23FFB000'/%3E%3Crect x='11' y='16' width='1' height='1' fill='%23B87E00'/%3E%3Crect x='12' y='16' width='1' height='1' fill='%23050300'/%3E%3Crect x='4' y='17' width='9' height='1' fill='%23050300'/%3E%3C/svg%3E") 8 1, pointer;
 }
 
 input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]),
 textarea {
   cursor: text;
+}
+
+/* ===== Builder bots =====
+   Sprite frame swaps and falling pixels for the pixel crew in Bots.jsx.
+   Transforms and opacity only, so nothing here triggers layout; step-end
+   holds each frame whole, like real sprite animation. */
+
+.bot-frames > :nth-child(2) { opacity: 0; }
+.bot-frames > :nth-child(1) { animation: bot-frame-a var(--bot-frame, 0.4s) step-end infinite; }
+.bot-frames > :nth-child(2) { animation: bot-frame-b var(--bot-frame, 0.4s) step-end infinite; }
+
+@keyframes bot-frame-a { 0% { opacity: 1; } 50% { opacity: 0; } }
+@keyframes bot-frame-b { 0% { opacity: 0; } 50% { opacity: 1; } }
+
+/* Pixels crumbling off a chipped button: they drop in visible steps, like a
+   sprite, drift a little sideways, and blink out below the row. */
+.bot-fall { animation: bot-fall 1.8s steps(12) infinite; }
+@keyframes bot-fall {
+  0%   { transform: translate(0, 0); opacity: 1; }
+  85%  { opacity: 1; }
+  100% { transform: translate(var(--dx, 0), var(--fall, 44px)); opacity: 0; }
+}
+
+/* An idle blink: eyes open almost all the time, shut for a moment. */
+.bot-frames.bot-blink > :nth-child(1) { animation: bot-blink-a 4s step-end infinite; }
+.bot-frames.bot-blink > :nth-child(2) { animation: bot-blink-b 4s step-end infinite; }
+@keyframes bot-blink-a { 0% { opacity: 1; } 94% { opacity: 0; } }
+@keyframes bot-blink-b { 0% { opacity: 0; } 94% { opacity: 1; } }
+
+/* The greeter hangs on the screen edge: now and then it slips a little and
+   pulls itself back up. */
+.bot-peek { animation: bot-peek 3s step-end infinite; }
+@keyframes bot-peek {
+  0%  { transform: translateY(0); }
+  80% { transform: translateY(3px); }
+  88% { transform: translateY(1px); }
+  94% { transform: translateY(0); }
+}
+
+/* The greeter's "HI!": shown for most of each cycle, then gone for a beat,
+   with no fade, so it reads as the robot saying it again. */
+.bot-hi { animation: bot-hi 4s step-end infinite; }
+@keyframes bot-hi {
+  0%  { opacity: 1; }
+  75% { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bot-crew * { animation: none !important; }
 }

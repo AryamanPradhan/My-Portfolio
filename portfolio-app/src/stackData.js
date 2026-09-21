@@ -101,12 +101,14 @@ const TOOLS = [
     description: 'Hosting for long-running services that need a disk that survives a restart.' },
   { group: 'infra', name: 'Vercel', tech: ['Vercel'], icon: 'Vercel',
     description: 'Hosting for frontends and serverless functions, deployed on every push.' },
-  { group: 'infra', name: 'Git', tech: ['Git'], icon: 'Git',
-    description: 'Version control, and the start of every deploy: a push triggers the build and ships it.' },
   { group: 'infra', name: 'Logfire', tech: ['Logfire'], icon: 'Logfire',
     description: 'Tracing for Python that shows every step, model call and what it cost.' },
   { group: 'infra', name: 'Bash', tech: ['Bash'], icon: 'Bash',
     description: 'The shell, for the scripts that glue everything else together.' },
+  // Last in its group on purpose: the Stack page's repair robot stands in the
+  // empty space after it (see BrokenTileBot).
+  { group: 'infra', name: 'Git', tech: ['Git'], icon: 'Git',
+    description: 'Version control, and the start of every deploy: a push triggers the build and ships it.' },
 
   { group: 'web', name: 'React', tech: ['React'], icon: 'React',
     description: 'A library for building interfaces out of components.' },
