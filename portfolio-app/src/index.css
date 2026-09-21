@@ -210,10 +210,10 @@
   scrollbar-color: #40322B #160C07;
 }
 
-/* ===== Responsive Sidebar ===== */
+/* ===== Mobile Menu ===== */
 
 @media (max-width: 1024px) {
-  .sidebar-mobile-overlay {
+  .mobile-menu-overlay {
     position: fixed;
     inset: 0;
     background: rgba(0, 0, 0, 0.7);
@@ -319,4 +319,31 @@ textarea:focus {
   font-family: 'JetBrains Mono', ui-monospace, monospace;
   font-size: 12px;
   z-index: 1;
+}
+
+/* ===== Cursor =====
+   A pixel arrow in the phosphor amber, inverted over anything clickable - the
+   same inverted video the Stack tiles use for selection. Native cursors via
+   SVG, not a JS follower: no lag, no script, and touch devices never see it.
+   Drawn on an 11x16 grid at 2x (22x32 stays under every browser's size cap);
+   the hotspot is the tip at (1,1), so 2 2. Text fields keep the I-beam. */
+
+html {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='32' viewBox='0 0 11 16' shape-rendering='crispEdges'%3E%3Cpath d='M1 1V13L4 10L6 15L8 14L6 9H10Z' fill='%23FFB000' stroke='%23050300'/%3E%3C/svg%3E") 2 2, auto;
+}
+
+a,
+button,
+summary,
+select,
+label[for],
+[role="button"],
+.cursor-pointer,
+.redacted {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='32' viewBox='0 0 11 16' shape-rendering='crispEdges'%3E%3Cpath d='M1 1V13L4 10L6 15L8 14L6 9H10Z' fill='%23050300' stroke='%23FFB000'/%3E%3C/svg%3E") 2 2, pointer;
+}
+
+input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]),
+textarea {
+  cursor: text;
 }

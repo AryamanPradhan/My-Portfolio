@@ -13,7 +13,9 @@ Personal portfolio site themed as a retro-industrial "classified intelligence do
 - **React Router DOM 7** for client-side routing (`BrowserRouter`)
 - **Tailwind CSS 3** with class-based dark mode (permanently dark via `<body class="dark">`)
 - **TypeScript** installed for type-checking only (`tsc && vite build`); all source files are `.jsx`, not `.tsx`
-- **Google Fonts** loaded via CDN in index.html: IBM Plex Mono and IBM Plex Sans, plus Material Symbols Outlined icons
+- **Google Fonts** loaded via CDN in index.html: Inter and JetBrains Mono, plus Material Symbols Outlined icons
+- **Fontsource** self-hosts VT323 and IBM Plex Mono, used only by the Stack section
+- **GSAP** drives the Stack section's one-time entry printout; nothing else uses it
 - **Vercel serverless functions** (Node, ESM) in `api/` for the contact form — Resend for delivery; rate limiting is in-process with no external store
 
 ## Commands
@@ -45,11 +47,13 @@ portfolio-app/           # The React application (Vercel builds this)
   src/
     main.jsx             # Mount point (renders into #app)
     App.jsx              # BrowserRouter with route definitions
-    Layout.jsx           # Persistent shell: top nav bar, left side nav, <Outlet/>
+    Layout.jsx           # Persistent shell: header with the nav (dropdown menu on mobile), <Outlet/>
     index.css            # Tailwind directives + custom CSS (CRT overlay, bevel effects, LED animations, scrollbars)
     portfolioData.json   # Site content: personal, contact, services, projects
-    pages/               # Home.jsx, About.jsx, Contact.jsx
-    components/          # BootScreen, CtaBand, DecryptText, InteractiveTerminal, WorkflowDiagram
+    stackData.js         # Stack section tools; `usedIn` is derived from each project's `tech`
+    techIcons.js         # Simple Icons paths (monochrome) or Material Symbol fallbacks per tool
+    pages/               # Home.jsx, About.jsx, Stack.jsx, Contact.jsx
+    components/          # BootScreen, CtaBand, DecryptText, InteractiveTerminal, StackSection, WorkflowDiagram
     assets/              # Static images (hero.png, SVGs)
   public/
     icons.svg            # SVG sprite sheet (social icons: bluesky, discord, x)
@@ -71,8 +75,9 @@ download_screens.py      # Helper to download design reference screens
 
 | Path | Component | Notes |
 |------|-----------|-------|
-| `/` | `Home` | Dashboard; projects live here |
+| `/` | `Home` | Dashboard; projects live here. `/#<slug>` (slugified codename) opens that project |
 | `/about` | `About` | Operator profile |
+| `/stack` | `Stack` | Tool stack; each tool links to the builds that used it |
 | `/contact` | `Contact` | Contact form |
 | `/profile` | — | Redirects to `/about` |
 | `/projects` | — | Redirects to `/` |
@@ -120,3 +125,5 @@ Custom CSS classes used throughout the JSX (defined in `index.css` or needing to
 - **The contact form degrades to `mailto:`** on any API failure, so a broken or unconfigured backend never costs an enquiry. Preserve that fallback when touching `Contact.jsx`
 - **Client-side validation is a courtesy, not a control** — `api/_lib/validation.js` is the authority. The two sets of limits are kept in sync by hand
 - **The site is silent** — there is no audio anywhere, by choice
+- **The cursor is custom, in CSS only** (end of `index.css`): an amber pixel arrow, inverted over clickable things. It's a native SVG cursor, not a JS follower. Anything clickable that isn't an `a`/`button` needs `cursor-pointer` or `role="button"` to get the inverted arrow
+- **The Stack section is its own look**: one amber hue (`phosphor-*` colours), sentence case, VT323 + IBM Plex Mono, no fades. Its `usedIn` links come from project `tech` arrays, so a tool only claims a build that lists it — add the tool to the project, never to `usedIn`

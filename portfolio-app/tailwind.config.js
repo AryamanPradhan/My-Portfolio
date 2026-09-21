@@ -8,6 +8,15 @@ export default {
   theme: {
     extend: {
       colors: {
+        // The Stack section's amber-phosphor palette. One hue; brightness is
+        // the only thing that varies, like a single-colour CRT.
+        phosphor: {
+          black: "#050300",
+          DEFAULT: "#FFB000",
+          hot: "#FFD27A",
+          dim: "#8A5A00",
+          burn: "#3D2700",
+        },
         "surface-tint": "#FFB000",
         "on-primary": "#4A2800",
         "on-secondary-fixed-variant": "#5C4300",
@@ -73,6 +82,9 @@ export default {
         "status-tiny": ["JetBrains Mono", "ui-monospace", "monospace"],
         "mono-data": ["JetBrains Mono", "ui-monospace", "monospace"],
         "label-caps": ["JetBrains Mono", "ui-monospace", "monospace"],
+        // Stack section only, both self-hosted through Fontsource.
+        "vt323": ["VT323", "ui-monospace", "monospace"],
+        "plex-mono": ["IBM Plex Mono", "ui-monospace", "monospace"],
       },
       // Nothing sits below 12px. Line heights are looser than before because
       // the old 1.0-1.4 values were tuned for text too small to wrap much.
@@ -88,6 +100,17 @@ export default {
       boxShadow: {
         'inset-bevel': 'inset 1px 1px 0px rgba(255, 255, 255, 0.1), inset -1px -1px 0px rgba(0, 0, 0, 0.8)',
         'outset-bevel': '1px 1px 0px rgba(255, 255, 255, 0.1), -1px -1px 0px rgba(0, 0, 0, 0.8)',
+        'phosphor': '0 0 12px rgba(255, 176, 0, 0.45)',
+      },
+      keyframes: {
+        // One dropped frame when a Stack tile is selected.
+        'phosphor-flicker': {
+          '0%, 100%': { opacity: '1' },
+          '50%': { opacity: '0.6' },
+        },
+      },
+      animation: {
+        'phosphor-flicker': 'phosphor-flicker 80ms steps(1, end) 1',
       },
       spacing: {
         "touch-target": "32px",

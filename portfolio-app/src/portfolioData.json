@@ -34,14 +34,6 @@
       "desc": "Research, drafting, and publishing pipelines with human approval gates so nothing ships unreviewed."
     }
   ],
-  "stack": [
-    { "category": "LANGUAGES", "items": ["Python", "JavaScript", "SQL", "Bash"] },
-    { "category": "AI / LLM", "items": ["Claude API", "OpenAI API", "DeepEval", "Prompt & Eval Design"] },
-    { "category": "RESEARCH / DATA", "items": ["Tavily", "Firecrawl", "SQLite", "PostgreSQL"] },
-    { "category": "PLATFORM APIS", "items": ["Notion API", "Gmail API", "Google Drive API", "Google Sheets API", "Slack API", "Twilio"] },
-    { "category": "BACKEND", "items": ["FastAPI", "Webhooks", "Cron Workers", "Render"] },
-    { "category": "FRONTEND", "items": ["React", "Vite", "Tailwind CSS"] }
-  ],
   "principles": [
     "Python against real APIs, not no-code glue. No Zapier, no per-run billing, no platform you don't control.",
     "Every AI output is evaluated before it ships. Structured evals and scoring rubrics on every agent, not vibes.",
@@ -137,7 +129,11 @@
         "Cohere Rerank",
         "Qdrant",
         "SQLite",
-        "Logfire"
+        "Logfire",
+        "Docker",
+        "Railway",
+        "Git",
+        "Gemini Embeddings"
       ],
       "facts": {
         "pipeline": "Fixed, not an agent loop",
@@ -478,7 +474,8 @@
         "React",
         "TypeScript",
         "Tailwind CSS",
-        "Vercel"
+        "Vercel",
+        "Git"
       ],
       "facts": {
         "booking": "WhatsApp deep link",
@@ -500,7 +497,7 @@
       "date": "2026",
       "brief": "This site. CRT terminal UI, interactive shell, every data point from one JSON file.",
       "objective": "The site you are reading. A retro-industrial CRT terminal interface built as a single-page React app, with a boot sequence, an interactive shell, and every data point driven from one structured source file.",
-      "tech": ["React", "Vite", "Tailwind CSS", "React Router"],
+      "tech": ["React", "Vite", "Tailwind CSS", "React Router", "Vercel", "Git"],
       "facts": {
         "dataSource": "Single JSON file",
         "pages": "3",

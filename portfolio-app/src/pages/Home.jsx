@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import DecryptText from '../components/DecryptText';
-import InteractiveTerminal from '../components/InteractiveTerminal';
 import CtaBand from '../components/CtaBand';
 import WorkflowDiagram from '../components/WorkflowDiagram';
 import data from '../portfolioData.json';
-import { TECH_ICONS } from '../techIcons';
+import { slugify } from '../stackData';
 
-const { personal, contact, services, stack, projects } = data;
+const { personal, services, projects } = data;
 
 const STATUS_STYLES = {
   SHIPPED: 'text-led-green bg-led-green/10 border border-led-green/30',
@@ -27,31 +26,23 @@ const FACT_LABELS = {
 
 const labelFor = (key) => FACT_LABELS[key] || key.replace(/([A-Z])/g, ' $1').toUpperCase();
 
-const Sparkline = ({ data, color }) => {
-  const min = Math.min(...data);
-  const max = Math.max(...data);
-  const range = max - min || 1;
-  const width = 100;
-  const height = 40;
-  const points = data.map((d, i) => {
-    const x = (i / (data.length - 1)) * width;
-    const y = height - ((d - min) / range) * height;
-    return `${x},${y}`;
-  }).join(' ');
-
-  return (
-    <svg viewBox={`0 0 ${width} ${height}`} className="w-full h-8" preserveAspectRatio="none">
-      <polyline fill="none" stroke={color} strokeWidth="2" points={points} vectorEffect="non-scaling-stroke" />
-      <polygon fill={color} fillOpacity="0.15" points={`0,${height} ${points} ${width},${height}`} />
-    </svg>
-  );
-};
-
 export default function Home() {
   const [time, setTime] = useState(new Date().toISOString().replace('T', ' ').substring(0, 19));
-  const [signalData, setSignalData] = useState(Array.from({ length: 20 }, () => Math.floor(Math.random() * 40) + 40));
-  const [linkData, setLinkData] = useState(Array.from({ length: 20 }, () => Math.floor(Math.random() * 20) + 30));
   const [openProject, setOpenProject] = useState(null);
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  // A project can be opened by link (/#hotel-ai-guide). The Stack page sends
+  // visitors here that way.
+  useEffect(() => {
+    const slug = location.hash.slice(1);
+    if (slug) setOpenProject(projects.find(p => slugify(p.codename) === slug) ?? null);
+  }, [location.hash]);
+
+  const closeProject = () => {
+    setOpenProject(null);
+    if (location.hash) navigate('/', { replace: true });
+  };
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -61,15 +52,7 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    const telemetryTimer = setInterval(() => {
-      setSignalData(prev => [...prev.slice(1), Math.floor(Math.random() * 40) + 40 + (Math.random() > 0.8 ? 30 : 0)]);
-      setLinkData(prev => [...prev.slice(1), Math.floor(Math.random() * 20) + 30 + (Math.random() > 0.9 ? 15 : 0)]);
-    }, 800);
-    return () => clearInterval(telemetryTimer);
-  }, []);
-
-  useEffect(() => {
-    const handleEsc = (e) => { if (e.key === 'Escape') setOpenProject(null); };
+    const handleEsc = (e) => { if (e.key === 'Escape') closeProject(); };
     if (openProject) {
       document.addEventListener('keydown', handleEsc);
       return () => document.removeEventListener('keydown', handleEsc);
@@ -88,17 +71,16 @@ export default function Home() {
     { label: 'BASE', value: 'INDIA — REMOTE', color: 'text-on-surface-variant' },
     { label: 'STACK', value: 'PYTHON', color: 'text-primary-container' },
     { label: 'CLIENTS', value: 'AGENCIES', color: 'text-on-surface-variant' },
-    { label: 'STATUS', value: 'AVAILABLE', color: 'text-led-green' },
   ];
 
   return (
-    <div className="h-full grid grid-cols-1 lg:grid-cols-12 gap-4 page-enter">
+    <div className="h-full page-enter">
 
       {/* [&>*]:shrink-0 is load-bearing. This is a fixed-height flex column, so
           its children default to flex-shrink:1 and get compressed to fit rather
           than overflowing into the scroll. The hero carries overflow-hidden, so
           it was compressed to zero height and silently disappeared. */}
-      <section className="lg:col-span-9 h-full flex flex-col gap-4 overflow-y-auto pr-0 lg:pr-2 [&>*]:shrink-0">
+      <section className="h-full flex flex-col gap-4 overflow-y-auto pr-0 lg:pr-2 [&>*]:shrink-0">
 
         {/* Hero */}
         <div className="bevel-outset bg-surface-dim relative overflow-hidden">
@@ -116,9 +98,6 @@ export default function Home() {
 
             <div className="flex flex-col lg:flex-row items-start gap-6 lg:gap-8">
               <div className="flex-1">
-                <div className="font-status-tiny text-status-tiny text-primary-container tracking-widest mb-2 animate-pulse">
-                  &gt; FILE LOADED — {personal.availability}
-                </div>
                 <DecryptText
                   text={personal.name.toUpperCase()}
                   as="div"
@@ -132,9 +111,6 @@ export default function Home() {
                   {personal.subheadline}
                 </p>
                 <div className="flex flex-wrap gap-3">
-                  <Link to="/contact" className="bevel-outset bg-primary text-on-primary px-5 py-2 font-label-caps font-bold text-[16px] hover:bg-primary-container active:translate-y-0.5 transition-all inline-block">
-                    START A PROJECT
-                  </Link>
                   <Link to="/about" className="bevel-outset bg-surface-container-highest text-primary px-5 py-2 font-label-caps font-bold text-[16px] hover:text-primary-container active:translate-y-0.5 transition-all border border-border-graphite inline-block">
                     ABOUT THE OPERATOR
                   </Link>
@@ -152,12 +128,6 @@ export default function Home() {
                     </div>
                   ))}
                 </div>
-                <a
-                  href={`mailto:${contact.email}`}
-                  className="mt-4 block text-center bevel-outset bg-surface-container-highest text-primary py-2 font-label-caps text-[13px] hover:text-primary-container transition-colors"
-                >
-                  EMAIL DIRECT
-                </a>
               </div>
             </div>
           </div>
@@ -180,51 +150,6 @@ export default function Home() {
                     the 18px and leave the heading smaller than its own body. */}
                 <div className="font-label-caps text-primary-container text-[18px] font-semibold leading-snug mb-2">{service.name}</div>
                 <div className="font-body-base text-on-surface-variant text-[15px] leading-relaxed">{service.desc}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Tech Stack */}
-        <div className="bevel-outset bg-surface-dim p-4 lg:p-6">
-          <div className="flex items-center gap-2 mb-1">
-            <span className="material-symbols-outlined text-primary text-lg">database</span>
-            <span className="font-label-caps text-label-caps text-primary">TECH STACK</span>
-          </div>
-          <div className="font-status-tiny text-outline text-[12px] mb-4">
-            EVERYTHING BELOW IS HANDS-ON, NOT ASPIRATIONAL
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            {stack.map(group => (
-              <div key={group.category} className="bevel-inset bg-background-matte/60 p-3">
-                <div className="font-label-caps text-primary-container text-[13px] mb-2">{group.category}</div>
-                <div className="flex flex-wrap gap-1.5">
-                  {group.items.map(item => {
-                    const icon = TECH_ICONS[item];
-                    return (
-                      <span
-                        key={item}
-                        className="inline-flex items-center gap-1.5 bg-surface-container-lowest text-on-surface-variant font-mono-data text-[13px] px-2 py-1 border border-border-graphite/30"
-                      >
-                        {/* Logos inherit currentColor rather than their brand
-                            hex, so the chips stay inside the amber palette. The
-                            official colour is kept in techIcons.js if that
-                            should ever change. */}
-                        {icon?.type === 'brand' && (
-                          <svg viewBox="0 0 24 24" aria-hidden="true" className="w-4 h-4 flex-shrink-0 fill-current text-primary-container">
-                            <path d={icon.path} />
-                          </svg>
-                        )}
-                        {icon?.type === 'symbol' && (
-                          <span className="material-symbols-outlined text-primary-container flex-shrink-0 text-[16px] leading-none" aria-hidden="true">
-                            {icon.name}
-                          </span>
-                        )}
-                        {item}
-                      </span>
-                    );
-                  })}
-                </div>
               </div>
             ))}
           </div>
@@ -331,81 +256,11 @@ export default function Home() {
         />
       </section>
 
-      {/* Right sidebar */}
-      <aside className="hidden lg:flex lg:col-span-3 h-full flex-col gap-3 overflow-hidden">
-        <div className="bevel-outset bg-surface-dim p-3 flex-shrink-0">
-          <div className="flex items-center gap-2 border-b border-border-graphite pb-2 mb-3">
-            <span className="material-symbols-outlined text-primary text-sm">monitoring</span>
-            <span className="font-label-caps text-label-caps text-primary">SYSTEM TELEMETRY</span>
-          </div>
-          <div className="space-y-3">
-            <div>
-              <div className="flex justify-between font-mono-data text-mono-data mb-1">
-                <span>SIGNAL</span>
-                <span className="text-primary-container">{signalData[signalData.length - 1]}%</span>
-              </div>
-              <div className="bevel-inset bg-surface-container-lowest p-0.5">
-                <Sparkline data={signalData} color="#EA6B1E" />
-              </div>
-            </div>
-            <div>
-              <div className="flex justify-between font-mono-data text-mono-data mb-1">
-                <span>UPLINK</span>
-                <span className="text-led-green">{linkData[linkData.length - 1]}%</span>
-              </div>
-              <div className="bevel-inset bg-surface-container-lowest p-0.5">
-                <Sparkline data={linkData} color="#22C55E" />
-              </div>
-            </div>
-          </div>
-          <div className="grid grid-cols-2 gap-2 mt-3">
-            <div className="bevel-inset bg-surface-container-low p-2">
-              <div className="font-status-tiny text-status-tiny text-outline">BUILDS</div>
-              <div className="font-mono-data text-mono-data text-primary text-sm">{projects.length}</div>
-            </div>
-            <div className="bevel-inset bg-surface-container-low p-2">
-              <div className="font-status-tiny text-status-tiny text-outline">ACTIVE</div>
-              <div className="font-mono-data text-mono-data text-led-green text-sm">{activeCount}</div>
-            </div>
-          </div>
-        </div>
-
-        <Link
-          to="/contact"
-          className="bevel-outset bg-primary text-on-primary py-3 font-label-caps font-bold text-[16px] text-center hover:bg-primary-container active:translate-y-0.5 transition-all flex-shrink-0"
-        >
-          START A PROJECT
-        </Link>
-
-        <div className="bevel-outset bg-surface-container-high p-3 flex-shrink-0">
-          <div className="font-label-caps text-label-caps text-outline mb-2">FIND ME</div>
-          <div className="grid grid-cols-2 gap-1.5">
-            {[
-              { icon: 'dns', label: 'LINKEDIN', href: `https://${contact.linkedin}`, color: 'text-led-green' },
-              { icon: 'mail', label: 'EMAIL', href: `mailto:${contact.email}`, color: 'text-primary' },
-            ].map(asset => (
-              <a
-                key={asset.label}
-                href={asset.href}
-                target={asset.icon !== 'mail' ? '_blank' : undefined}
-                rel={asset.icon !== 'mail' ? 'noopener noreferrer' : undefined}
-                className={`h-12 bevel-inset bg-background-matte flex flex-col items-center justify-center ${asset.color} hover:text-primary transition-colors`}
-              >
-                <span className="material-symbols-outlined text-sm">{asset.icon}</span>
-                <span className="font-status-tiny text-[12px] mt-0.5">{asset.label}</span>
-              </a>
-            ))}
-          </div>
-        </div>
-
-        <InteractiveTerminal className="flex-1 min-h-0" />
-      </aside>
-
       {/* Retro window modal */}
       {openProject && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center p-4"
-          onClick={() => setOpenProject(null)}
+          onClick={closeProject}
         >
           <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" />
 
@@ -421,7 +276,7 @@ export default function Home() {
                 <span className="font-mono-data text-outline text-[14px]">// {openProject.name}</span>
               </div>
               <button
-                onClick={() => setOpenProject(null)}
+                onClick={closeProject}
                 className="bevel-outset bg-surface-container-lowest w-7 h-7 flex items-center justify-center text-led-red hover:bg-led-red hover:text-on-primary transition-colors font-mono-data font-bold text-[16px]"
               >
                 X
@@ -533,7 +388,7 @@ export default function Home() {
                 {openProject.tech.length} DEPS &nbsp;|&nbsp; {Object.keys(openProject.facts).length} FACTS &nbsp;|&nbsp; {openProject.outcomes.length} DECISIONS
               </span>
               <button
-                onClick={() => setOpenProject(null)}
+                onClick={closeProject}
                 className="font-label-caps text-outline text-[13px] hover:text-primary transition-colors"
               >
                 [ESC] CLOSE

@@ -7,24 +7,22 @@ const { personal, contact } = data;
 export default function Layout() {
   const location = useLocation();
   const isActive = (path) => location.pathname === path;
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [time, setTime] = useState(new Date().toISOString().replace('T', ' ').substring(0, 19));
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setTime(new Date().toISOString().replace('T', ' ').substring(0, 19));
-    }, 1000);
-    return () => clearInterval(timer);
-  }, []);
-
-  useEffect(() => {
-    setSidebarOpen(false);
+    setMenuOpen(false);
   }, [location]);
 
   const navLinks = [
     { to: '/', icon: 'home', label: 'HOME' },
-    { to: '/about', icon: 'person_search', label: 'ABOUT THE AGENT' },
-    { to: '/contact', icon: 'mail', label: 'GET IN TOUCH' },
+    { to: '/about', icon: 'person_search', label: 'ABOUT' },
+    { to: '/stack', icon: 'layers', label: 'STACK' },
+    { to: '/contact', icon: 'mail', label: 'CONTACT' },
+  ];
+
+  const socialLinks = [
+    { icon: 'dns', href: `https://${contact.linkedin}`, label: 'LinkedIn' },
+    { icon: 'mail', href: `mailto:${contact.email}`, label: 'Email' },
   ];
 
   return (
@@ -32,16 +30,20 @@ export default function Layout() {
       <div className="crt-overlay"></div>
       <div className="scanline"></div>
 
-      {/* TopNavBar */}
-      <nav className="fixed top-0 w-full z-50 flex justify-between items-center px-4 lg:px-6 h-[56px] lg:h-[64px] bg-background-matte border-b-2 border-border-graphite shadow-[0_1px_0_0_rgba(255,182,147,0.1)]">
-        <div className="flex items-center gap-3 lg:gap-4 min-w-0">
-          {/* Mobile hamburger */}
+      {/* Header: the site's only navigation, so pages get the full width.
+          Equal outer grid tracks keep the nav centred on the page, whatever
+          the logo and the call to action measure. */}
+      <nav className="fixed top-0 w-full z-50 grid grid-cols-[1fr_auto_1fr] items-center gap-4 px-4 lg:px-6 h-[56px] lg:h-[64px] bg-background-matte border-b-2 border-border-graphite shadow-[0_1px_0_0_rgba(255,182,147,0.1)]">
+        <div className="flex items-center gap-3 lg:gap-4 min-w-0 h-full">
+          {/* Mobile menu toggle */}
           <button
-            onClick={() => setSidebarOpen(!sidebarOpen)}
+            onClick={() => setMenuOpen(!menuOpen)}
+            aria-expanded={menuOpen}
+            aria-label={menuOpen ? 'Close menu' : 'Open menu'}
             className="lg:hidden text-outline hover:text-primary transition-colors"
           >
             <span className="material-symbols-outlined text-xl">
-              {sidebarOpen ? 'close' : 'menu'}
+              {menuOpen ? 'close' : 'menu'}
             </span>
           </button>
 
@@ -51,16 +53,32 @@ export default function Layout() {
           >
             ARYAMAN
           </Link>
-          <div className="h-5 w-px bg-border-graphite hidden md:block"></div>
-          <div className="font-mono-data text-mono-data text-outline hidden md:block truncate">
+          <div className="h-5 w-px bg-border-graphite hidden xl:block"></div>
+          <div className="font-mono-data text-mono-data text-outline hidden xl:block truncate">
             {personal.title.toUpperCase()}
           </div>
         </div>
-        <div className="flex items-center gap-3 flex-shrink-0">
-          <div className="font-mono-data text-mono-data text-outline hidden xl:block">
-            {time}
-          </div>
-          <div className="h-5 w-px bg-border-graphite hidden xl:block"></div>
+
+        {/* Desktop nav */}
+        <div className="hidden lg:flex items-stretch h-full">
+          {navLinks.map(link => (
+            <Link
+              key={link.to}
+              to={link.to}
+              aria-current={isActive(link.to) ? 'page' : undefined}
+              className={`flex items-center gap-2 px-4 border-b-2 -mb-[2px] transition-colors ${
+                isActive(link.to)
+                  ? 'border-primary text-primary bg-primary/10'
+                  : 'border-transparent text-outline hover:text-primary-fixed-dim hover:bg-surface-container-highest'
+              }`}
+            >
+              <span className="material-symbols-outlined text-lg">{link.icon}</span>
+              <span className="font-label-caps text-label-caps whitespace-nowrap">{link.label}</span>
+            </Link>
+          ))}
+        </div>
+
+        <div className="col-start-3 justify-self-end flex items-center gap-3 flex-shrink-0">
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 bg-led-green led-pulse-green rounded-full"></div>
             <span className="font-status-tiny text-status-tiny text-led-green hidden sm:inline">AVAILABLE</span>
@@ -70,102 +88,58 @@ export default function Layout() {
             className="bevel-outset bg-primary text-on-primary px-3 lg:px-4 py-1.5 font-label-caps font-bold text-[13px] lg:text-[14px] hover:bg-primary-container active:translate-y-0.5 transition-all whitespace-nowrap"
           >
             {/* The full label plus the wordmark overruns a 320px viewport. The
-                sidebar and hero still carry the full call to action. */}
+                closing band on each page still carries the full call to action. */}
             <span className="hidden min-[380px]:inline">START A PROJECT</span>
             <span className="min-[380px]:hidden">CONTACT</span>
           </Link>
         </div>
       </nav>
 
-      {/* Mobile overlay */}
-      {sidebarOpen && (
-        <div
-          className="sidebar-mobile-overlay lg:hidden"
-          onClick={() => setSidebarOpen(false)}
-        ></div>
+      {/* Mobile menu: drops down under the header */}
+      {menuOpen && (
+        <>
+          <div className="mobile-menu-overlay lg:hidden" onClick={() => setMenuOpen(false)}></div>
+          <div className="lg:hidden fixed top-[56px] left-0 right-0 z-40 bg-surface-dim border-b-2 border-border-graphite">
+            <nav className="py-2">
+              {navLinks.map(link => (
+                <Link
+                  key={link.to}
+                  to={link.to}
+                  aria-current={isActive(link.to) ? 'page' : undefined}
+                  className={`flex items-center gap-3 px-4 py-3 mx-2 my-0.5 transition-all ${
+                    isActive(link.to)
+                      ? 'bg-primary-container text-on-primary-container border-l-2 border-primary'
+                      : 'text-outline hover:bg-surface-container-highest hover:text-primary-fixed-dim border-l-2 border-transparent'
+                  }`}
+                >
+                  <span className="material-symbols-outlined text-lg">{link.icon}</span>
+                  <span className="font-label-caps text-label-caps">{link.label}</span>
+                </Link>
+              ))}
+            </nav>
+            <div className="px-4 py-3 border-t border-border-graphite">
+              <div className="font-status-tiny text-outline text-[12px] mb-2">FIND ME</div>
+              <div className="flex gap-2">
+                {socialLinks.map(link => (
+                  <a
+                    key={link.label}
+                    href={link.href}
+                    target={link.icon !== 'mail' ? '_blank' : undefined}
+                    rel={link.icon !== 'mail' ? 'noopener noreferrer' : undefined}
+                    className="flex-1 h-10 bevel-inset bg-background-matte flex flex-col items-center justify-center text-outline hover:text-primary transition-colors"
+                  >
+                    <span className="material-symbols-outlined text-sm">{link.icon}</span>
+                    <span className="font-status-tiny text-[12px] mt-0.5">{link.label.toUpperCase()}</span>
+                  </a>
+                ))}
+              </div>
+            </div>
+          </div>
+        </>
       )}
 
-      {/* SideNavBar */}
-      <aside className={`fixed left-0 top-[56px] lg:top-[64px] bottom-0 w-56 flex flex-col z-40 bg-surface-dim border-r-2 border-border-graphite transition-transform duration-300 ${
-        sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
-      }`}>
-        <div className="p-4 border-b-2 border-border-graphite bg-surface-container">
-          <div className="font-status-tiny text-status-tiny text-outline mb-1">{personal.location.toUpperCase()}</div>
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 bevel-outset bg-surface-steel flex items-center justify-center flex-shrink-0">
-              <span className="material-symbols-outlined text-primary text-lg">shield_person</span>
-            </div>
-            <div className="min-w-0">
-              <div className="font-headline-md text-sm text-primary leading-tight font-bold truncate">{personal.name}</div>
-              <div className="font-status-tiny text-status-tiny text-led-green">OPEN TO WORK</div>
-            </div>
-          </div>
-        </div>
-        <nav className="flex-1 overflow-y-auto py-2">
-          <div className="px-4 py-2 font-status-tiny text-status-tiny text-outline">SECTIONS</div>
-          {navLinks.map(link => (
-            <Link
-              key={link.to}
-              to={link.to}
-              className={`flex items-center gap-3 px-4 py-3 mx-2 my-0.5 transition-all ${
-                isActive(link.to)
-                  ? 'bg-primary-container text-on-primary-container border-l-2 border-primary'
-                  : 'text-outline hover:bg-surface-container-highest hover:text-primary-fixed-dim border-l-2 border-transparent'
-              }`}
-            >
-              <span className="material-symbols-outlined text-lg">{link.icon}</span>
-              <span className="font-label-caps text-label-caps">{link.label}</span>
-            </Link>
-          ))}
-        </nav>
-
-        {/* Sidebar CTA */}
-        <div className="px-4 pb-3">
-          <Link
-            to="/contact"
-            className="block text-center bevel-outset bg-primary text-on-primary py-2.5 font-label-caps font-bold text-[14px] hover:bg-primary-container active:translate-y-0.5 transition-all"
-          >
-            START A PROJECT
-          </Link>
-        </div>
-
-        {/* Social links */}
-        <div className="px-4 py-3 border-t border-border-graphite">
-          <div className="font-status-tiny text-outline text-[12px] mb-2">FIND ME</div>
-          <div className="flex gap-2">
-            {[
-              { icon: 'dns', href: `https://${contact.linkedin}`, label: 'LinkedIn' },
-              { icon: 'mail', href: `mailto:${contact.email}`, label: 'Email' },
-            ].map(link => (
-              <a
-                key={link.label}
-                href={link.href}
-                target={link.icon !== 'mail' ? '_blank' : undefined}
-                rel={link.icon !== 'mail' ? 'noopener noreferrer' : undefined}
-                className="flex-1 h-10 bevel-inset bg-background-matte flex flex-col items-center justify-center text-outline hover:text-primary transition-colors group"
-                title={link.label}
-              >
-                <span className="material-symbols-outlined text-sm group-hover:text-primary transition-colors">{link.icon}</span>
-                <span className="font-status-tiny text-[12px] mt-0.5">{link.label.toUpperCase()}</span>
-              </a>
-            ))}
-          </div>
-        </div>
-
-        <div className="p-4 border-t-2 border-border-graphite">
-          {/* 13px, not the 14px mono-data token: the longest line is 23 mono
-              characters and the rail leaves 192px, which 14px overruns by a
-              hair and wraps to an orphaned word. */}
-          <div className="font-mono-data text-outline text-[13px] leading-relaxed">
-            <div>STACK: PYTHON / FASTAPI</div>
-            <div>AI: CLAUDE + OPENAI API</div>
-            <div className="text-primary-container mt-1">THIS SITE: REACT + VITE</div>
-          </div>
-        </div>
-      </aside>
-
       {/* Main Content */}
-      <main className="lg:ml-56 mt-[56px] lg:mt-[64px] p-3 lg:p-4 h-[calc(100vh-56px)] lg:h-[calc(100vh-64px)] overflow-hidden">
+      <main className="mt-[56px] lg:mt-[64px] p-3 lg:p-4 h-[calc(100vh-56px)] lg:h-[calc(100vh-64px)] overflow-hidden">
         <Outlet />
       </main>
     </div>

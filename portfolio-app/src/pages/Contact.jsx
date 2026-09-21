@@ -197,8 +197,11 @@ export default function Contact() {
               </div>
 
               <div>
-                <label className="font-label-caps text-outline text-[13px] block mb-1.5">YOUR NAME</label>
+                <label htmlFor="contact-name" className="font-label-caps text-outline text-[13px] block mb-1.5">YOUR NAME</label>
                 <input
+                  id="contact-name"
+                  name="name"
+                  autoComplete="name"
                   type="text"
                   value={form.name}
                   maxLength={LIMITS.name.max}
@@ -214,8 +217,11 @@ export default function Contact() {
               </div>
 
               <div>
-                <label className="font-label-caps text-outline text-[13px] block mb-1.5">YOUR EMAIL</label>
+                <label htmlFor="contact-email" className="font-label-caps text-outline text-[13px] block mb-1.5">YOUR EMAIL</label>
                 <input
+                  id="contact-email"
+                  name="email"
+                  autoComplete="email"
                   type="email"
                   value={form.email}
                   maxLength={LIMITS.email.max}
@@ -252,8 +258,10 @@ export default function Contact() {
               </div>
 
               <div>
-                <label className="font-label-caps text-outline text-[13px] block mb-1.5">MESSAGE</label>
+                <label htmlFor="contact-message" className="font-label-caps text-outline text-[13px] block mb-1.5">MESSAGE</label>
                 <textarea
+                  id="contact-message"
+                  name="message"
                   value={form.message}
                   maxLength={LIMITS.message.max}
                   onChange={e => setForm(prev => ({ ...prev, message: e.target.value }))}

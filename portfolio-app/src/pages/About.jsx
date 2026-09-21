@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import DecryptText from '../components/DecryptText';
 import CtaBand from '../components/CtaBand';
+import InteractiveTerminal from '../components/InteractiveTerminal';
 import data from '../portfolioData.json';
 
 const { personal, contact, principles, projects } = data;
@@ -162,6 +163,8 @@ export default function About() {
               {contact.email}
             </a>
           </div>
+
+          <InteractiveTerminal className="hidden lg:flex h-[420px]" />
         </div>
       </div>
     </div>

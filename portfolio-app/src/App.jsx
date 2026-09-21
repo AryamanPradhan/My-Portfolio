@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Layout from './Layout';
 import Home from './pages/Home';
 import About from './pages/About';
+import Stack from './pages/Stack';
 import Contact from './pages/Contact';
 import BootScreen from './components/BootScreen';
 
@@ -17,6 +18,7 @@ function App() {
           <Route path="/" element={<Layout />}>
             <Route index element={<Home />} />
             <Route path="about" element={<About />} />
+            <Route path="stack" element={<Stack />} />
             <Route path="contact" element={<Contact />} />
             {/* Old routes from the 4-page layout — projects now lives on Home. */}
             <Route path="profile" element={<Navigate to="/about" replace />} />

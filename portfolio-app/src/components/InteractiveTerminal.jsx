@@ -1,7 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import data from '../portfolioData.json';
+import { STACK_GROUPS, STACK_GROUP_LABELS, STACK_TOOLS } from '../stackData';
 
-const { personal, contact, services, stack, principles, projects } = data;
+const { personal, contact, services, principles, projects } = data;
 
 const pad = (str, len) => String(str).padEnd(len);
 
@@ -46,7 +47,7 @@ const COMMANDS = {
   stack: () => [
     'STACK',
     '─────────────────────────',
-    ...stack.map(g => `  ${pad(g.category, 16)}${g.items.join(', ')}`),
+    ...STACK_GROUPS.map(g => `  ${pad(STACK_GROUP_LABELS[g].toUpperCase(), 16)}${STACK_TOOLS.filter(t => t.group === g).map(t => t.name).join(', ')}`),
     '',
   ],
   principles: () => [
