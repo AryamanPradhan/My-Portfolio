@@ -134,7 +134,6 @@ export default function Layout() {
           <div className="font-status-tiny text-outline text-[12px] mb-2">FIND ME</div>
           <div className="flex gap-2">
             {[
-              { icon: 'hub', href: `https://${contact.github}`, label: 'GitHub' },
               { icon: 'dns', href: `https://${contact.linkedin}`, label: 'LinkedIn' },
               { icon: 'mail', href: `mailto:${contact.email}`, label: 'Email' },
             ].map(link => (

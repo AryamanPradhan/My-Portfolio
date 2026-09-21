@@ -379,9 +379,8 @@ export default function Home() {
 
         <div className="bevel-outset bg-surface-container-high p-3 flex-shrink-0">
           <div className="font-label-caps text-label-caps text-outline mb-2">FIND ME</div>
-          <div className="grid grid-cols-3 gap-1.5">
+          <div className="grid grid-cols-2 gap-1.5">
             {[
-              { icon: 'hub', label: 'GITHUB', href: `https://${contact.github}`, color: 'text-primary-container' },
               { icon: 'dns', label: 'LINKEDIN', href: `https://${contact.linkedin}`, color: 'text-led-green' },
               { icon: 'mail', label: 'EMAIL', href: `mailto:${contact.email}`, color: 'text-primary' },
             ].map(asset => (

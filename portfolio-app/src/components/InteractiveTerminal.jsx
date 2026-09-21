@@ -58,7 +58,6 @@ const COMMANDS = {
     'CONTACT',
     '─────────────────────────',
     `  EMAIL     ${contact.email}`,
-    `  GITHUB    ${contact.github}`,
     `  LINKEDIN  ${contact.linkedin}`,
     '',
     'Or use the CONTACT page to draft a message.',

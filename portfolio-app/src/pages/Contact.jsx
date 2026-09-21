@@ -338,7 +338,6 @@ export default function Contact() {
             <div className="space-y-2">
               {[
                 { icon: 'mail', label: 'EMAIL', value: contact.email, href: `mailto:${contact.email}` },
-                { icon: 'hub', label: 'GITHUB', value: contact.github, href: `https://${contact.github}` },
                 { icon: 'dns', label: 'LINKEDIN', value: contact.linkedin, href: `https://${contact.linkedin}` },
               ].map(({ icon, label, value, href }) => (
                 <a
