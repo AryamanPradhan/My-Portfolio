@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import data from './portfolioData.json';
-import { GreeterBot, PaintedName } from './components/Bots';
+import { PaintedName } from './components/Bots';
 
 const { personal, contact } = data;
 
@@ -14,10 +14,18 @@ export default function Layout() {
     setMenuOpen(false);
   }, [location]);
 
+  // The document scrolls, so the browser carries the previous page's offset
+  // over. Keyed on pathname alone, deliberately: opening and closing a project
+  // only changes the hash, and resetting the scroll there would throw a visitor
+  // back to the top of the list they were reading.
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
+
   const navLinks = [
     { to: '/', icon: 'home', label: 'HOME' },
     { to: '/about', icon: 'person_search', label: 'ABOUT' },
-    { to: '/stack', icon: 'layers', label: 'STACK' },
+    { to: '/stack', icon: 'layers', label: 'TOOLS' },
     { to: '/contact', icon: 'mail', label: 'CONTACT' },
   ];
 
@@ -85,10 +93,6 @@ export default function Layout() {
         </div>
 
         <div className="col-start-3 justify-self-end flex items-center gap-3 flex-shrink-0">
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 bg-led-green led-pulse-green rounded-full"></div>
-            <span className="font-status-tiny text-status-tiny text-led-green hidden sm:inline">AVAILABLE</span>
-          </div>
           <Link
             to="/contact"
             className="bevel-outset bg-primary text-on-primary px-3 lg:px-4 py-1.5 font-label-caps font-bold text-[13px] lg:text-[14px] hover:bg-primary-container active:translate-y-0.5 transition-all whitespace-nowrap"
@@ -144,12 +148,95 @@ export default function Layout() {
         </>
       )}
 
-      <GreeterBot phosphor={location.pathname === '/stack'} />
-
       {/* Main Content */}
-      <main className="mt-[56px] lg:mt-[64px] p-3 lg:p-4 h-[calc(100vh-56px)] lg:h-[calc(100vh-64px)] overflow-hidden">
+      {/* min-h, not h: content taller than the viewport extends the document
+          instead of being clipped into a nested scroller. dvh, not vh: on a
+          phone the browser chrome moves and vh does not follow it. */}
+      <main className="mt-[56px] lg:mt-[64px] p-3 lg:p-4 min-h-[calc(100dvh-56px)] lg:min-h-[calc(100dvh-64px)]">
         <Outlet />
       </main>
+
+      {/* Footer: deliberately the quietest thing on the page. The CTA band at
+          the end of each page is the closing ask; this is just the second
+          chance at navigation once someone has read to the bottom. No bevels,
+          no LEDs, no glow — a plain rule and muted text.
+
+          A capped, centred grid rather than justify-between: across a wide
+          viewport that pushed three short columns to the edges and left a void
+          down the middle. */}
+      <footer className="border-t-2 border-border-graphite bg-surface-dim">
+        <div className="max-w-[1120px] mx-auto px-4 lg:px-6 py-6">
+          <div className="grid grid-cols-2 gap-x-8 gap-y-6 sm:grid-cols-3">
+
+            <div className="col-span-2 sm:col-span-1">
+              <Link
+                to="/"
+                className="font-display-lg text-base font-black text-primary uppercase tracking-[0.25em] hover:text-primary-container transition-colors"
+              >
+                ARYAMAN
+              </Link>
+              <div className="font-mono-data text-outline text-[13px] mt-1.5 leading-relaxed">
+                {personal.title.toUpperCase()}
+                <br />
+                {contact.address.toUpperCase()}
+                <br />
+                INDIA — REMOTE
+              </div>
+            </div>
+
+            <nav aria-label="Footer" className="flex flex-col gap-1.5">
+              <div className="font-status-tiny text-outline/80 text-[12px] mb-0.5">PAGES</div>
+              {navLinks.map(link => (
+                <Link
+                  key={link.to}
+                  to={link.to}
+                  aria-current={isActive(link.to) ? 'page' : undefined}
+                  className={`font-label-caps text-label-caps transition-colors ${
+                    isActive(link.to) ? 'text-primary' : 'text-outline hover:text-primary'
+                  }`}
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </nav>
+
+            <div className="flex flex-col gap-1.5">
+              <div className="font-status-tiny text-outline/80 text-[12px] mb-0.5">GET IN TOUCH</div>
+              <a
+                href={`mailto:${contact.email}`}
+                className="font-mono-data text-outline text-[13px] hover:text-primary transition-colors break-all"
+              >
+                {contact.email}
+              </a>
+              <a
+                href={`tel:${contact.phone}`}
+                className="font-mono-data text-outline text-[13px] hover:text-primary transition-colors"
+              >
+                {contact.phoneDisplay}
+              </a>
+              <a
+                href={`https://${contact.linkedin}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-mono-data text-outline text-[13px] hover:text-primary transition-colors"
+              >
+                LinkedIn
+              </a>
+            </div>
+          </div>
+
+          <div className="mt-6 pt-3 border-t border-border-graphite/40 flex flex-col gap-1 sm:flex-row sm:justify-between">
+            <span className="font-status-tiny text-outline text-[12px]">
+              © {new Date().getFullYear()} {personal.name}
+            </span>
+            <span className="font-status-tiny text-outline text-[12px] flex items-center gap-2">
+              <Link to="/privacy" className="hover:text-primary transition-colors">Privacy</Link>
+              <span className="text-outline/50">·</span>
+              Built in React
+            </span>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }

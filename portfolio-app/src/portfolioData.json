@@ -7,30 +7,32 @@
     "tagline": "I give teams back the hours they lose to repetitive work — Python automation built against the tools you already use.",
     "bio": "I work with marketing and creative agencies to turn their recurring operational work into software that runs itself. The builds are Python against real APIs (Notion, Gmail, Slack, Sheets) with language models handling the parts that need judgment, and human approval gates on anything that reaches a customer. No no-code platforms, no per-run billing, no vendor lock-in.",
     "location": "India, Remote",
-    "availability": "AVAILABLE FOR WORK",
-    "focus": "Marketing & creative agencies",
-    "engagement": "Project-based, retainer preferred"
+    "focus": "Marketing & creative agencies"
   },
   "contact": {
-    "email": "aryamanacepradhan@gmail.com",
+    "email": "pradhanaryaman1008@gmail.com",
+    "phone": "+918101561812",
+    "phoneDisplay": "+91 81015 61812",
+    "address": "Gangtok, Sikkim 737101",
     "linkedin": "linkedin.com/in/aryaman-pradhan-a79158425"
   },
   "services": [
     {
-      "name": "AI Agents & Assistants",
-      "desc": "Custom agents that research, draft, classify, and act — built directly on the Claude and OpenAI APIs."
+      "name": "Systems that run unattended",
+      "desc": "The work your team repeats every week — onboarding, intake, handoffs, reporting — rebuilt as Python that runs on a schedule and interrupts a person only when it should."
     },
     {
-      "name": "Workflow Automation",
-      "desc": "End-to-end business workflows written in Python against real APIs — Notion, Gmail, Drive, Slack, Sheets."
+      "name": "Assistants that cite their sources",
+      "desc": "Customer-facing AI grounded in your own documents. A citation behind every claim, and a straight \"I don't know\" instead of a confident guess."
     },
     {
-      "name": "AI Strategy Consulting",
-      "desc": "Scoping where AI actually pays off in a business, and where it quietly doesn't. Written specs before code."
+      "name": "A spec before any code",
+      "desc": "Where AI pays off in your business and where it quietly doesn't — written down and yours to keep, including the parts where I'd tell you not to build."
     },
     {
-      "name": "Content & Marketing Automation",
-      "desc": "Research, drafting, and publishing pipelines with human approval gates so nothing ships unreviewed."
+      "name": "Something not on this list",
+      "desc": "Most of what I've built didn't fit a category when it started. If yours doesn't either, that's usually a good sign.",
+      "hideInForm": true
     }
   ],
   "principles": [
@@ -333,18 +335,73 @@
       "status": "SHIPPED",
       "date": "v1.1",
       "brief": "Webhook fires, lead enriched, Slack pings, personalized reply sent — before competitors pick up.",
-      "objective": "A resellable lead-response service for small businesses. A web-form webhook fires, the lead's site is scraped for context, the team gets a Slack alert, and the lead gets a personalized reply by email — before a competitor answers.",
+      "objective": "A resellable lead-response service for small businesses. A web-form webhook fires, the lead's site is scraped for context, the team gets a Slack alert, and the lead gets a personalized reply by email — before a competitor answers. This is the one build here that sends a customer-facing message without a human sign-off, and that is the point: a reply that waits for approval is no longer a fast reply. The trade is bounded — the copy is format-locked rather than freely written, and the Slack alert puts a person on the thread seconds after the first message goes out.",
       "tech": ["Python", "FastAPI", "Slack API", "Gmail SMTP", "SQLite", "PostgreSQL"],
       "facts": {
         "deployModel": "Clone & configure",
         "config": "Fully env-driven",
         "storage": "SQLite → Postgres",
-        "personalization": "LLM + template fallback"
+        "personalization": "LLM + template fallback",
+        "humanGate": "None before first reply — by design"
       },
+      "workflow": [
+        {
+          "step": 1,
+          "title": "INBOUND ENQUIRY",
+          "mode": "auto",
+          "items": [
+            "Web-form webhook fires",
+            "Responds before any work starts",
+            "Enquiry written to storage",
+            "Handed to a background worker"
+          ],
+          "receives": [
+            "Name and contact",
+            "What they are asking about",
+            "Their website"
+          ],
+          "note": "The webhook returns immediately — everything below runs behind it"
+        },
+        {
+          "step": 2,
+          "title": "LEAD QUALIFICATION",
+          "mode": "auto",
+          "items": [
+            "Lead's own site scraped for context",
+            "What the business does and sells",
+            "Context scored before anything is sent"
+          ],
+          "note": "Too little signal → the plain template, never a guess"
+        },
+        {
+          "step": 3,
+          "title": "AUTO EMAIL / WHATSAPP REPLY",
+          "mode": "auto",
+          "items": [
+            "Reply written from the scraped context",
+            "Email over Gmail SMTP",
+            "WhatsApp where a number was given",
+            "Template fallback when no LLM is configured"
+          ],
+          "note": "No approval gate here, deliberately — step 4 puts a person on the thread seconds later"
+        },
+        {
+          "step": 4,
+          "title": "INFORM TEAM VIA SLACK",
+          "mode": "auto",
+          "items": [
+            "Alert into the team channel",
+            "Lead details and the context found",
+            "The reply that already went out"
+          ],
+          "note": "The team joins a conversation that has already started"
+        }
+      ],
       "outcomes": [
         "Every client-specific value lives in env — nothing hardcoded, so a new install is a config change",
         "Background worker handles enrichment so the webhook always returns fast",
-        "Falls back to templates when no LLM is configured — the service never hard-depends on one"
+        "Falls back to templates when no LLM is configured — the service never hard-depends on one",
+        "No approval gate before the first reply, deliberately — format-locked copy and an immediate Slack handoff buy the speed without giving up control"
       ]
     },
     {
@@ -457,35 +514,6 @@
           ],
           "note": "Whole pipeline readable in one sheet"
         }
-      ]
-    },
-    {
-      "codename": "GLASS HOTEL",
-      "name": "WhatsApp-First Hotel Website",
-      "type": "Frontend",
-      "status": "INTERNAL",
-      "date": "2026",
-      "live": "https://hotel-website-five-xi.vercel.app/",
-      "brief": "Demo hotel site: bookings go straight to WhatsApp, questions go to the Hotel AI Guide.",
-      "objective": "A single-page hotel website built as the demo property for the Hotel AI Guide. The booking bar turns dates, guests and room choice into a pre-filled WhatsApp message to the front desk, and the Guide widget answers visitors' questions from the hotel's own documents.",
-      "tech": [
-        "Next.js",
-        "React",
-        "TypeScript",
-        "Tailwind CSS",
-        "Vercel",
-        "Git"
-      ],
-      "facts": {
-        "booking": "WhatsApp deep link",
-        "backend": "None",
-        "content": "Typed config files",
-        "assistant": "Hotel AI Guide"
-      },
-      "outcomes": [
-        "Booking needs no backend: the enquiry arrives in WhatsApp already filled in",
-        "All hotel content lives in typed config files, so reskinning it for a new property is a data change",
-        "Serves as the live demo corpus and eval set for the Hotel AI Guide"
       ]
     },
     {

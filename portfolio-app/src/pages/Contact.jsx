@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import DecryptText from '../components/DecryptText';
 import data from '../portfolioData.json';
-import { ScribeBot, WelderBot } from '../components/Bots';
 
 const { personal, contact, services } = data;
 
@@ -48,14 +47,8 @@ function buildMailto(form) {
 
 export default function Contact() {
   const [form, setForm] = useState({ name: '', email: '', project: '', message: '' });
-  // The typewriter robot in the message box types while the visitor does,
-  // and settles back down shortly after they stop.
-  const [typing, setTyping] = useState(false);
-  const typingTimer = useRef(null);
-  const nameRef = useRef(null);
-  const emailRef = useRef(null);
+  // Only the Other box needs a ref: it is focused when it opens.
   const otherRef = useRef(null);
-  const messageRef = useRef(null);
 
   // "What do you need?" has an Other option that opens a box to describe it.
   const [otherOpen, setOtherOpen] = useState(false);
@@ -64,12 +57,6 @@ export default function Contact() {
     ? (otherText.trim() ? `${OTHER_PREFIX}${otherText.trim()}` : 'Other')
     : form.project;
   useEffect(() => { if (otherOpen) otherRef.current?.focus(); }, [otherOpen]);
-  useEffect(() => () => clearTimeout(typingTimer.current), []);
-  const nudgeTyping = () => {
-    setTyping(true);
-    clearTimeout(typingTimer.current);
-    typingTimer.current = setTimeout(() => setTyping(false), 700);
-  };
   // Honeypot. Hidden from people and from assistive tech, so anything that
   // fills it is a bot walking the DOM rather than reading the page.
   const [website, setWebsite] = useState('');
@@ -168,21 +155,15 @@ export default function Contact() {
   const sending = status === 'sending';
 
   return (
-    <div className="h-full overflow-y-auto pr-2 page-enter">
+    <div className="page-enter">
       {/* Header */}
-      <div className="bevel-outset bg-surface-dim px-4 lg:px-6 py-3 flex justify-between items-center mb-4 gap-3">
-        <div className="flex items-center gap-2 min-w-0">
-          <span className="material-symbols-outlined text-primary text-lg flex-shrink-0">settings_input_antenna</span>
-          <DecryptText
-            text="CONTACT TERMINAL"
-            className="font-label-caps text-label-caps text-primary"
-            speed={25}
-          />
-        </div>
-        <div className="flex items-center gap-2 flex-shrink-0">
-          <div className="w-1.5 h-1.5 bg-led-green led-pulse-green rounded-full"></div>
-          <span className="font-status-tiny text-led-green text-[13px]">{personal.availability}</span>
-        </div>
+      <div className="bevel-outset bg-surface-dim px-4 lg:px-6 py-3 flex items-center mb-4 gap-3">
+        <span className="material-symbols-outlined text-primary text-lg flex-shrink-0">settings_input_antenna</span>
+        <DecryptText
+          text="CONTACT TERMINAL"
+          className="font-label-caps text-label-caps text-primary"
+          speed={25}
+        />
       </div>
 
       {/* CTA headline */}
@@ -204,7 +185,6 @@ export default function Contact() {
         {/* Form */}
         <div className="lg:col-span-7 flex flex-col gap-4">
           <div className="relative bevel-outset bg-surface-dim p-4 lg:p-6">
-            <WelderBot right="10%" />
             <div className="flex items-center gap-2 mb-1">
               <span className="material-symbols-outlined text-primary text-sm">edit_note</span>
               <span className="font-label-caps text-label-caps text-primary">START A CONVERSATION</span>
@@ -232,20 +212,18 @@ export default function Contact() {
                 <label htmlFor="contact-name" className="font-label-caps text-outline text-[13px] block mb-1.5">YOUR NAME</label>
                 <div className="relative">
                   <input
-                    ref={nameRef}
                     id="contact-name"
                     name="name"
                     autoComplete="name"
                     type="text"
                     value={form.name}
                     maxLength={LIMITS.name.max}
-                    onChange={e => { setForm(prev => ({ ...prev, name: e.target.value })); nudgeTyping(); }}
+                    onChange={e => { setForm(prev => ({ ...prev, name: e.target.value })); }}
                     placeholder="Who's writing?"
-                    className={`w-full pl-3 pr-10 py-2 text-[16px] caret-transparent ${errors.name ? 'border border-led-red' : ''}`}
+                    className={`w-full px-3 py-2 text-[16px] ${errors.name ? 'border border-led-red' : ''}`}
                     aria-invalid={Boolean(errors.name)}
                     disabled={sending}
                   />
-                  <ScribeBot targetRef={nameRef} typing={typing} />
                 </div>
                 {errors.name && (
                   <div className="font-mono-data text-led-red text-[13px] mt-1">{errors.name}</div>
@@ -256,20 +234,18 @@ export default function Contact() {
                 <label htmlFor="contact-email" className="font-label-caps text-outline text-[13px] block mb-1.5">YOUR EMAIL</label>
                 <div className="relative">
                   <input
-                    ref={emailRef}
                     id="contact-email"
                     name="email"
                     autoComplete="email"
                     type="email"
                     value={form.email}
                     maxLength={LIMITS.email.max}
-                    onChange={e => { setForm(prev => ({ ...prev, email: e.target.value })); nudgeTyping(); }}
+                    onChange={e => { setForm(prev => ({ ...prev, email: e.target.value })); }}
                     placeholder="where I should reply"
-                    className={`w-full pl-3 pr-10 py-2 text-[16px] caret-transparent ${errors.email ? 'border border-led-red' : ''}`}
+                    className={`w-full px-3 py-2 text-[16px] ${errors.email ? 'border border-led-red' : ''}`}
                     aria-invalid={Boolean(errors.email)}
                     disabled={sending}
                   />
-                  <ScribeBot targetRef={emailRef} typing={typing} />
                 </div>
                 {errors.email && (
                   <div className="font-mono-data text-led-red text-[13px] mt-1">{errors.email}</div>
@@ -279,7 +255,7 @@ export default function Contact() {
               <div>
                 <label className="font-label-caps text-outline text-[13px] block mb-1.5">WHAT DO YOU NEED?</label>
                 <div className="flex flex-wrap gap-1.5">
-                  {services.map(s => (
+                  {services.filter(s => !s.hideInForm).map(s => (
                     <button
                       type="button"
                       key={s.name}
@@ -319,12 +295,11 @@ export default function Contact() {
                       type="text"
                       value={otherText}
                       maxLength={OTHER_MAX}
-                      onChange={e => { setOtherText(e.target.value); nudgeTyping(); }}
+                      onChange={e => { setOtherText(e.target.value); }}
                       placeholder="Tell me in a few words"
-                      className="w-full pl-3 pr-10 py-2 text-[16px] caret-transparent"
+                      className="w-full px-3 py-2 text-[16px]"
                       disabled={sending}
                     />
-                    <ScribeBot targetRef={otherRef} typing={typing} />
                   </div>
                 )}
               </div>
@@ -333,20 +308,18 @@ export default function Contact() {
                 <label htmlFor="contact-message" className="font-label-caps text-outline text-[13px] block mb-1.5">MESSAGE</label>
                 <div className="relative">
                   <textarea
-                    ref={messageRef}
                     id="contact-message"
                     name="message"
                     value={form.message}
                     maxLength={LIMITS.message.max}
-                    onChange={e => { setForm(prev => ({ ...prev, message: e.target.value })); nudgeTyping(); }}
+                    onChange={e => { setForm(prev => ({ ...prev, message: e.target.value })); }}
                     placeholder="What are you trying to automate, and what does it cost you today?"
                     rows={6}
-                    className={`w-full px-3 pt-2 pb-10 text-[16px] resize-none caret-transparent ${errors.message ? 'border border-led-red' : ''}`}
+                    className={`w-full px-3 py-2 text-[16px] resize-none ${errors.message ? 'border border-led-red' : ''}`}
                     aria-invalid={Boolean(errors.message)}
                     disabled={sending}
                   />
                   {/* The typewriter robot is the cursor here, so the real caret is hidden. */}
-                  <ScribeBot targetRef={messageRef} typing={typing || sending} rest="corner" />
                 </div>
                 {errors.message && (
                   <div className="font-mono-data text-led-red text-[13px] mt-1">{errors.message}</div>
@@ -403,9 +376,8 @@ export default function Contact() {
             <div className="font-label-caps text-label-caps text-primary mb-3">WORKING DETAILS</div>
             <div className="space-y-2 font-mono-data text-[14px]">
               {[
-                { label: 'BASED', value: personal.location, color: 'text-primary' },
+                { label: 'BASED', value: contact.address, color: 'text-primary' },
                 { label: 'WORKS WITH', value: personal.focus, color: 'text-primary-container' },
-                { label: 'ENGAGEMENT', value: personal.engagement, color: 'text-on-surface-variant' },
                 { label: 'BUILT IN', value: 'Python', color: 'text-primary' },
                 { label: 'AVAILABILITY', value: 'Open to new work', color: 'text-led-green' },
               ].map(({ label, value, color }) => (
@@ -423,13 +395,14 @@ export default function Contact() {
             <div className="space-y-2">
               {[
                 { icon: 'mail', label: 'EMAIL', value: contact.email, href: `mailto:${contact.email}` },
+                { icon: 'call', label: 'PHONE', value: contact.phoneDisplay, href: `tel:${contact.phone}` },
                 { icon: 'dns', label: 'LINKEDIN', value: contact.linkedin, href: `https://${contact.linkedin}` },
               ].map(({ icon, label, value, href }) => (
                 <a
                   key={label}
                   href={href}
-                  target={icon !== 'mail' ? '_blank' : undefined}
-                  rel={icon !== 'mail' ? 'noopener noreferrer' : undefined}
+                  target={icon === 'dns' ? '_blank' : undefined}
+                  rel={icon === 'dns' ? 'noopener noreferrer' : undefined}
                   className="flex items-center gap-2 bevel-inset bg-background-matte/40 px-3 py-2 hover:bg-surface-container-highest/40 transition-all group"
                 >
                   <span className="material-symbols-outlined text-outline text-sm group-hover:text-primary transition-colors">{icon}</span>

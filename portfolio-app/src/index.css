@@ -82,47 +82,6 @@
   50% { opacity: 0.6; box-shadow: 0 0 3px #22C55E, 0 0 6px rgba(34, 197, 94, 0.2); }
 }
 
-/* ===== Boot Screen ===== */
-
-.boot-log-line {
-  opacity: 0;
-  transform: translateY(5px);
-  animation: boot-line-in 0.1s forwards;
-}
-
-@keyframes boot-line-in {
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.boot-progress-bar {
-  display: flex;
-  gap: 2px;
-  height: 12px;
-  background-color: #251913;
-  border: 1px solid #584238;
-  padding: 1px;
-}
-
-.boot-progress-segment {
-  flex: 1;
-  background-color: transparent;
-  transition: background-color 0.08s;
-}
-
-.boot-progress-segment.active {
-  background-color: #FFB000;
-}
-
-.boot-flash {
-  animation: boot-flash 0.8s forwards;
-}
-
-@keyframes boot-flash {
-  0% { opacity: 0; }
-  15% { opacity: 0.8; }
-  100% { opacity: 0; }
-}
-
 /* ===== Terminal Cursor ===== */
 
 .cursor-block {
@@ -378,4 +337,13 @@ textarea {
 
 @media (prefers-reduced-motion: reduce) {
   .bot-crew * { animation: none !important; }
+
+  /* The page-wide flicker and the sweeping scanline are the two largest
+     animations on the site, so they are the two that most need to stop when
+     someone has asked their machine for less motion. The static scanline
+     texture (.crt-overlay) stays: it does not move. */
+  .crt-flicker { animation: none !important; opacity: 1 !important; }
+  .scanline { display: none !important; }
+  .led-pulse-green,
+  [class*="led-pulse"] { animation: none !important; }
 }

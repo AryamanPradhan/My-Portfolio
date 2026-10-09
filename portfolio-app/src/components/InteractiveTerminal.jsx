@@ -25,8 +25,6 @@ const COMMANDS = {
     `ROLE:     ${personal.title}`,
     `BASED:    ${personal.location}`,
     `CLIENTS:  ${personal.focus}`,
-    `TERMS:    ${personal.engagement}`,
-    `STATUS:   ${personal.availability}`,
   ],
   'ls projects': () => [
     ...projects.map(p => `  ${pad(p.codename, 16)}${pad(`[${p.type}]`, 24)}${p.status}`),

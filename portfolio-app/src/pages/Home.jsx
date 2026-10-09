@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import CtaBand from '../components/CtaBand';
 import WorkflowDiagram from '../components/WorkflowDiagram';
@@ -31,22 +31,33 @@ function ProjectRow({ project, icon, onOpen }) {
   // phones the button drops to its own line so the robot has room beside it.
   const repair = project.codename === 'ARYAMAN_OS';
   return (
-    <div className="bevel-inset bg-background-matte/40 px-3 lg:px-4 py-3">
+    <div
+      onClick={() => onOpen(project)}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onOpen(project); } }}
+      className="bevel-inset bg-background-matte/40 px-3 lg:px-4 py-3 cursor-pointer hover:bg-surface-container-high/40 transition-colors"
+    >
       <div className={`flex items-center justify-between gap-3 ${repair ? 'flex-wrap sm:flex-nowrap' : ''}`}>
         <div className={`flex items-center gap-3 min-w-0 ${repair ? 'basis-full sm:basis-auto' : ''}`}>
           <span className="material-symbols-outlined text-primary-container text-lg flex-shrink-0">{icon}</span>
           <div className="min-w-0">
+            {/* The readable name leads; the codename is one more tag beside the
+                status, so a visitor reads what the build does before its label. */}
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="font-mono-data text-primary text-[16px] font-semibold min-w-0 break-words">{project.codename}</span>
+              <span className="font-mono-data text-primary text-[16px] font-semibold min-w-0 break-words">{project.name}</span>
               <span className={`font-label-caps text-[12px] px-2 py-0.5 ${STATUS_STYLES[project.status] || STATUS_STYLES.INTERNAL}`}>
                 {project.status}
               </span>
               <span className="font-label-caps text-[12px] px-2 py-0.5 text-outline bg-surface-container-low border border-border-graphite/30 hidden sm:inline">
                 {project.type.toUpperCase()}
               </span>
+              <span className="font-mono-data text-[12px] px-2 py-0.5 text-outline border border-border-graphite/20 hidden lg:inline">
+                {project.codename}
+              </span>
             </div>
-            <div className="font-mono-data text-on-surface-variant text-[14px] mt-1 line-clamp-1">
-              {project.brief || project.name}
+            <div className="font-mono-data text-on-surface-variant text-[14px] mt-1 line-clamp-2">
+              {project.brief || project.type}
             </div>
           </div>
         </div>
@@ -55,11 +66,11 @@ function ProjectRow({ project, icon, onOpen }) {
         <div className={`relative flex-shrink-0 ${repair ? 'ml-auto sm:ml-12 lg:ml-0' : ''}`}>
           {repair && <RepairBot />}
           <button
-            onClick={() => onOpen(project)}
+            onClick={(e) => { e.stopPropagation(); onOpen(project); }}
             className="bevel-outset bg-surface-container-highest text-primary px-3 py-1.5 font-label-caps text-[13px] hover:text-primary-container hover:bg-surface-container-high active:translate-y-0.5 transition-all flex items-center gap-1.5"
           >
             <span className="material-symbols-outlined text-sm">open_in_new</span>
-            OPEN FILE
+            VIEW PROJECT
           </button>
         </div>
       </div>
@@ -75,7 +86,7 @@ function ProjectPanel({ icon, title, subtitle, projects, onOpen }) {
           <span className="material-symbols-outlined text-primary text-lg">{icon}</span>
           <span className="font-label-caps text-label-caps text-primary">{title}</span>
         </div>
-        <span className="font-mono-data text-outline text-[13px] hidden sm:block">{projects.length} FILES</span>
+        <span className="font-mono-data text-outline text-[13px] hidden sm:block">{projects.length} PROJECTS</span>
       </div>
       <div className="font-status-tiny text-outline text-[12px] mb-4">{subtitle}</div>
       <div className="space-y-2">
@@ -86,42 +97,37 @@ function ProjectPanel({ icon, title, subtitle, projects, onOpen }) {
 }
 
 export default function Home() {
-  const [time, setTime] = useState(new Date().toISOString().replace('T', ' ').substring(0, 19));
-  const [openProject, setOpenProject] = useState(null);
   const location = useLocation();
   const navigate = useNavigate();
 
-  // A project can be opened by link (/#hotel-ai-guide). The Stack page sends
-  // visitors here that way.
-  useEffect(() => {
-    const slug = location.hash.slice(1);
-    if (slug) setOpenProject(projects.find(p => slugify(p.codename) === slug) ?? null);
-  }, [location.hash]);
+  // The URL is the only record of which project is open: /#hotel-ai-guide.
+  // Opening one is a navigation, so Back closes it rather than leaving the
+  // site, and a visitor can send someone a link to the project itself.
+  const openProject = projects.find(p => slugify(p.codename) === location.hash.slice(1)) ?? null;
 
-  const closeProject = () => {
-    setOpenProject(null);
-    if (location.hash) navigate('/', { replace: true });
-  };
+  const openProjectByHash = (p) => navigate(`/#${slugify(p.codename)}`);
+  const closeProject = () => navigate('/', { replace: true });
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setTime(new Date().toISOString().replace('T', ' ').substring(0, 19));
-    }, 1000);
-    return () => clearInterval(timer);
-  }, []);
-
-  useEffect(() => {
+    if (!openProject) return;
     const handleEsc = (e) => { if (e.key === 'Escape') closeProject(); };
-    if (openProject) {
-      document.addEventListener('keydown', handleEsc);
-      return () => document.removeEventListener('keydown', handleEsc);
-    }
+    document.addEventListener('keydown', handleEsc);
+    // The page scrolls now, so without this the content slides around
+    // behind the modal.
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.removeEventListener('keydown', handleEsc);
+      document.body.style.overflow = '';
+    };
   }, [openProject]);
 
   const activeCount = projects.filter(p => ['SHIPPED', 'IN BUILD'].includes(p.status)).length;
 
-  const SPOTLIGHT_CODENAMES = ['AI ASSISTED ONBOARDING SYSTEM', 'HOTEL AI GUIDE'];
-  const spotlightProjects = projects.filter(p => SPOTLIGHT_CODENAMES.includes(p.codename));
+  // Order here is the order on the page, not the order in portfolioData.json.
+  const SPOTLIGHT_CODENAMES = ['SPEED-TO-LEAD', 'AI ASSISTED ONBOARDING SYSTEM', 'HOTEL AI GUIDE'];
+  const spotlightProjects = SPOTLIGHT_CODENAMES
+    .map(c => projects.find(p => p.codename === c))
+    .filter(Boolean);
   const otherProjects = projects.filter(p => !SPOTLIGHT_CODENAMES.includes(p.codename));
 
   const summary = [
@@ -133,78 +139,69 @@ export default function Home() {
   ];
 
   return (
-    <div className="h-full page-enter">
+    <div className="page-enter">
 
-      {/* [&>*]:shrink-0 is load-bearing. This is a fixed-height flex column, so
-          its children default to flex-shrink:1 and get compressed to fit rather
-          than overflowing into the scroll. The hero carries overflow-hidden, so
-          it was compressed to zero height and silently disappeared. */}
-      <section className="h-full flex flex-col gap-4 overflow-y-auto pr-0 lg:pr-2 [&>*]:shrink-0">
+      <section className="flex flex-col gap-4">
 
         {/* Hero */}
         <div className="bevel-outset bg-surface-dim relative overflow-hidden">
-          <div className="bg-led-red/20 border-b border-led-red/40 px-4 lg:px-6 py-1 flex justify-between items-center">
-            <span className="font-label-caps text-label-caps text-led-red tracking-widest">
-              PERSONNEL FILE // OPEN FOR ENGAGEMENT
-            </span>
-            <span className="font-mono-data text-mono-data text-outline">{time}</span>
-          </div>
-
           <div className="p-4 lg:p-8">
-            <div className="font-mono-data text-mono-data text-outline mb-3">
-              FILE TYPE: OPERATOR OVERVIEW &nbsp;|&nbsp; BUILDS: SYSTEMS THAT RUN UNATTENDED &nbsp;|&nbsp; ENGAGEMENT: {personal.engagement.toUpperCase()}
-            </div>
-
+            {/* Three columns from xl, two at lg, stacked below. The left column
+                used to be flex-1 with everything inside it capped at max-w-xl,
+                which left a dead band between the copy and the fact card on any
+                wide screen. The shipped-builds list now occupies that width
+                instead of sitting underneath the copy. */}
             <div className="flex flex-col lg:flex-row items-start gap-6 lg:gap-8">
-              <div className="flex-1">
-                <h1 className="font-display-lg text-3xl md:text-4xl lg:text-5xl font-black text-primary uppercase tracking-tighter leading-[1.05] mb-5 drop-shadow-[0_0_15px_rgba(255,176,0,0.4)] max-w-2xl">
+
+              <div className="flex-1 min-w-0 w-full">
+                <h1 className="font-display-lg text-3xl md:text-4xl lg:text-5xl font-bold text-primary tracking-tight leading-[1.1] mb-5">
                   {personal.headline}
                 </h1>
-                <p className="font-body-base text-on-surface-variant leading-relaxed mb-6 max-w-xl text-[16px] border-l-2 border-primary/40 pl-3">
+                <p className="font-body-base text-on-surface-variant leading-relaxed mb-6 max-w-2xl text-[16px] border-l-2 border-primary/40 pl-3">
                   {personal.subheadline}
                 </p>
                 <div className="flex flex-wrap gap-3">
+                  <Link to="/contact" className="bevel-outset bg-primary text-on-primary px-5 py-2 font-label-caps font-bold text-[16px] hover:bg-primary-container active:translate-y-0.5 transition-all inline-block">
+                    Start a project
+                  </Link>
                   <Link to="/about" className="bevel-outset bg-surface-container-highest text-primary px-5 py-2 font-label-caps font-bold text-[16px] hover:text-primary-container active:translate-y-0.5 transition-all border border-border-graphite inline-block">
-                    ABOUT THE OPERATOR
+                    About me
                   </Link>
                 </div>
               </div>
 
-              {/* Fact card */}
-              <div className="bevel-inset bg-background-matte/80 p-4 lg:p-5 w-full lg:w-64 flex-shrink-0">
-                <div className="font-label-caps text-label-caps text-primary mb-3">AT A GLANCE</div>
-                <div className="space-y-2 font-mono-data text-mono-data">
-                  {summary.map(({ label, value, color }, i) => (
-                    <div key={label} className={`flex justify-between gap-2 ${i < summary.length - 1 ? 'border-b border-border-graphite/30 pb-1' : ''}`}>
-                      <span className="text-outline flex-shrink-0">{label}</span>
-                      <span className={`${color} text-right`}>{value}</span>
-                    </div>
-                  ))}
+              {/* Side by side from xl, stacked into one column at lg. */}
+              <div className="w-full lg:w-72 xl:w-auto flex-shrink-0 flex flex-col xl:flex-row gap-4 xl:gap-6">
+
+                {/* What I build, in the hero rather than in a panel further
+                    down: it answers "can this person do my thing?" while the
+                    headline is still on screen. */}
+                <div className="xl:w-[21rem] flex-shrink-0">
+                  <div className="font-label-caps text-label-caps text-primary mb-3">WHAT I BUILD</div>
+                  <div className="space-y-2">
+                    {services.map(service => (
+                      <div key={service.name} className="bevel-inset bg-background-matte/60 px-3 py-2">
+                        <span className="font-mono-data text-primary text-[14px] font-semibold">{service.name}</span>
+                        <span className="block font-body-base text-on-surface-variant text-[13px] leading-snug mt-0.5">{service.desc}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Fact card */}
+                <div className="bevel-inset bg-background-matte/80 p-4 lg:p-5 w-full xl:w-64 flex-shrink-0 self-start">
+                  <div className="font-label-caps text-label-caps text-primary mb-3">AT A GLANCE</div>
+                  <div className="space-y-2 font-mono-data text-mono-data">
+                    {summary.map(({ label, value, color }, i) => (
+                      <div key={label} className={`flex justify-between gap-2 ${i < summary.length - 1 ? 'border-b border-border-graphite/30 pb-1' : ''}`}>
+                        <span className="text-outline flex-shrink-0">{label}</span>
+                        <span className={`${color} text-right`}>{value}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-
-        {/* Services */}
-        <div className="bevel-outset bg-surface-dim p-4 lg:p-6">
-          <div className="flex items-center gap-2 mb-1">
-            <span className="material-symbols-outlined text-primary text-lg">handyman</span>
-            <span className="font-label-caps text-label-caps text-primary">WHAT I BUILD // SERVICES</span>
-          </div>
-          <div className="font-status-tiny text-outline text-[12px] mb-4">
-            TYPICAL ENGAGEMENT: {personal.engagement.toUpperCase()} &nbsp;|&nbsp; FOCUS: {personal.focus.toUpperCase()}
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 lg:gap-4">
-            {services.map(service => (
-              <div key={service.name} className="bevel-inset bg-background-matte/60 p-4">
-                {/* No text-label-caps here: that token sets its own font-size
-                    and is emitted after arbitrary values, so it would override
-                    the 18px and leave the heading smaller than its own body. */}
-                <div className="font-label-caps text-primary-container text-[18px] font-semibold leading-snug mb-2">{service.name}</div>
-                <div className="font-body-base text-on-surface-variant text-[15px] leading-relaxed">{service.desc}</div>
-              </div>
-            ))}
           </div>
         </div>
 
@@ -213,20 +210,19 @@ export default function Home() {
           title="SPOTLIGHT PROJECTS"
           subtitle={<>FEATURED BUILDS &nbsp;|&nbsp; PRIMARY LANGUAGE: PYTHON</>}
           projects={spotlightProjects}
-          onOpen={setOpenProject}
+          onOpen={openProjectByHash}
         />
 
         <ProjectPanel
           icon="folder_special"
-          title="OTHER PROJECTS // BUILD LOG"
+          title="MORE WORK"
           subtitle={<>{otherProjects.length} BUILDS &nbsp;|&nbsp; {activeCount} LIVE OR IN BUILD &nbsp;|&nbsp; PRIMARY LANGUAGE: PYTHON</>}
           projects={otherProjects}
-          onOpen={setOpenProject}
+          onOpen={openProjectByHash}
         />
 
         {/* CTA */}
         <CtaBand
-          builder={false}
           heading="Got something that should be running itself?"
           sub="Tell me the workflow that eats your team's week. I'll tell you honestly whether automation is worth it — and what it would take to build."
         />
@@ -241,7 +237,7 @@ export default function Home() {
           <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" />
 
           <div
-            className={`relative w-full max-h-[85vh] flex flex-col animate-slide-up ${openProject.workflow ? 'max-w-5xl' : 'max-w-3xl'}`}
+            className={`relative w-full max-h-[85dvh] flex flex-col animate-slide-up ${openProject.workflow ? 'max-w-5xl' : 'max-w-3xl'}`}
             onClick={(e) => e.stopPropagation()}
           >
             {/* Title bar */}
@@ -360,9 +356,7 @@ export default function Home() {
 
             {/* Bottom bar */}
             <div className="bevel-outset bg-surface-container-high px-4 py-2 flex items-center justify-between flex-shrink-0">
-              <span className="font-mono-data text-outline text-[13px]">
-                {openProject.tech.length} DEPS &nbsp;|&nbsp; {Object.keys(openProject.facts).length} FACTS &nbsp;|&nbsp; {openProject.outcomes.length} DECISIONS
-              </span>
+              <span />
               <button
                 onClick={closeProject}
                 className="font-label-caps text-outline text-[13px] hover:text-primary transition-colors"

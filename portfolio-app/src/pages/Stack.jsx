@@ -9,7 +9,7 @@ export default function Stack() {
   const navigate = useNavigate();
 
   return (
-    <div className="h-full overflow-y-auto pr-2 page-enter">
+    <div className="page-enter">
       <div className="max-w-[1120px] px-2 lg:px-6 py-4 lg:py-6">
         <h1 className="font-vt323 text-phosphor-hot text-[2.75rem] sm:text-[3.5rem] leading-none mb-3 [text-shadow:0_0_8px_rgba(255,176,0,0.45)]">
           Stack

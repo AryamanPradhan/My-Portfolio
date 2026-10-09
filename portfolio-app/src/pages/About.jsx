@@ -24,14 +24,11 @@ export default function About() {
   );
 
   return (
-    <div className="h-full overflow-y-auto pr-2 page-enter">
+    <div className="page-enter">
       {/* Header */}
-      <div className="bevel-outset bg-led-red/10 border-led-red/30 px-4 lg:px-6 py-2 flex justify-between items-center mb-4 gap-3">
+      <div className="bevel-outset bg-led-red/10 border-led-red/30 px-4 lg:px-6 py-2 flex items-center mb-4 gap-3">
         <span className="font-label-caps text-label-caps text-led-red tracking-widest">
           ABOUT THE OPERATOR // {personal.name.toUpperCase()}
-        </span>
-        <span className="font-mono-data text-mono-data text-outline hidden sm:block flex-shrink-0">
-          {personal.availability}
         </span>
       </div>
 
@@ -64,10 +61,9 @@ export default function About() {
                 <p className="font-body-base text-on-surface-variant text-[16px] leading-relaxed mb-4">
                   {personal.bio}
                 </p>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                <div className="grid grid-cols-2 gap-3">
                   {[
                     { label: 'BASED', value: personal.location, color: 'text-primary' },
-                    { label: 'STATUS', value: 'AVAILABLE', color: 'text-led-green' },
                     { label: 'CLIENTS', value: personal.focus, color: 'text-primary-container' },
                   ].map(({ label, value, color }) => (
                     <div key={label} className="bevel-inset bg-background-matte/60 p-2">
@@ -152,9 +148,9 @@ export default function About() {
           </div>
 
           <div className="bevel-outset bg-surface-dim p-4">
-            <div className="font-label-caps text-label-caps text-primary mb-2">ENGAGEMENT</div>
+            <div className="font-label-caps text-label-caps text-primary mb-2">AVAILABILITY</div>
             <p className="font-body-base text-on-surface-variant text-[15px] leading-relaxed mb-3">
-              {personal.engagement}. Currently taking on new work with {personal.focus.toLowerCase()}.
+              Currently taking on new work with {personal.focus.toLowerCase()}.
             </p>
             <a
               href={`mailto:${contact.email}`}

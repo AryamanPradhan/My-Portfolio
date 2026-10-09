@@ -47,7 +47,6 @@ const BUILD_NAMES = {
   'CONTENT GENERATION SYSTEM': 'Football content pipeline',
   'SPEED-TO-LEAD': 'Speed to Lead',
   'COLD OUTREACH': 'Cold outreach',
-  'GLASS HOTEL': 'Glass Hotel',
   ARYAMAN_OS: 'This portfolio',
 };
 
